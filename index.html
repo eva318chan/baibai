@@ -295,7 +295,13 @@
   .sr-only{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0);}
 </style>
 </head>
-<body>
+<body class="hide-brand">
+<!-- hide-brand by default (2026-11-15, v43): the entry page is the
+     default active view and showView('view-entry') is only called when
+     coming back from the garden, so on a fresh load the small top-left
+     logo used to show on the entry page although the big central logo
+     is already there. showView removes it on entering the garden/hall
+     and puts it back when returning to the entry page. -->
 
 <!-- top bar -->
 <header class="topbar">
