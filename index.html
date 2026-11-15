@@ -583,8 +583,8 @@ var I18N = {
     toastSoundOff:'已靜音，殿內回復寧靜。',
     toastBeadsDone:'念珠數滿 108 粒，圓滿。',
     presence:'🪔 同殿善信 {n} 位 · 全殿 {cap} 個座位 · 一齊靜坐中',
-    hallHintSeated:'你已入座 · 可以撳下面按鈕參拜，或者撳另一個空蒲團移座，想睇人入嚟就撳「望門口」',
-    standBtn:'起身', lookDoor:'望門口', lookAltar:'望返神壇', toastSeated:'已坐低，靜下心來參拜。', toastStand:'已起身，慢慢行。',
+    hallHintSeated:'你已入座 · 可以撳下面按鈕參拜，或者撳另一個空蒲團移座',
+    standBtn:'起身', toastSeated:'已坐低，靜下心來參拜。', toastStand:'已起身，慢慢行。',
     open:'已開放', soon:'敬請期待',
     actIncense:'上香', actPalms:'合掌', actBow:'鞠躬', actFortune:'求籤', actBeads:'撥念珠', actLotus:'獻蓮花', actBell:'敲鐘',
     beadProgress:'已撥 {n} 粒，繼續靜心。', hallSuffix:'殿', hallScene:'3D 大殿場景', gateLabel:'廟門', gatePlaque:'廟宇',
@@ -643,8 +643,8 @@ var I18N = {
     toastSoundOff:'已静音，殿内回复宁静。',
     toastBeadsDone:'念珠数满 108 粒，圆满。',
     presence:'🪔 同殿善信 {n} 位 · 全殿 {cap} 个座位 · 一起静坐中',
-    hallHintSeated:'你已入座 · 可以点下面按钮参拜，或者点另一个空蒲团移座，想看人进来就点「望门口」',
-    standBtn:'起身', lookDoor:'望门口', lookAltar:'望回神坛', toastSeated:'已坐下，静下心来参拜。', toastStand:'已起身，慢慢走。',
+    hallHintSeated:'你已入座 · 可以点下面按钮参拜，或者点另一个空蒲团移座',
+    standBtn:'起身', toastSeated:'已坐下，静下心来参拜。', toastStand:'已起身，慢慢走。',
     open:'已开放', soon:'敬请期待',
     actIncense:'上香', actPalms:'合掌', actBow:'鞠躬', actFortune:'求签', actBeads:'拨念珠', actLotus:'献莲花', actBell:'敲钟',
     beadProgress:'已拨 {n} 粒，继续静心。', hallSuffix:'殿', hallScene:'3D 大殿场景', gateLabel:'庙门', gatePlaque:'庙宇',
@@ -703,8 +703,8 @@ var I18N = {
     toastSoundOff:'Muted. The hall returns to silence.',
     toastBeadsDone:'108 beads counted — a full, perfect round.',
     presence:'🪔 {n} worshippers here · {cap} seats in the hall · sitting in silence together',
-    hallHintSeated:"You're seated · Use the buttons below to worship, or tap another empty cushion to move — tap 'See the door' to watch people come in",
-    standBtn:'Stand Up', lookDoor:'See the door', lookAltar:'Back to the altar', toastSeated:'Seated. Let your heart settle, and worship.', toastStand:'Standing. Take your time.',
+    hallHintSeated:"You're seated · Use the buttons below to worship, or tap another empty cushion to move",
+    standBtn:'Stand Up', toastSeated:'Seated. Let your heart settle, and worship.', toastStand:'Standing. Take your time.',
     open:'Open', soon:'Coming Soon',
     actIncense:'Incense', actPalms:'Palms Together', actBow:'Bow', actFortune:'Fortune Stick', actBeads:'Prayer Beads', actLotus:'Offer Lotus', actBell:'Ring the Bell',
     beadProgress:'{n} beads counted. Stay with the stillness.', hallSuffix:' Hall', hallScene:'3D temple hall scene', gateLabel:'Temple gate', gatePlaque:'廟宇',
@@ -1705,9 +1705,8 @@ var smokePts = null, candleLights = [], statueGroup = null, incenseGroup = null,
 var seatHitMeshes = [], seatRings = [], seatGlowDiscs = [], seatedIdx = null;
 var hallBreathers = [], visitorFigure = null, visitorWalk = null, visitorWalkPhase = 0;
 /* 2026-11-15: the hall's few living worshippers (hallAmbient) sit
-   on the "taken" cushions recorded in ambientSeatIdx; seatDoorView
-   is the seated "look at the doorway" toggle (see renderActions) */
-var ambientSeatIdx = [], hallAmbient = [], seatDoorView = false;
+   on the "taken" cushions recorded in ambientSeatIdx */
+var ambientSeatIdx = [], hallAmbient = [];
 /* which acolyte the visitor picked on the entry screen (2026-11-15):
    false = boy, true = girl — every visitor is a little Taoist （道童） */
 var visitorFemale = false;
@@ -2987,7 +2986,7 @@ function disposeScene(){
   scene = null; smokePts = null; candleLights = []; incenseGroup = null; lotusGroup = null; statueGroup = null;
   seatHitMeshes = []; seatRings = []; seatGlowDiscs = []; seatedIdx = null;
   hallBreathers = []; visitorFigure = null; visitorWalk = null; pendingBow = false;
-  ambientSeatIdx = []; hallAmbient = []; seatDoorView = false;
+  ambientSeatIdx = []; hallAmbient = [];
   hJoy = null; joyReset('joy-hall');
   smokeSystems = []; smokeBoost = 0; burnerGroup = null; incenseBusy = false;
   hallSmokeSystems = []; hallSmokeLit = false; incenseOffered = 0;
@@ -4973,15 +4972,9 @@ function renderActions(){
   }
   btn('🔔', t('actBell'), function(){ playBell(0.26); toast(t('toastBell')); });
   if (seatedIdx != null) btn('🧍', t('standBtn'), function(){ standUp(); });
-  if (seatedIdx != null) btn('🚪', seatDoorView ? t('lookAltar') : t('lookDoor'), function(){
-    /* seated, turn the gaze round to the doorway — so you can
-       watch people come in through it — or back to the altar.
-       The figure stays facing the altar; only the gaze turns,
-       the way turning your head in your seat would. */
-    seatDoorView = !seatDoorView;
-    camTarget = seatDoorView ? Math.PI : 0;
-    renderActions();
-  });
+  /* no "look at the door" button (2026-11-15): the doorway is already
+     visible from the seats through the see-through entrance, so no
+     button is needed to turn and look — dragging the view turns the gaze. */
 }
 
 /* ================= sitting on a cushion ================= */
@@ -5014,7 +5007,7 @@ function releaseSeatRings(){
 function sitSeat(idx){
   if (!visitorWalk && idx === seatedIdx) return;
   if (visitorWalk && visitorWalk.seat === idx) return;
-  pendingBow = false; seatDoorView = false;
+  pendingBow = false;
   releaseSeatRings();
   seatedIdx = null;
   setSeatMarker(idx, false);
@@ -5023,7 +5016,7 @@ function sitSeat(idx){
 }
 function standUp(){
   releaseSeatRings();
-  seatedIdx = null; seatDoorView = false;
+  seatedIdx = null;
   visitorStandAt = { x: 0, z: STAND_Z };
   startWalkTo(0, STAND_Z, null);
   toast(t('toastStand')); updateHint(); renderActions();
