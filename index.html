@@ -551,8 +551,8 @@ var I18N = {
     toastSoundOff:'已靜音，殿內回復寧靜。',
     toastBeadsDone:'念珠數滿 108 粒，圓滿。',
     presence:'🪔 同殿善信 {n} 位 · 全殿 {cap} 個座位 · 一齊靜坐中',
-    hallHintSeated:'你已入座 · 可以撳下面按鈕參拜，或者撳另一個空蒲團移座',
-    standBtn:'起身', toastSeated:'已坐低，靜下心來參拜。', toastStand:'已起身，慢慢行。',
+    hallHintSeated:'你已入座 · 可以撳下面按鈕參拜，或者撳另一個空蒲團移座，想睇人入嚟就撳「望門口」',
+    standBtn:'起身', lookDoor:'望門口', lookAltar:'望返神壇', toastSeated:'已坐低，靜下心來參拜。', toastStand:'已起身，慢慢行。',
     open:'已開放', soon:'敬請期待',
     actIncense:'上香', actPalms:'合掌', actBow:'鞠躬', actFortune:'求籤', actBeads:'撥念珠', actLotus:'獻蓮花', actBell:'敲鐘',
     beadProgress:'已撥 {n} 粒，繼續靜心。', hallSuffix:'殿', hallScene:'3D 大殿場景', gateLabel:'廟門', gatePlaque:'廟宇',
@@ -611,8 +611,8 @@ var I18N = {
     toastSoundOff:'已静音，殿内回复宁静。',
     toastBeadsDone:'念珠数满 108 粒，圆满。',
     presence:'🪔 同殿善信 {n} 位 · 全殿 {cap} 个座位 · 一起静坐中',
-    hallHintSeated:'你已入座 · 可以点下面按钮参拜，或者点另一个空蒲团移座',
-    standBtn:'起身', toastSeated:'已坐下，静下心来参拜。', toastStand:'已起身，慢慢走。',
+    hallHintSeated:'你已入座 · 可以点下面按钮参拜，或者点另一个空蒲团移座，想看人进来就点「望门口」',
+    standBtn:'起身', lookDoor:'望门口', lookAltar:'望回神坛', toastSeated:'已坐下，静下心来参拜。', toastStand:'已起身，慢慢走。',
     open:'已开放', soon:'敬请期待',
     actIncense:'上香', actPalms:'合掌', actBow:'鞠躬', actFortune:'求签', actBeads:'拨念珠', actLotus:'献莲花', actBell:'敲钟',
     beadProgress:'已拨 {n} 粒，继续静心。', hallSuffix:'殿', hallScene:'3D 大殿场景', gateLabel:'庙门', gatePlaque:'庙宇',
@@ -671,8 +671,8 @@ var I18N = {
     toastSoundOff:'Muted. The hall returns to silence.',
     toastBeadsDone:'108 beads counted — a full, perfect round.',
     presence:'🪔 {n} worshippers here · {cap} seats in the hall · sitting in silence together',
-    hallHintSeated:"You're seated · Use the buttons below to worship, or tap another empty cushion to move",
-    standBtn:'Stand Up', toastSeated:'Seated. Let your heart settle, and worship.', toastStand:'Standing. Take your time.',
+    hallHintSeated:"You're seated · Use the buttons below to worship, or tap another empty cushion to move — tap 'See the door' to watch people come in",
+    standBtn:'Stand Up', lookDoor:'See the door', lookAltar:'Back to the altar', toastSeated:'Seated. Let your heart settle, and worship.', toastStand:'Standing. Take your time.',
     open:'Open', soon:'Coming Soon',
     actIncense:'Incense', actPalms:'Palms Together', actBow:'Bow', actFortune:'Fortune Stick', actBeads:'Prayer Beads', actLotus:'Offer Lotus', actBell:'Ring the Bell',
     beadProgress:'{n} beads counted. Stay with the stillness.', hallSuffix:' Hall', hallScene:'3D temple hall scene', gateLabel:'Temple gate', gatePlaque:'廟宇',
@@ -858,13 +858,11 @@ function cnNum(n){ if(n===100) return '一百'; if(n<=10) return CN_NUM[n]; retu
    apart left-to-right (well over a metre of air between
    cushions) and rows sit 2.85 apart front-to-back, with the
    centre aisle kept clear so the statue stays visible on entry.
-   24 seats are taken by fellow worshippers (visible seated
-   figures, robed and breathing gently — never faceless
-   silhouettes); 10 stay empty — two in every row, spread across
+   Only 3 seats are taken — by three living fellow worshippers who sit a while, rise, walk out through the doorway and come back in at their own pace, never in step (visible seated figures, robed and breathing gently — never faceless silhouettes); 10 stay empty — two in every row, spread across
    the row including the aisle-side seats — wearing a bright
    pulsing gold ring so the visitor can tap one and sit down to
-   worship; the remaining 6 cushions sit bare. The presence
-   counter uses these counts. */
+   worship; the remaining 27 cushions sit bare. The presence
+   counter counts the living worshippers inside right now. */
 var SEAT_TOTAL = 40;
 var SEATS = (function(){
   /* seat spacing widened again 2026-11-15 — the hall should feel
@@ -882,12 +880,13 @@ var SEATS = (function(){
   rowZ.forEach(function(z, r){
     base.forEach(function(bx, c){ list.push({ x: bx, z: z, empty: !!empty[r+','+c] }); });
   });
-  /* exactly 24 of the non-ringed cushions hold a fellow worshipper,
-     spread evenly through the rows by a stride count; the rest are
-     bare cushions with nobody on them */
+  /* exactly 3 of the non-ringed cushions hold a fellow worshipper —
+     the living few (see enterHall): they sit, rise, walk out and
+     come back in, so the hall is never a room of frozen dummies.
+     The rest are bare cushions with nobody on them */
   var cand = list.filter(function(s){ return !s.empty; });
   for (var k = 0; k < cand.length; k++){
-    var taken = Math.floor((k + 1) * 24 / cand.length) > Math.floor(k * 24 / cand.length);
+    var taken = Math.floor((k + 1) * 3 / cand.length) > Math.floor(k * 3 / cand.length);
     cand[k].bare = !taken;
   }
   return list;
@@ -1167,6 +1166,10 @@ var renderer = null, scene = null, camera = null, rafId = null;
 var smokePts = null, candleLights = [], statueGroup = null, incenseGroup = null, lotusGroup = null;
 var seatHitMeshes = [], seatRings = [], seatGlowDiscs = [], seatedIdx = null;
 var hallBreathers = [], visitorFigure = null, visitorWalk = null, visitorWalkPhase = 0;
+/* 2026-11-15: the hall's few living worshippers (hallAmbient) sit
+   on the "taken" cushions recorded in ambientSeatIdx; seatDoorView
+   is the seated "look at the doorway" toggle (see renderActions) */
+var ambientSeatIdx = [], hallAmbient = [], seatDoorView = false;
 /* which acolyte the visitor picked on the entry screen (2026-11-15):
    false = boy, true = girl — every visitor is a little Taoist （道童） */
 var visitorFemale = false;
@@ -1517,9 +1520,28 @@ function buildCommon(kind){
   wallBox(10.3, 10.6, .4, 6.85, 5.3, 11.9);
   wallBox(3.4, 5.0, .4, 0, 8.1, 11.9);
   var doorGlow = new THREE.Mesh(new THREE.PlaneGeometry(3.3, 5.6),
-    new THREE.MeshBasicMaterial({ color: 0xffca7a, transparent: true, opacity: .34 }));
+    new THREE.MeshBasicMaterial({ color: 0xffca7a, transparent: true, opacity: .45 }));
   doorGlow.position.set(0, 2.8, 12.12); doorGlow.rotation.y = Math.PI; scene.add(doorGlow);
   var doorLight = new THREE.PointLight(0xffbe78, .6, 10); doorLight.position.set(0, 3.4, 10.4); scene.add(doorLight);
+  /* the doorway is a real open entrance, not a glowing slot: two
+     lacquered door leaves stand swung open inward against the
+     walls either side, with a stone threshold under them — so
+     from a cushion you can actually see the way people come in */
+  var leafMat = new THREE.MeshStandardMaterial({ color: 0x7c2d20, roughness: .6 });
+  var leafGold = new THREE.MeshStandardMaterial({ color: 0xc9a24b, roughness: .4, metalness: .5 });
+  [-1, 1].forEach(function(s){
+    var hinge = new THREE.Group();
+    hinge.position.set(s * 1.85, 0, 11.85);
+    hinge.rotation.y = s > 0 ? 1.14 : Math.PI - 1.14;
+    scene.add(hinge);
+    var leaf = new THREE.Mesh(new THREE.BoxGeometry(1.6, 5.3, .1), leafMat);
+    leaf.position.set(.8, 2.65, 0); hinge.add(leaf);
+    var stud = new THREE.Mesh(new THREE.BoxGeometry(1.4, .07, .12), leafGold);
+    stud.position.set(.8, 4.6, 0); hinge.add(stud);
+    var handle = new THREE.Mesh(new THREE.CylinderGeometry(.03, .03, .8, 8), leafGold);
+    handle.position.set(1.45, 2.6, .12); hinge.add(handle);
+  });
+  box(3.8, .12, .9, 0x8a7a63, 0, .06, 11.9);
   [-1.85, 1.85].forEach(function(x){
     var dp = new THREE.Mesh(new THREE.CylinderGeometry(.17,.2,5.6,14), beamMat);
     dp.position.set(x, 2.8, 11.85); scene.add(dp);
@@ -1698,11 +1720,13 @@ function buildCommon(kind){
      reached 0.435 under the inner columns and read as cramped */
   box(1.1,.03,15.5, isGY?0x4c5540:0x6e2a20, 0,.015,0.4);
   /* seating — 40 cushions in five widely spaced rows facing the
-     altar (see SEATS). 24 taken seats carry a visible seated
-     worshipper — robed, faced, gently breathing — so the hall
-     feels accompanied without feeling packed; bare cushions stay
-     plain; the 10 ringed empty ones glow bright and can be tapped
-     to sit. */
+     altar (see SEATS). Only 3 taken seats carry a fellow
+     worshipper — and those three are alive (built in enterHall):
+     they sit a while, rise, walk out through the doorway and
+     come back in — so the hall feels accompanied without feeling
+     packed, and never like a room of frozen dummies. Bare
+     cushions stay plain; the 10 ringed empty ones glow bright
+     and can be tapped to sit. */
   var cushC = isGY ? 0x7a8455 : 0x93392a;
   seatHitMeshes = []; seatRings = []; seatGlowDiscs = []; hallBreathers = [];
   SEATS.forEach(function(s, i){
@@ -1731,11 +1755,11 @@ function buildCommon(kind){
       return;
     }
     if (s.bare) return;
-    var w = makeSeatedWorshipper(i);
-    w.position.set(s.x, .16, s.z);
-    w.rotation.y = Math.PI;
-    scene.add(w);
-    hallBreathers.push({ inner: w.userData.inner, ph: i * 1.37 });
+    /* a taken seat: one of the hall's three living worshippers
+       sits here — the figure itself is built in enterHall, after
+       the hall, so it can walk the finished room; only its seat
+       is recorded here */
+    ambientSeatIdx.push(i);
   });
   /* hanging lanterns — two pairs down the nave, their glow marking
      the depth of the room as they recede toward the altar */
@@ -1984,52 +2008,10 @@ function makePilgrim(robeColor, trimColor, female){
   return g;
 }
 
-/* A fellow worshipper, already seated in the same rounded style:
-   robe mound over crossed legs, a waist under its sash, arms that
-   either hold palms together at the chest or rest open on the lap.
-   The congregation is a natural mix of women and men — assigned by
-   a fixed stride so the balance holds in every row — and they read
-   differently from behind (the view the visitor gets): the women
-   wear their hair long down the back or in a low bun, with
-   narrower shoulders and softer robe colours; the men have the
-   short crop, broader shoulders and deeper robe colours. Each
-   figure breathes — a barely-there sway of the torso, animated in
-   the hall loop via hallBreathers. */
-function makeSeatedWorshipper(i){
-  var female = ((i * 37 + 11) % 10) < 5;
-  var robeColsF = [0x8a6d7a, 0x97785a, 0x6d7a8a, 0x86755f, 0x5f7161, 0x7d7261];
-  var robeColsM = [0x3d4c66, 0x44586b, 0x5d4a38, 0x40584a, 0x4a3f35, 0x54443a];
-  var skins = [0xf0c297, 0xe6b98a, 0xf5d3a8];
-  var robe = (female ? robeColsF : robeColsM)[i % 6], skin = skins[i % skins.length], hairC = 0x38302a;
-  var g = new THREE.Group();
-  var inner = new THREE.Group(); g.add(inner);
-  var mound = latheMesh([[0,.01],[.42,.01],[.455,.06],[.37,.17],[.255,.25]], robe, 22); inner.add(mound);
-  var torso = latheMesh([[0,.2],[.265,.22],[.232,.37],[.246,.5],[.192,.61],[.09,.67]], robe, 22); inner.add(torso);
-  /* shoulders: men a touch broader, women a touch narrower */
-  torso.scale.set(female ? .9 : 1.07, 1, female ? .94 : 1);
-  mound.scale.x = female ? .95 : 1.03;
-  var sash = new THREE.Mesh(new THREE.TorusGeometry(.24, .024, 8, 24), mat(0x3a3128));
-  sash.rotation.x = Math.PI / 2; sash.position.y = .39; inner.add(sash);
-  var palmsPose = (i % 3 === 0);
-  var sx = female ? .165 : .195;
-  var armL = makeArm(robe, skin, .21, .17, .058, inner, -sx, .55);
-  var armR = makeArm(robe, skin, .21, .17, .058, inner, sx, .55);
-  if (palmsPose){
-    armL.sh.rotation.set(-.5, 0, .42); armR.sh.rotation.set(-.5, 0, -.42);
-    armL.el.rotation.set(-1.3, 0, .25); armR.el.rotation.set(-1.3, 0, -.25);
-    armL.hand.visible = armR.hand.visible = false;
-    var palms = makePalms(skin, .058);
-    palms.position.set(0, .43, .225); palms.rotation.x = -.12; inner.add(palms);
-  } else {
-    /* forearms resting forward, mitt hands open on the lap */
-    armL.sh.rotation.set(-.32, 0, -.1); armR.sh.rotation.set(-.32, 0, .1);
-    armL.el.rotation.set(-.55, 0, .1); armR.el.rotation.set(-.55, 0, -.1);
-  }
-  var headG = makeHead(skin, hairC, .185, female, i); headG.position.y = .62; inner.add(headG);
-  g.userData.inner = inner;
-  g.scale.setScalar(female ? .95 + (i % 4) * .025 : 1.0 + (i % 4) * .025);
-  return g;
-}
+/* makeSeatedWorshipper is gone (2026-11-15): the hall's few
+   fellow worshippers are now living makePilgrim figures built in
+   enterHall — they sit, rise, walk out through the doorway and
+   come back in — instead of frozen seated figures. */
 function buildStatueWTS(){
   /* Wong Tai Sin — an original sculpted figure synthesising the three
      reference likenesses the user supplied (they are design references
@@ -2437,6 +2419,7 @@ function disposeScene(){
   scene = null; smokePts = null; candleLights = []; incenseGroup = null; lotusGroup = null; statueGroup = null;
   seatHitMeshes = []; seatRings = []; seatGlowDiscs = []; seatedIdx = null;
   hallBreathers = []; visitorFigure = null; visitorWalk = null; pendingBow = false;
+  ambientSeatIdx = []; hallAmbient = []; seatDoorView = false;
   hPadDir = null; hPadQuad = -1; padReset('dpad-hall');
   smokeSystems = []; smokeBoost = 0; burnerGroup = null; incenseBusy = false;
   hallSmokeSystems = []; hallSmokeLit = false; incenseOffered = 0;
@@ -2469,6 +2452,31 @@ function enterHall(d){
   visitorFigure.rotation.y = Math.PI;
   visitorFigure.userData.stand();
   scene.add(visitorFigure);
+  /* the hall's few fellow worshippers (2026-11-15): only three,
+     and alive — they sit a while, rise, stroll out through the
+     doorway, and come back in at their own pace, staggered and
+     unhurried, never in step, so the hall feels like a place
+     people pass through rather than a room of frozen dummies.
+     Two are already seated when you arrive; the third walks in
+     shortly after. Under reduced motion they simply sit and
+     breathe, and never walk. */
+  hallAmbient = [];
+  var ambRobes = [ [0x5d4a38, 0xc9a24b, false], [0x6d7a8a, 0xd6bd8a, true], [0x44586b, 0xc9a24b, false] ];
+  ambientSeatIdx.forEach(function(si, ai){
+    var ar = ambRobes[ai % ambRobes.length];
+    var af = makePilgrim(ar[0], ar[1], ar[2]);
+    var ast = SEATS[si];
+    af.position.set(ast.x, .16, ast.z);
+    af.rotation.y = Math.PI;
+    af.userData.sit();
+    scene.add(af);
+    hallBreathers.push({ inner: af.userData.inner, ph: si * 1.37 });
+    hallAmbient.push({ fig: af, seat: si, target: si, phase: ai * 2.1, amt: 0,
+      state: (!REDUCED_MOTION && ai === 2) ? 'outside' : 'seated',
+      timer: ai === 0 ? 26 + Math.random() * 30 : (ai === 1 ? 12 + Math.random() * 18 : 7 + Math.random() * 9) });
+    if (!REDUCED_MOTION && ai === 2) af.visible = false;
+  });
+  presenceN = hallAmbient.filter(function(a){ return a.state === 'seated'; }).length; renderPresence();
   /* drag to look around; a short tap (not a drag) on an empty,
      gold-ringed cushion sits you down on it — tap another to move */
   var dragging = false, lastX = 0, lastY = 0, downX = 0, downY = 0, downT = 0;
@@ -2676,6 +2684,81 @@ function enterHall(d){
         vu.bow.rotation.x = bowDip * 1.15;
       }
     }
+    /* the hall's few living worshippers (2026-11-15): each one
+       sits a while, then rises, strolls out through the doorway,
+       and comes back in at its own pace — staggered, unhurried,
+       never in step. If you are standing in the aisle in their
+       way, they wait politely instead of walking through you. */
+    if (!REDUCED_MOTION) for (var ai = 0; ai < hallAmbient.length; ai++){
+      var amb = hallAmbient[ai], afig = amb.fig, au = afig.userData;
+      if (amb.state === 'seated'){
+        au.sit();
+        afig.position.set(SEATS[amb.seat].x, .16, SEATS[amb.seat].z);
+        var ady = Math.PI - afig.rotation.y;
+        while (ady > Math.PI) ady -= Math.PI * 2;
+        while (ady < -Math.PI) ady += Math.PI * 2;
+        afig.rotation.y += ady * (1 - Math.pow(1 - .08, dt60));
+        au.bow.rotation.x = Math.sin(clockT * .8 + amb.seat * 1.37) * .02;
+        amb.timer -= dt;
+        if (amb.timer <= 0){
+          amb.state = 'walking'; amb.leg = 0;
+          amb.path = [{ x: 0, z: SEATS[amb.seat].z }, { x: 0, z: 10.4 }, { x: 0, z: 11.9 }];
+          amb.out = true; au.rise();
+          presenceN = hallAmbient.filter(function(o){ return o.state !== 'outside'; }).length; renderPresence();
+        }
+      } else if (amb.state === 'outside'){
+        amb.timer -= dt;
+        if (amb.timer <= 0){
+          /* come back in through the doorway to a cushion that is
+             free — never one another worshipper is sitting on */
+          var afree = ambientSeatIdx.filter(function(si){
+            return !hallAmbient.some(function(o){ return o !== amb && (o.seat === si || o.target === si) && o.state !== 'outside'; });
+          });
+          amb.target = afree.length ? afree[Math.floor(Math.random() * afree.length)] : amb.seat;
+          amb.state = 'walking'; amb.leg = 0;
+          amb.path = [{ x: 0, z: 10.4 }, { x: 0, z: SEATS[amb.target].z }, { x: SEATS[amb.target].x, z: SEATS[amb.target].z }];
+          amb.out = false;
+          afig.visible = true; afig.position.set(0, 0, 11.9); afig.rotation.y = Math.PI; au.rise();
+          presenceN = hallAmbient.filter(function(o){ return o.state !== 'outside'; }).length; renderPresence();
+        }
+      } else if (amb.state === 'walking'){
+        var awp = amb.path[amb.leg];
+        var adx = awp.x - afig.position.x, adz = awp.z - afig.position.z;
+        var ad = Math.hypot(adx, adz);
+        /* someone in the way (you, in the aisle): wait, standing
+           still, instead of walking through them */
+        var ablocked = visitorFigure && Math.hypot(visitorFigure.position.x - afig.position.x, visitorFigure.position.z - afig.position.z) < 1.0;
+        if (ad <= .08){
+          if (amb.leg < amb.path.length - 1){ amb.leg++; }
+          else if (amb.out){
+            afig.visible = false; amb.state = 'outside'; amb.timer = 20 + Math.random() * 40; amb.seat = amb.target;
+            presenceN = hallAmbient.filter(function(o){ return o.state !== 'outside'; }).length; renderPresence();
+          } else {
+            amb.state = 'seated'; amb.seat = amb.target; amb.timer = 25 + Math.random() * 45;
+            afig.position.set(SEATS[amb.seat].x, .16, SEATS[amb.seat].z); au.sit();
+          }
+        } else if (!ablocked){
+          var awant = Math.atan2(adx, adz);
+          var ady2 = awant - afig.rotation.y;
+          while (ady2 > Math.PI) ady2 -= Math.PI * 2;
+          while (ady2 < -Math.PI) ady2 += Math.PI * 2;
+          afig.rotation.y += Math.max(-.12 * dt60, Math.min(.12 * dt60, ady2 * .35 * dt60));
+          var aalign = Math.max(0, Math.cos(ady2));
+          if (aalign > .28){
+            var astep = Math.min(ad, 1.25 * (0.3 + 0.7 * aalign * aalign) * dt);
+            afig.position.x += Math.sin(afig.rotation.y) * astep;
+            afig.position.z += Math.cos(afig.rotation.y) * astep;
+            amb.phase += astep * 4.4; amb.amt = Math.min(1, amb.amt + .2 * dt60);
+            au.walk(amb.phase, amb.amt);
+          } else { amb.amt = Math.max(0, amb.amt - .3 * dt60); if (amb.amt > .02) au.walk(amb.phase, amb.amt); }
+          au.bow.rotation.x = 0;
+        } else {
+          amb.amt = Math.max(0, amb.amt - .3 * dt60);
+          if (amb.amt > .02) au.walk(amb.phase, amb.amt); else au.stand();
+          au.bow.rotation.x = 0;
+        }
+      }
+    }
     if (statueGroup) statueGroup.position.y = .75 + Math.sin(clockT*.5)*.012;
     /* the pad only shows while walking (a walk in progress, not
        the scripted incense offering): the moment the figure
@@ -2736,6 +2819,7 @@ function rollPondLife(){
   gDragonflies.forEach(function(d, i){ d.vis = di.indexOf(i) >= 0; });
 }
 var gAvatar = null, gWalkPhase = 0, gWalkAmt = 0;
+var gWalkers = []; /* fellow visitors strolling the grounds (2026-11-15) */
 var REDUCED_MOTION = false;
 try { REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch(e){}
 
@@ -3586,6 +3670,28 @@ function buildGarden(){
      floating eye */
   gAvatar = makePilgrim(0x46587e, 0xd6bd8a, visitorFemale);
   scene.add(gAvatar);
+  /* fellow visitors strolling the grounds (2026-11-15): two
+     unhurried figures on a slow loop — gate, east lawn, lake
+     shore — pausing now and then to look around, so the temple
+     outside is lived in too. They wait if you step into their
+     path, and they keep clear of the pond rim, the benches, the
+     stone lanterns and the tree trunks along the way. Under
+     reduced motion the grounds stay still. */
+  gWalkers = [];
+  if (!REDUCED_MOTION){
+    var gLoop = [[-1.3,-11.0],[3.5,-6.0],[5.0,0.0],[2.5,5.5],[-2.9,2.6]];
+    var gRobes = [ [0x5d4a38, 0xc9a24b, false], [0x6d7a8a, 0xd6bd8a, true] ];
+    [[0,0],[3,9]].forEach(function(st, wi){
+      var gr = gRobes[wi % gRobes.length];
+      var gf = makePilgrim(gr[0], gr[1], gr[2]);
+      var wp0 = gLoop[st[0]];
+      gf.position.set(wp0[0], 0, wp0[1]);
+      gf.rotation.y = Math.PI;
+      gf.userData.stand();
+      scene.add(gf);
+      gWalkers.push({ fig: gf, loop: gLoop, leg: st[0], pause: st[1], phase: wi * 2.1, amt: 0 });
+    });
+  }
 }
 
 function disposeGarden(){
@@ -3598,7 +3704,7 @@ function disposeGarden(){
   gGroundHits = []; gGateHits = []; gRipples = []; gSway = []; gRibbons = []; gMist = null; gClouds = []; gSunGlow = null;
   gBirdFlock = null; gBirdState = null; gSquirrel = null; gSquirrelState = null; gButterflies = [];
   gKoi = []; gDragonflies = []; gPads = []; gPondT = 0;
-  gAvatar = null; gWalkAmt = 0;
+  gAvatar = null; gWalkAmt = 0; gWalkers = [];
 }
 function updateGardenHint(){
   var el = document.getElementById('garden-hint'); if (!el) return;
@@ -3818,6 +3924,47 @@ function enterGarden(keepSpot){
       gAvatar.position.set(gPos.x, Math.abs(Math.sin(gWalkPhase)) * .045 * gWalkAmt, gPos.z);
       gAvatar.rotation.y = gHeading;
     }
+    /* the grounds' strollers: a slow loop, unhurried, with pauses
+       to look around; they wait if you step into their path */
+    if (!REDUCED_MOTION) gWalkers.forEach(function(wk){
+      var wfig = wk.fig, wu = wfig.userData;
+      if (wk.pause > 0){
+        wk.pause -= gDt; wk.amt = Math.max(0, wk.amt - .18 * gDt60);
+        if (wk.amt > .02) wu.walk(wk.phase, wk.amt); else wu.stand();
+        /* looking around while paused — a slow drift of the gaze */
+        wfig.rotation.y += Math.sin(gTime * .25 + wk.leg) * .0022 * gDt60;
+        return;
+      }
+      var wwp = wk.loop[wk.leg];
+      var wdx = wwp[0] - wfig.position.x, wdz = wwp[1] - wfig.position.z;
+      var wd = Math.hypot(wdx, wdz);
+      var wblocked = gPos && Math.hypot(gPos.x - wfig.position.x, gPos.z - wfig.position.z) < 1.2;
+      if (wd <= .12){
+        wk.leg = (wk.leg + 1) % wk.loop.length;
+        if (Math.random() < .25) wk.pause = 6 + Math.random() * 8;
+        return;
+      }
+      if (wblocked){
+        wk.amt = Math.max(0, wk.amt - .18 * gDt60);
+        if (wk.amt > .02) wu.walk(wk.phase, wk.amt); else wu.stand();
+        return;
+      }
+      var wwant = Math.atan2(wdx, wdz);
+      var wdy = gWrapPi(wwant - wfig.rotation.y);
+      wfig.rotation.y += Math.max(-.12 * gDt60, Math.min(.12 * gDt60, wdy * .35 * gDt60));
+      var walign = Math.max(0, Math.cos(wdy));
+      if (walign > .28){
+        var wstep = Math.min(wd, 1.1 * (0.3 + 0.7 * walign * walign) * gDt);
+        wfig.position.x += Math.sin(wfig.rotation.y) * wstep;
+        wfig.position.z += Math.cos(wfig.rotation.y) * wstep;
+        wk.phase += wstep * 4.4; wk.amt = Math.min(1, wk.amt + .2 * gDt60);
+        wu.walk(wk.phase, wk.amt);
+      } else {
+        wk.amt = Math.max(0, wk.amt - .18 * gDt60);
+        if (wk.amt > .02) wu.walk(wk.phase, wk.amt);
+      }
+      wu.bow.rotation.x = 0;
+    });
     gRipples.forEach(function(r){
       var ph = (gTime * .14 + r.off) % 1;
       r.ring.scale.setScalar(.4 + ph * 2.1);
@@ -4033,6 +4180,15 @@ function renderActions(){
   }
   btn('🔔', t('actBell'), function(){ playBell(0.26); toast(t('toastBell')); });
   if (seatedIdx != null) btn('🧍', t('standBtn'), function(){ standUp(); });
+  if (seatedIdx != null) btn('🚪', seatDoorView ? t('lookAltar') : t('lookDoor'), function(){
+    /* seated, turn the gaze round to the doorway — so you can
+       watch people come in through it — or back to the altar.
+       The figure stays facing the altar; only the gaze turns,
+       the way turning your head in your seat would. */
+    seatDoorView = !seatDoorView;
+    camTarget = seatDoorView ? Math.PI : 0;
+    renderActions();
+  });
 }
 
 /* ================= sitting on a cushion ================= */
@@ -4065,7 +4221,7 @@ function releaseSeatRings(){
 function sitSeat(idx){
   if (!visitorWalk && idx === seatedIdx) return;
   if (visitorWalk && visitorWalk.seat === idx) return;
-  pendingBow = false;
+  pendingBow = false; seatDoorView = false;
   releaseSeatRings();
   seatedIdx = null;
   setSeatMarker(idx, false);
@@ -4074,7 +4230,7 @@ function sitSeat(idx){
 }
 function standUp(){
   releaseSeatRings();
-  seatedIdx = null;
+  seatedIdx = null; seatDoorView = false;
   visitorStandAt = { x: 0, z: STAND_Z };
   startWalkTo(0, STAND_Z, null);
   toast(t('toastStand')); updateHint(); renderActions();
