@@ -89,6 +89,28 @@
   .acolyte-btn.selected{color:var(--gold-soft);}
   .enter-btn{margin-top:26px; background:var(--red); color:#fff; border:1px solid #d1604f; border-radius:999px; padding:16px 52px; font-size:19px; font-weight:700; letter-spacing:.3em; text-indent:.3em; font-family:"Noto Serif TC",serif; box-shadow:0 10px 30px rgba(165,42,30,.4);}
   .enter-btn:active{transform:scale(.98);}
+  .enter-btn.ghost{background:transparent; border:1px solid var(--gold); color:var(--gold-soft); box-shadow:none; margin-top:12px; padding:13px 44px; font-size:17px;}
+  /* ---------- tai sui checker (v47) ---------- */
+  .ts-years{display:flex; gap:8px; justify-content:center; margin:0 0 14px;}
+  .ts-year{background:transparent; border:1px solid var(--line); color:var(--ink-dim); border-radius:999px; padding:8px 22px; font-size:14px; font-weight:700; letter-spacing:.06em;}
+  .ts-year.selected{background:var(--red); border-color:var(--red); color:#fff;}
+  .ts-signs{display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin:0 0 12px;}
+  .ts-sign{background:rgba(42,33,26,.7); border:1px solid var(--line); color:var(--ink); border-radius:12px; padding:10px 2px 8px; font-size:22px; font-weight:700; font-family:"Noto Serif TC",serif; line-height:1.2;}
+  .ts-sign small{display:block; font-size:11px; font-weight:600; color:var(--ink-dim); font-family:"Noto Sans TC",sans-serif; letter-spacing:.04em; margin-top:2px;}
+  .ts-sign.selected{border-color:var(--gold); color:var(--gold-soft); box-shadow:0 0 0 2px rgba(201,162,75,.3);}
+  .ts-year-row{display:flex; align-items:center; gap:10px; justify-content:center; margin:0 0 6px; color:var(--ink-dim); font-size:13px;}
+  .ts-year-row select{background:rgba(42,33,26,.7); color:var(--ink); border:1px solid var(--line); border-radius:8px; padding:7px 10px; font-size:14px; font-family:inherit;}
+  .ts-note{text-align:center; color:var(--ink-faint); font-size:12px; line-height:1.7; margin:0 0 14px;}
+  .ts-result{background:rgba(42,33,26,.55); border:1px solid var(--gold); border-radius:14px; padding:16px 16px 14px; margin-top:6px; text-align:center;}
+  .ts-result .ts-year-line{color:var(--gold-soft); font-size:12.5px; letter-spacing:.08em; margin:0 0 8px;}
+  .ts-result .ts-head{font-family:"Noto Serif TC",serif; font-size:24px; font-weight:700; letter-spacing:.1em; margin:0 0 4px;}
+  .ts-result .ts-type{color:var(--gold-soft); font-size:15px; font-weight:700; letter-spacing:.1em; margin:0 0 10px;}
+  .ts-result .ts-exp{color:var(--ink); font-size:14px; line-height:1.9; margin:0 0 12px; text-align:left;}
+  .ts-result .ts-guide-title{color:var(--gold-soft); font-size:13.5px; font-weight:700; letter-spacing:.12em; margin:0 0 8px;}
+  .ts-result ul{margin:0 0 12px; padding:0; list-style:none; text-align:left;}
+  .ts-result ul li{color:var(--ink); font-size:13.5px; line-height:1.8; padding-left:18px; position:relative; margin-bottom:4px;}
+  .ts-result ul li::before{content:"·"; position:absolute; left:6px; color:var(--gold);}
+  .ts-result .ts-close{color:var(--ink-dim); font-size:13px; line-height:1.9; margin:0; font-style:italic;}
   .entry-foot{padding:0 20px 26px; text-align:center; color:var(--ink-faint); font-size:12px; line-height:1.8;}
 
   /* ---------- select ---------- */
@@ -400,6 +422,7 @@
       <span data-i18n="rule1">免費入廟</span><span data-i18n="rule2">唔使註冊</span><span data-i18n="rule3">殿內請保持安靜</span><span data-i18n="rule4">冇聊天功能</span>
     </div>
     <button class="enter-btn" id="enter-btn" data-i18n="enterBtn">入 廟</button>
+    <button class="enter-btn ghost" id="taisui-btn" data-i18n="taisuiBtn">查 太 歲</button>
   </div>
   <p class="entry-foot" data-i18n="entryFoot">本頁為 Demo 示範版，3D 場景與儀式均為體驗示範；殿內善信為氣氛人物，並非真人連線。真正多人同時在線版本需要後端支援，Demo 未包含。</p>
   <p class="entry-foot credit-line" data-i18n="chantCredit">誦經：台灣福嚴佛學院僧眾《心經》唱誦（Matheson Trust Sacred Audio Collection）</p>
@@ -587,6 +610,29 @@
   </div>
 </div>
 
+<!-- ============ TAI SUI SHEET (v47) ============ -->
+<div class="overlay" id="taisui-overlay" role="dialog" aria-modal="true">
+  <div class="sheet">
+    <h3 data-i18n="taisuiTitle">查 太 歲</h3>
+    <p class="sub" data-i18n="taisuiSub">揀你嘅生肖，睇吓今年犯唔犯太歲。結果只係提醒，唔係定局。</p>
+    <div class="ts-years" id="ts-years">
+      <button class="ts-year selected" data-year="2026">2026</button>
+      <button class="ts-year" data-year="2027">2027</button>
+    </div>
+    <p class="sub" style="margin-bottom:8px;" data-i18n="tsPickSign">揀你嘅生肖</p>
+    <div class="ts-signs" id="ts-signs"></div>
+    <div class="ts-year-row">
+      <label for="ts-birth-year" data-i18n="tsPickYear">出生年份（可選）</label>
+      <select id="ts-birth-year"></select>
+    </div>
+    <p class="ts-note" data-i18n="tsYearNote">生肖按農曆年（立春）計；1 月或 2 月初出生嘅朋友，生肖可能係上一年嘅，請自行核對。</p>
+    <div class="ts-result" id="ts-result" style="display:none;"></div>
+    <div class="close-row" style="gap:10px;">
+      <button class="btn ghost" data-close="taisui-overlay" data-i18n="closeSheet">合十離開</button>
+    </div>
+  </div>
+</div>
+
 <!-- ============ BEADS SHEET ============ -->
 <div class="overlay" id="beads-overlay" role="dialog" aria-modal="true">
   <div class="sheet">
@@ -691,7 +737,27 @@ var I18N = {
     open:'已開放', soon:'敬請期待',
     actIncense:'上香', actPalms:'合掌', actBow:'鞠躬', actFortune:'求籤', actBeads:'撥念珠', actLotus:'獻蓮花', actBell:'敲鐘',
     beadProgress:'已撥 {n} 粒，繼續靜心。', hallSuffix:'殿', hallScene:'3D 大殿場景', gateLabel:'廟門', gatePlaque:'廟宇',
-    pageTitle:'拜拜 — 線上虛擬廟宇 Demo'
+    pageTitle:'拜拜 — 線上虛擬廟宇 Demo',
+    taisuiBtn:'查 太 歲', taisuiTitle:'查 太 歲',
+    taisuiSub:'揀你嘅生肖，睇吓今年犯唔犯太歲。結果只係提醒，唔係定局。',
+    tsPickSign:'揀你嘅生肖', tsPickYear:'出生年份（可選）',
+    tsYearNote:'生肖按農曆年（立春）計；1 月或 2 月初出生嘅朋友，生肖可能係上一年嘅，請自行核對。',
+    tsYearLine:'{year} {ganzhi}{animal}年 · 值年太歲 {lord}',
+    tsType_zhi:'值太歲', tsType_zhi_xing:'值太歲＋刑太歲', tsType_chong:'沖太歲', tsType_chong_xing:'沖太歲（兼刑）', tsType_hai:'害太歲', tsType_po:'破太歲', tsType_xing_po:'刑太歲＋破太歲', tsType_none:'不犯太歲',
+    tsExp_zhi:'本命年，太歲落喺自己身上；好壞都容易放大，大事之前多想一步。',
+    tsExp_zhi_xing:'本命年，太歲落喺自己身上；好壞都容易放大，情緒同壓力都大啲。',
+    tsExp_chong:'太歲同你嘅生肖正對面，呢年變動多——搬遷、轉工、出行都容易出現。',
+    tsExp_chong_xing:'太歲同你嘅生肖正對面，變動最大——工作或者住所可能有調整；變動唔一定係壞事，按部就班就好。',
+    tsExp_hai:'太歲同你嘅生肖有暗中摩擦，小人、誤會同口舌是非要留意；合作同溝通多確認一次，細節位多啲心。',
+    tsExp_po:'太歲同你嘅生肖有破，計劃容易中途打散，凡事留返啲緩衝。',
+    tsExp_xing_po:'太歲同你嘅生肖有刑有破，計劃容易被打亂，口舌是非多啲；重要約定留低紀錄會安心啲。',
+    tsExp_none:'呢年你嘅生肖同太歲冇刑沖破害，氣場平穩，安心過日子就好。',
+    tsGuideTitle:'可以咁樣安心啲',
+    tsGuide1:'保持低調，唔好做冒險決定；大事之前，靜一靜先。',
+    tsGuide2:'多行善積德，對人好啲，心安自然順。',
+    tsGuide3:'戴返啲紅色嘢（紅繩、紅色衫）係民間習俗，求個心安；得閒入嚟廟宇靜一靜、上炷香。',
+    tsCloseOffend:'犯太歲係提醒，唔係定局。靜下心來，好好面對，逢凶可以化吉，化險可以為夷。',
+    tsCloseCalm:'願你呢年平平安安，順順利利。'
   },
   sc: {
     brand:'拜拜', brandSub:'线上虚拟庙宇', demoTag:'DEMO 示范版',
@@ -752,7 +818,27 @@ var I18N = {
     open:'已开放', soon:'敬请期待',
     actIncense:'上香', actPalms:'合掌', actBow:'鞠躬', actFortune:'求签', actBeads:'拨念珠', actLotus:'献莲花', actBell:'敲钟',
     beadProgress:'已拨 {n} 粒，继续静心。', hallSuffix:'殿', hallScene:'3D 大殿场景', gateLabel:'庙门', gatePlaque:'庙宇',
-    pageTitle:'拜拜 — 线上虚拟庙宇 Demo'
+    pageTitle:'拜拜 — 线上虚拟庙宇 Demo',
+    taisuiBtn:'查 太 岁', taisuiTitle:'查 太 岁',
+    taisuiSub:'选你的生肖，看看今年犯不犯太岁。结果只是提醒，不是定局。',
+    tsPickSign:'选你的生肖', tsPickYear:'出生年份（可选）',
+    tsYearNote:'生肖按农历年（立春）计；1 月或 2 月初出生的朋友，生肖可能是上一年的，请自行核对。',
+    tsYearLine:'{year} {ganzhi}{animal}年 · 值年太岁 {lord}',
+    tsType_zhi:'值太岁', tsType_zhi_xing:'值太岁＋刑太岁', tsType_chong:'冲太岁', tsType_chong_xing:'冲太岁（兼刑）', tsType_hai:'害太岁', tsType_po:'破太岁', tsType_xing_po:'刑太岁＋破太岁', tsType_none:'不犯太岁',
+    tsExp_zhi:'本命年，太岁落在自己身上；好坏都容易放大，大事之前多想一步。',
+    tsExp_zhi_xing:'本命年，太岁落在自己身上；好坏都容易放大，情绪和压力都大一些。',
+    tsExp_chong:'太岁和你的生肖正对面，这年变动多——搬迁、转工、出行都容易出现。',
+    tsExp_chong_xing:'太岁和你的生肖正对面，变动最大——工作或者住所可能有调整；变动不一定是坏事，按部就班就好。',
+    tsExp_hai:'太岁和你的生肖有暗中摩擦，小人、误会和口舌是非要留意；合作和沟通多确认一次，细节处多留心。',
+    tsExp_po:'太岁和你的生肖有破，计划容易中途打散，凡事留点缓冲。',
+    tsExp_xing_po:'太岁和你的生肖有刑有破，计划容易被打乱，口舌是非多一些；重要约定留下记录会安心一些。',
+    tsExp_none:'这年你的生肖和太岁没有刑冲破害，气场平稳，安心过日子就好。',
+    tsGuideTitle:'可以这样安心一些',
+    tsGuide1:'保持低调，不要做冒险决定；大事之前，静一静再说。',
+    tsGuide2:'多行善积德，对人好一些，心安自然顺。',
+    tsGuide3:'戴点红色东西（红绳、红色衣服）是民间习俗，求个心安；有空进来庙宇静一静、上炷香。',
+    tsCloseOffend:'犯太岁是提醒，不是定局。静下心来，好好面对，逢凶可以化吉，化险可以为夷。',
+    tsCloseCalm:'愿你这一年平平安安，顺顺利利。'
   },
   en: {
     brand:'BaiBai', brandSub:'Online Virtual Temple', demoTag:'DEMO',
@@ -813,7 +899,27 @@ var I18N = {
     open:'Open', soon:'Coming Soon',
     actIncense:'Incense', actPalms:'Palms Together', actBow:'Bow', actFortune:'Fortune Stick', actBeads:'Prayer Beads', actLotus:'Offer Lotus', actBell:'Ring the Bell',
     beadProgress:'{n} beads counted. Stay with the stillness.', hallSuffix:' Hall', hallScene:'3D temple hall scene', gateLabel:'Temple gate', gatePlaque:'廟宇',
-    pageTitle:'BaiBai — Online Virtual Temple Demo'
+    pageTitle:'BaiBai — Online Virtual Temple Demo',
+    taisuiBtn:'Check Tai Sui', taisuiTitle:'Check Tai Sui',
+    taisuiSub:'Pick your sign to see whether it offends Tai Sui this year. The result is a reminder, not a verdict.',
+    tsPickSign:'Pick your sign', tsPickYear:'Birth year (optional)',
+    tsYearNote:'Signs follow the lunar year (from Lichun, the start of spring). If you were born in January or early February, your sign may be the previous year\u2019s — please check.',
+    tsYearLine:'{year} · {element} {animalEn} year ({ganzhiEn}) · Tai Sui: {lordEn}',
+    tsType_zhi:'Birth-Sign Year', tsType_zhi_xing:'Birth-Sign Year + Self-Punishment', tsType_chong:'Opposition', tsType_chong_xing:'Opposition (with Punishment)', tsType_hai:'Harm', tsType_po:'Break', tsType_xing_po:'Punishment + Break', tsType_none:'No Clash with Tai Sui',
+    tsExp_zhi:'Your birth-sign year — Tai Sui rests on your own sign, so both good and bad feel stronger. Think one step further before big decisions.',
+    tsExp_zhi_xing:'Your birth-sign year — Tai Sui rests on your own sign, so both good and bad feel stronger, and emotions and pressure run higher.',
+    tsExp_chong:'Tai Sui sits directly opposite your sign, so this year brings more change — moving, job changes, travel.',
+    tsExp_chong_xing:'Tai Sui sits directly opposite your sign — the most change of all; work or home may shift. Change is not necessarily bad — take it step by step.',
+    tsExp_hai:'A quiet friction with Tai Sui — watch for petty people, misunderstandings and gossip. Double-checking in work and communication, and minding the details, helps things run smoothly.',
+    tsExp_po:'A break with Tai Sui — plans may come apart midway, so leave yourself some slack.',
+    tsExp_xing_po:'Punishment and break with Tai Sui — plans may be disrupted and gossip may follow. Keeping a record of important agreements brings peace of mind.',
+    tsExp_none:'This year your sign has no clash, punishment, break or harm with Tai Sui. The energy is steady — live your days in peace.',
+    tsGuideTitle:'Ways to feel more at ease',
+    tsGuide1:'Keep a low profile and avoid rash decisions. Before anything big, pause and settle your mind.',
+    tsGuide2:'Do good deeds and be kind to others — a peaceful heart brings smooth days.',
+    tsGuide3:'Wearing something red (a red cord, a red garment) is a folk custom, for peace of mind. When you have time, come to the temple to sit quietly and light incense.',
+    tsCloseOffend:'Offending Tai Sui is a reminder, not a verdict. Quiet your mind and face what comes — misfortune can turn to good fortune, and danger to safety.',
+    tsCloseCalm:'May your year be peaceful and smooth.'
   }
 };
 function t(key){ return (I18N[LANG] && I18N[LANG][key]) || I18N.tc[key] || key; }
@@ -870,6 +976,9 @@ function applyLang(){
     if (rp.style.display !== 'none' && currentLot){ renderReading(currentLot); rb.textContent = t('readLess'); }
     else { rb.textContent = t('readMore'); }
   }
+  /* keep an open Tai Sui panel in the new language (v47) */
+  var tso = document.getElementById('taisui-overlay');
+  if (tso && tso.classList.contains('open')){ renderTsYears(); renderTsSigns(); renderTsResult(); }
   /* the chant is one real recording in every language, so a
      language switch leaves the track untouched; syncChant() just
      keeps its play state honest */
@@ -5386,6 +5495,80 @@ function openFortune(){
   document.getElementById('fortune-stage-result').style.display = 'none';
   document.getElementById('fortune-overlay').classList.add('open');
 }
+/* ================= tai sui checker (v47, 2026-11-15) =================
+   查太歲 — pick a zodiac sign (or a birth year) and see whether it
+   offends Tai Sui in 2026 or 2027. Data verified from multiple
+   independent almanac sources (2026: uptogo / fortunetelling.tw /
+   albertblog.tw agree on 馬值＋刑、鼠沖、牛害、兔破、雞破, star lord
+   文哲大將軍; 2027: daoshi.gkuer / u-mi / hourlightkey / lcalendar
+   agree on 羊值、牛沖、狗刑＋破、鼠害, star lord 繆丙大將軍).
+   Everything is computed locally — no personal data leaves the
+   device, no registration. The result is a reminder, not a verdict:
+   the wording is calm and reassuring by design (see the central
+   philosophy — comfort and hope, never fear). */
+var TS_SIGNS = ['鼠','牛','虎','兔','龍','蛇','馬','羊','猴','雞','狗','豬'];
+var TS_SIGNS_SC = ['鼠','牛','虎','兔','龙','蛇','马','羊','猴','鸡','狗','猪'];
+var TS_SIGN_EN = ['Rat','Ox','Tiger','Rabbit','Dragon','Snake','Horse','Goat','Monkey','Rooster','Dog','Pig'];
+var TS_YEARS = {
+  2026: { ganzhi:'丙午', ganzhiEn:'Bing Wu', animal:'馬', animalSc:'马', animalEn:'Horse', element:'火', elementEn:'Fire', lord:'文哲大將軍', lordSc:'文哲大将军', lordEn:'General Wenzhe',
+    clash:{ '馬':'zhi_xing', '鼠':'chong', '牛':'hai', '兔':'po', '雞':'po' } },
+  2027: { ganzhi:'丁未', ganzhiEn:'Ding Wei', animal:'羊', animalSc:'羊', animalEn:'Goat', element:'火', elementEn:'Fire', lord:'繆丙大將軍', lordSc:'缪丙大将军', lordEn:'General Miaobing',
+    clash:{ '羊':'zhi', '牛':'chong_xing', '狗':'xing_po', '鼠':'hai' } }
+};
+/* the sign is stored internally as its Traditional character (the key
+   into the clash map); the display character follows the language */
+function tsDisp(ch){ return LANG === 'sc' ? TS_SIGNS_SC[TS_SIGNS.indexOf(ch)] : ch; }
+var tsYear = 2026, tsSign = null;
+function tsYearLine(y){
+  var d = TS_YEARS[y];
+  if (LANG === 'en') return t('tsYearLine').replace('{year}', y).replace('{element}', d.elementEn).replace('{animalEn}', d.animalEn).replace('{ganzhiEn}', d.ganzhiEn).replace('{lordEn}', d.lordEn);
+  if (LANG === 'sc') return t('tsYearLine').replace('{year}', y).replace('{ganzhi}', d.ganzhi).replace('{animal}', d.animalSc).replace('{lord}', d.lordSc);
+  return t('tsYearLine').replace('{year}', y).replace('{ganzhi}', d.ganzhi).replace('{animal}', d.animal).replace('{lord}', d.lord);
+}
+function renderTsSigns(){
+  var wrap = document.getElementById('ts-signs'); if (!wrap) return;
+  wrap.innerHTML = '';
+  TS_SIGNS.forEach(function(ch, i){
+    var b = document.createElement('button');
+    b.className = 'ts-sign' + (tsSign === ch ? ' selected' : '');
+    b.type = 'button';
+    b.innerHTML = tsDisp(ch) + (LANG === 'en' ? '<small>' + TS_SIGN_EN[i] + '</small>' : '');
+    b.addEventListener('click', function(){
+      tsSign = ch;
+      var sel = document.getElementById('ts-birth-year'); if (sel) sel.value = '';
+      renderTsSigns(); renderTsResult();
+    });
+    wrap.appendChild(b);
+  });
+}
+function renderTsYears(){
+  var ys = document.querySelectorAll('#ts-years .ts-year');
+  for (var i=0;i<ys.length;i++){ ys[i].classList.toggle('selected', +ys[i].getAttribute('data-year') === tsYear); }
+}
+function renderTsResult(){
+  var box = document.getElementById('ts-result'); if (!box) return;
+  if (!tsSign){ box.style.display = 'none'; box.innerHTML = ''; return; }
+  var d = TS_YEARS[tsYear], type = d.clash[tsSign] || 'none';
+  var head = LANG === 'en' ? tsDisp(tsSign) + ' · ' + TS_SIGN_EN[TS_SIGNS.indexOf(tsSign)] : tsDisp(tsSign);
+  var html = '<p class="ts-year-line">' + tsYearLine(tsYear) + '</p>'
+    + '<p class="ts-head">' + head + '</p>'
+    + '<p class="ts-type">' + t('tsType_' + type) + '</p>'
+    + '<p class="ts-exp">' + t('tsExp_' + type) + '</p>';
+  if (type !== 'none'){
+    html += '<p class="ts-guide-title">' + t('tsGuideTitle') + '</p><ul>'
+      + '<li>' + t('tsGuide1') + '</li>'
+      + '<li>' + t('tsGuide2') + '</li>'
+      + '<li>' + t('tsGuide3') + '</li></ul>'
+      + '<p class="ts-close">' + t('tsCloseOffend') + '</p>';
+  } else {
+    html += '<p class="ts-close">' + t('tsCloseCalm') + '</p>';
+  }
+  box.innerHTML = html; box.style.display = 'block';
+}
+function openTaiSui(){
+  renderTsYears(); renderTsSigns(); renderTsResult();
+  document.getElementById('taisui-overlay').classList.add('open');
+}
 /* 簽筒 (v46): denser rattle for the fuller bundle — seventeen sticks
    knock more often than five, so clusters grow to 3–5 knocks, a touch
    closer together. Tuned to BAMBOO (the tube is a bamboo tube, not
@@ -5539,6 +5722,25 @@ function renderBeads(){
 
 /* ================= wire up ================= */
 document.getElementById('enter-btn').addEventListener('click', function(){ ensureAudio(); unlockChant(); if (soundOn) playBell(.2, 'gate'); enterGarden(); });
+/* tai sui checker (v47) — entry button, year switcher and birth-year
+   select, wired once at load. The year select maps a birth year to
+   its sign: 1924 is a Rat year, so sign = (year − 1924) mod 12. */
+document.getElementById('taisui-btn').addEventListener('click', function(){ openTaiSui(); });
+(function(){
+  var ys = document.querySelectorAll('#ts-years .ts-year');
+  for (var i=0;i<ys.length;i++){
+    ys[i].addEventListener('click', function(){
+      tsYear = +this.getAttribute('data-year'); renderTsYears(); renderTsResult();
+    });
+  }
+  var sel = document.getElementById('ts-birth-year');
+  var ph = document.createElement('option'); ph.value = ''; ph.textContent = '—'; sel.appendChild(ph);
+  for (var y=2026; y>=1924; y--){ var o = document.createElement('option'); o.value = y; o.textContent = y; sel.appendChild(o); }
+  sel.addEventListener('change', function(){
+    var v = +sel.value; if (!v) return;
+    tsSign = TS_SIGNS[(v - 1924) % 12]; renderTsSigns(); renderTsResult();
+  });
+})();
 /* virtual stick (v40): garden steering — drag any way and the figure
    walks that way; letting go stops the stroll where it is, with no
    resuming a tap route steered away from */
