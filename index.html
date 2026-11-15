@@ -1557,12 +1557,13 @@ function buildCommon(kind){
       shaft.position.set(wx - side * 1.6, 3.1, z); shaft.rotation.z = side * .5; shaft.rotation.y = Math.PI/2; scene.add(shaft);
     });
   });
-  /* entrance wall behind the visitor: a wide doorway with warm
-     light beyond it and a lintel sign, so looking back completes
-     the room instead of meeting a void */
+  /* entrance wall behind the visitor: a tall doorway (7.0 high,
+     2026-11-15, v39 — the old 5.6 door read as too short against
+     the 10.6 hall) with warm light beyond it, so looking back
+     completes the room instead of meeting a void */
   wallBox(10.3, 10.6, .4, -6.85, 5.3, 11.9);
   wallBox(10.3, 10.6, .4, 6.85, 5.3, 11.9);
-  wallBox(3.4, 5.0, .4, 0, 8.1, 11.9);
+  wallBox(3.4, 3.6, .4, 0, 8.8, 11.9);
   var doorLight = new THREE.PointLight(0xffbe78, .6, 10); doorLight.position.set(0, 3.4, 10.4); scene.add(doorLight);
   /* the doorway is a REAL opening with perspective, not a flat
      glowing slab (2026-11-15, v39): the old doorGlow panel sat
@@ -1573,11 +1574,14 @@ function buildCommon(kind){
      out from the threshold, and real pines and a stone lantern
      standing in front of the painted view, so the doorway has
      true depth and parallax. The plane is 40 wide so the view
-     holds from every seat; the ground is unlit, so it reads as
+     holds from every seat — the plane is 40x20, tall enough
+     that even the top sightline through the taller 7.0 opening
+     from the back row still lands on painted sky; the ground is
+     unlit, so it reads as
      bright daylight against the hall's warm interior */
-  var doorView = new THREE.Mesh(new THREE.PlaneGeometry(40, 16),
+  var doorView = new THREE.Mesh(new THREE.PlaneGeometry(40, 20),
     new THREE.MeshBasicMaterial({ map: gardenViewTexture() }));
-  doorView.position.set(0, 6, 28); doorView.rotation.y = Math.PI; scene.add(doorView);
+  doorView.position.set(0, 7, 28); doorView.rotation.y = Math.PI; scene.add(doorView);
   var doorGround = new THREE.Mesh(new THREE.PlaneGeometry(24, 16),
     new THREE.MeshBasicMaterial({ color: 0x8a9a68 }));
   doorGround.rotation.x = -Math.PI / 2; doorGround.position.set(0, -.06, 20); scene.add(doorGround);
@@ -1599,17 +1603,17 @@ function buildCommon(kind){
     hinge.position.set(s * 1.85, 0, 11.85);
     hinge.rotation.y = s > 0 ? 1.14 : Math.PI - 1.14;
     scene.add(hinge);
-    var leaf = new THREE.Mesh(new THREE.BoxGeometry(1.6, 5.3, .1), leafMat);
-    leaf.position.set(.8, 2.65, 0); hinge.add(leaf);
+    var leaf = new THREE.Mesh(new THREE.BoxGeometry(1.6, 6.7, .1), leafMat);
+    leaf.position.set(.8, 3.35, 0); hinge.add(leaf);
     var stud = new THREE.Mesh(new THREE.BoxGeometry(1.4, .07, .12), leafGold);
-    stud.position.set(.8, 4.6, 0); hinge.add(stud);
+    stud.position.set(.8, 6.0, 0); hinge.add(stud);
     var handle = new THREE.Mesh(new THREE.CylinderGeometry(.03, .03, .8, 8), leafGold);
-    handle.position.set(1.45, 2.6, .12); hinge.add(handle);
+    handle.position.set(1.45, 3.3, .12); hinge.add(handle);
   });
   box(3.8, .12, .9, 0x8a7a63, 0, .06, 11.9);
   [-1.85, 1.85].forEach(function(x){
-    var dp = new THREE.Mesh(new THREE.CylinderGeometry(.17,.2,5.6,14), beamMat);
-    dp.position.set(x, 2.8, 11.85); scene.add(dp);
+    var dp = new THREE.Mesh(new THREE.CylinderGeometry(.17,.2,7.0,14), beamMat);
+    dp.position.set(x, 3.5, 11.85); scene.add(dp);
   });
   /* ceiling — dark, with exposed rafters marching toward the altar
      and two pendant lamps hanging over the nave, as in real halls */
