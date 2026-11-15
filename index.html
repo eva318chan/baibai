@@ -244,11 +244,28 @@
   .btn.ghost{background:transparent; border:1px solid var(--line); color:var(--ink);}
   .btn.goldb{background:#7a5c1e; border:1px solid var(--gold);}
   /* fortune card */
-  .fortune-paper{background:var(--cream); color:#33241a; border-radius:10px; padding:20px 18px; text-align:center; box-shadow:inset 0 0 0 2px #c9a24b, inset 0 0 0 5px #f7efdd, inset 0 0 0 6px #c9a24b;}
-  .fortune-paper .f-no{font-size:13px; letter-spacing:.3em; color:#8c2b1d; font-weight:700;}
-  .fortune-paper .f-level{display:inline-block; margin:8px 0 2px; background:#8c2b1d; color:#fff; border-radius:6px; padding:3px 14px; font-family:"Noto Serif TC",serif; font-weight:900; font-size:17px; letter-spacing:.2em;}
-  .fortune-paper .f-title{font-family:"Noto Serif TC",serif; font-size:19px; font-weight:700; margin:6px 0 10px; letter-spacing:.1em;}
-  .fortune-paper .f-verse{font-family:"Noto Serif TC",serif; font-size:17.5px; line-height:2.05; font-weight:600; margin:0;}
+  /* 結果卡 (v46): a real Wong Tai Sin paper slip （籤紙） — pink
+     paper, red border and red text, the way the slip a drawer is
+     handed in real life looks. The header is printed in a bold
+     serif (as on the real slip, whose header is a regular bold
+     print); the number, grade seal, title and poem are in a
+     running script (Zhi Mang Xing, already loaded; Ma Shan Zheng
+     then Noto Serif TC as fallback — the Google calligraphy faces
+     cover ~86% of the slip's characters, the rest fall back to
+     the serif gracefully, never tofu). The poem stands in four
+     vertical columns, right to left, exactly as on the slip
+     (each of the four seven-character phrases is one column);
+     the English version stays horizontal, as English must. */
+  .fortune-paper{background:linear-gradient(160deg,#f9d3da,#f6c3cf 55%,#f3bcc9); color:#9c2b1e; border:2px solid #a93226; border-radius:10px; padding:14px 18px 20px; text-align:center; box-shadow:inset 0 0 0 3px #f9d3da, inset 0 0 0 4px #c0392b, 0 4px 14px rgba(60,10,5,.25);}
+  .fortune-paper .f-head{font-family:"Noto Serif TC",serif; font-weight:900; font-size:18px; letter-spacing:.35em; text-indent:.35em; color:#a93226; border-bottom:2px solid #a93226; padding-bottom:8px; margin-bottom:10px;}
+  .fortune-paper .f-meta{display:flex; justify-content:center; align-items:center; gap:14px; margin:2px 0 8px;}
+  .fortune-paper .f-no{font-family:"Zhi Mang Xing","Ma Shan Zheng","Noto Serif TC",serif; font-size:18px; letter-spacing:.12em; color:#a93226;}
+  .fortune-paper .f-level{display:inline-block; border:2px solid #a93226; border-radius:6px; color:#a93226; background:rgba(255,255,255,.28); padding:1px 10px; font-family:"Zhi Mang Xing","Ma Shan Zheng","Noto Serif TC",serif; font-size:16px; letter-spacing:.2em;}
+  .fortune-paper .f-title{font-family:"Zhi Mang Xing","Ma Shan Zheng","Noto Serif TC",serif; font-size:25px; margin:4px 0 12px; letter-spacing:.14em; color:#a93226;}
+  .fortune-paper .f-verse{font-family:"Zhi Mang Xing","Ma Shan Zheng","Noto Serif TC",serif; font-size:21px; line-height:1.5; margin:0 auto; color:#a93226;}
+  .fortune-paper .f-verse.cols{display:flex; flex-direction:row-reverse; justify-content:center; gap:14px;}
+  .fortune-paper .f-verse.cols span{writing-mode:vertical-rl; letter-spacing:.08em;}
+  .fortune-paper .f-verse.flat{line-height:1.9; text-align:center;}
   .fortune-note{font-size:12px; color:var(--ink-dim); line-height:1.8; margin-top:12px;}
   .fortune-note a{color:var(--gold-soft);}
   /* 解讀 panel (v44): plain-language reading, warm and calm — the
@@ -266,17 +283,25 @@
   .shake-stage{text-align:center; padding:10px 0 2px;}
   .tube{width:118px; height:158px; display:inline-block;}
   .tube svg{display:block; width:100%; height:auto;}
-  /* 簽筒 (v45): the sticks live INSIDE the tube now — only their
-     tips show above the rim, the way a real 籤筒 holds them. The
-     tube still rocks hard, but the sticks only jitter inside it:
-     small offsets and small rotations pivoting mid-tube, never
-     swinging out past the rim, so the shake reads as sticks
-     rattling against the tube walls, not a bouquet waving about */
+  /* 簽筒 (v46): the tube now matches the real Sik Sik Yuen 籤筒
+     in the user's photo — bamboo body with grain, a red band
+     carrying gold 嗇色園, a big red 福 on the belly and a black
+     band at the foot, and a dense bundle of thin sticks (not five
+     sparse ones, not tips-only): seventeen sticks packed tight,
+     their tips peeking modestly above the rim like a full tube.
+     The shake jostles them against each other — the bundle is
+     split in three, each part rattling on its own slightly
+     different beat, so the sticks visibly shift and knock
+     together inside the tube, never swinging out past the rim. */
   .tube.shaking{animation:tubeShake .13s linear infinite;}
-  .tube.shaking .tube-sticks{animation:sticksRattle .085s linear infinite; transform-origin:60px 100px;}
+  .tube.shaking .sticks-a{animation:sticksRattleA .085s linear infinite; transform-origin:60px 100px;}
+  .tube.shaking .sticks-b{animation:sticksRattleB .075s linear infinite; transform-origin:60px 100px;}
+  .tube.shaking .sticks-c{animation:sticksRattleC .095s linear infinite; transform-origin:60px 100px;}
   @keyframes tubeShake{0%{transform:rotate(-9deg) translate(-3px,0)}25%{transform:rotate(8deg) translate(3px,-6px)}50%{transform:rotate(-7deg) translate(-2px,-2px)}75%{transform:rotate(9deg) translate(3px,-5px)}100%{transform:rotate(-9deg) translate(-3px,0)}}
-  @keyframes sticksRattle{0%{transform:translate(0,0) rotate(0deg)}25%{transform:translate(1px,-2px) rotate(1deg)}50%{transform:translate(-1px,-.5px) rotate(-.8deg)}75%{transform:translate(.5px,-1.5px) rotate(.6deg)}100%{transform:translate(0,0) rotate(0deg)}}
-  @media (prefers-reduced-motion: reduce){.tube.shaking,.tube.shaking .tube-sticks{animation:none;}}
+  @keyframes sticksRattleA{0%{transform:translate(0,0) rotate(0deg)}25%{transform:translate(1.2px,-2px) rotate(1.1deg)}50%{transform:translate(-1.2px,-.5px) rotate(-.9deg)}75%{transform:translate(.6px,-1.5px) rotate(.7deg)}100%{transform:translate(0,0) rotate(0deg)}}
+  @keyframes sticksRattleB{0%{transform:translate(0,0) rotate(0deg)}30%{transform:translate(-1px,-2.4px) rotate(-1.2deg)}55%{transform:translate(1.2px,-.8px) rotate(1deg)}80%{transform:translate(-.5px,-1.8px) rotate(-.6deg)}100%{transform:translate(0,0) rotate(0deg)}}
+  @keyframes sticksRattleC{0%{transform:translate(0,0) rotate(0deg)}20%{transform:translate(1px,-1.6px) rotate(.9deg)}45%{transform:translate(-1.4px,-2.2px) rotate(-1.1deg)}70%{transform:translate(.8px,-1px) rotate(.8deg)}100%{transform:translate(0,0) rotate(0deg)}}
+  @media (prefers-reduced-motion: reduce){.tube.shaking,.tube.shaking .sticks-a,.tube.shaking .sticks-b,.tube.shaking .sticks-c{animation:none;}}
   /* beads */
   .beads-visual{display:flex; flex-wrap:wrap; gap:5px; justify-content:center; margin:14px 0;}
   .bead{width:15px; height:15px; border-radius:50%; background:#4a3421; border:1px solid #6b4c2a;}
@@ -459,27 +484,56 @@
     <div id="fortune-stage-shake">
       <h3 data-i18n="fortuneTitle">求 籤</h3>
       <p class="sub" data-i18n="fortuneSub">心誠則靈。請喺心入面默念所問之事，再撳「搖籤」。</p>
-      <!-- 簽筒 (v45): the sticks sit INSIDE the tube — only their tips show above the rim, the way a real 籤筒 holds them. The old v42 sticks stuck 50–62 units out of the tube like a bouquet; now each stick runs from its tip down to the tube floor, hidden by the tube body. -->
+      <!-- 簽筒 (v46): redrawn to match the real Sik Sik Yuen 籤筒 in the user's photo — bamboo body with grain, red band with gold 嗇色園, big red 福 on the belly, black band at the foot, and a dense bundle of seventeen thin sticks packed tight, their tips peeking modestly above the rim like a full tube (not the sparse v42 bouquet, not the tips-only v45). -->
       <div class="shake-stage"><div class="tube" id="tube-icon" role="img" aria-label="簽筒"><svg viewBox="0 0 120 160" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <linearGradient id="bambooBody" x1="0" y1="0" x2="1" y2="0">
             <stop offset="0" stop-color="#c99a4e"/><stop offset=".45" stop-color="#dcb26a"/>
             <stop offset=".75" stop-color="#c99a4e"/><stop offset="1" stop-color="#a87c33"/>
           </linearGradient>
+          <clipPath id="tubeClip"><path d="M34,62 L86,62 L82,148 Q81,152 77,152 L43,152 Q39,152 38,148 Z"/></clipPath>
         </defs>
         <ellipse cx="60" cy="154" rx="30" ry="5" fill="rgba(0,0,0,.18)"/>
         <g class="tube-sticks">
-          <g transform="rotate(-14 55 62)"><rect x="51.5" y="48" width="7" height="100" rx="3.5" fill="#e8d5a8"/></g>
-          <g transform="rotate(-7 63 62)"><rect x="59.5" y="44" width="7" height="104" rx="3.5" fill="#e8d5a8"/><rect x="59.5" y="44" width="7" height="12" rx="3.5" fill="#a32e1f"/></g>
-          <g transform="rotate(0 68 62)"><rect x="64.5" y="41" width="7" height="107" rx="3.5" fill="#f0e0b8"/></g>
-          <g transform="rotate(7 76 62)"><rect x="72.5" y="46" width="7" height="102" rx="3.5" fill="#e8d5a8"/><rect x="72.5" y="46" width="7" height="12" rx="3.5" fill="#a32e1f"/></g>
-          <g transform="rotate(14 84 62)"><rect x="80.5" y="50" width="7" height="98" rx="3.5" fill="#e8d5a8"/></g>
+          <g class="sticks-a">
+            <g transform="rotate(-5 39.6 100)"><rect x="38" y="33" width="3.2" height="115" rx="1.6" fill="#e8d5a8"/></g>
+            <g transform="rotate(-3 42.2 100)"><rect x="40.6" y="30" width="3.2" height="118" rx="1.6" fill="#f0e0b8"/></g>
+            <g transform="rotate(-4 44.8 100)"><rect x="43.2" y="36" width="3.2" height="112" rx="1.6" fill="#dcc088"/></g>
+            <g transform="rotate(-2 47.4 100)"><rect x="45.8" y="31" width="3.2" height="117" rx="1.6" fill="#e8d5a8"/><rect x="45.8" y="31" width="3.2" height="7" rx="1.6" fill="#a32e1f"/></g>
+            <g transform="rotate(-1 50 100)"><rect x="48.4" y="35" width="3.2" height="113" rx="1.6" fill="#e2cd9e"/></g>
+            <g transform="rotate(0 52.6 100)"><rect x="51" y="29" width="3.2" height="119" rx="1.6" fill="#f0e0b8"/></g>
+          </g>
+          <g class="sticks-b">
+            <g transform="rotate(1 55.2 100)"><rect x="53.6" y="34" width="3.2" height="114" rx="1.6" fill="#e8d5a8"/></g>
+            <g transform="rotate(-1 57.8 100)"><rect x="56.2" y="32" width="3.2" height="116" rx="1.6" fill="#dcc088"/></g>
+            <g transform="rotate(2 60.4 100)"><rect x="58.8" y="37" width="3.2" height="111" rx="1.6" fill="#f0e0b8"/><rect x="58.8" y="37" width="3.2" height="7" rx="1.6" fill="#a32e1f"/></g>
+            <g transform="rotate(0 63 100)"><rect x="61.4" y="30" width="3.2" height="118" rx="1.6" fill="#e8d5a8"/></g>
+            <g transform="rotate(1 65.6 100)"><rect x="64" y="34" width="3.2" height="114" rx="1.6" fill="#e2cd9e"/></g>
+            <g transform="rotate(3 68.2 100)"><rect x="66.6" y="31" width="3.2" height="117" rx="1.6" fill="#f0e0b8"/></g>
+          </g>
+          <g class="sticks-c">
+            <g transform="rotate(-2 70.8 100)"><rect x="69.2" y="36" width="3.2" height="112" rx="1.6" fill="#e8d5a8"/></g>
+            <g transform="rotate(2 73.4 100)"><rect x="71.8" y="33" width="3.2" height="115" rx="1.6" fill="#dcc088"/><rect x="71.8" y="33" width="3.2" height="7" rx="1.6" fill="#a32e1f"/></g>
+            <g transform="rotate(4 76 100)"><rect x="74.4" y="29" width="3.2" height="119" rx="1.6" fill="#f0e0b8"/></g>
+            <g transform="rotate(3 78.6 100)"><rect x="77" y="35" width="3.2" height="113" rx="1.6" fill="#e8d5a8"/></g>
+            <g transform="rotate(5 81.2 100)"><rect x="79.6" y="32" width="3.2" height="116" rx="1.6" fill="#e2cd9e"/></g>
+          </g>
         </g>
         <path d="M34,62 L86,62 L82,148 Q81,152 77,152 L43,152 Q39,152 38,148 Z" fill="url(#bambooBody)"/>
+        <g clip-path="url(#tubeClip)" opacity=".55">
+          <path d="M44,82 L44,136" stroke="#b98f45" stroke-width="1"/>
+          <path d="M52,82 L52,136" stroke="#e3c07e" stroke-width="1"/>
+          <path d="M68,82 L68,136" stroke="#b98f45" stroke-width="1"/>
+          <path d="M76,82 L76,136" stroke="#e3c07e" stroke-width="1"/>
+        </g>
         <path d="M34,66 L86,66 L85.4,78 L34.6,78 Z" fill="#8c2b1d"/>
+        <text x="60" y="76" text-anchor="middle" font-size="8" fill="#d9b45c" font-family="'Noto Serif CJK TC','Noto Serif TC',serif">嗇色園</text>
         <path d="M34.7,80 L85.3,80" stroke="#c9a24b" stroke-width="1.6"/>
         <path d="M36.4,94 L83.6,94" stroke="#a67c3a" stroke-width="2"/>
-        <path d="M37.6,120 L82.4,120" stroke="#a67c3a" stroke-width="2"/>
+        <text x="60" y="114" text-anchor="middle" font-size="19" font-weight="bold" fill="#8c2b1d" font-family="'Noto Serif CJK TC','Noto Serif TC',serif">福</text>
+        <path d="M37.6,128 L82.4,128" stroke="#a67c3a" stroke-width="2"/>
+        <path d="M37.7,137 L82.3,137" stroke="#c9a24b" stroke-width="1"/>
+        <path d="M37.5,138 L82.5,138 L82,148 Q81,152 77,152 L43,152 Q39,152 38,148 Z" fill="#241a12"/>
         <ellipse cx="60" cy="62" rx="26" ry="7" fill="#8a5a24"/>
         <ellipse cx="60" cy="61" rx="20" ry="4.5" fill="#5d3c14"/>
       </svg></div></div>
@@ -492,8 +546,8 @@
       <h3 data-i18n="fortuneResultTitle">你求到嘅籤</h3>
       <p class="sub" data-i18n="fortuneResultSub">籤文錄自黃大仙靈籤通行本，請靜心細讀。</p>
       <div class="fortune-paper">
-        <div class="f-no" id="f-no">第 一 籤</div>
-        <div><span class="f-level" id="f-level">上上</span></div>
+        <div class="f-head" data-i18n="slipHeader">黃大仙靈簽</div>
+        <div class="f-meta"><span class="f-no" id="f-no">第 一 籤</span><span class="f-level" id="f-level">上上</span></div>
         <div class="f-title" id="f-title">姜公封相</div>
         <p class="f-verse" id="f-verse"></p>
       </div>
@@ -586,7 +640,7 @@ var I18N = {
     toastStroll:'沿住石徑慢慢行，唔使趕。',
     gWalk:'沿徑前行', gLake:'去湖邊', gTree:'去老樹下', gTemple:'入殿參拜',
     soonBody:'呢間殿仲喺籌備之中，工匠正在雕琢神壇。開放日期一到，會喺廟門公佈。感恩善信耐心等候。',
-    fortuneTitle:'求 籤', fortuneSub:'心誠則靈。請喺心入面默念所問之事，再撳「搖籤」。',
+    fortuneTitle:'求 籤', fortuneSub:'心誠則靈。請喺心入面默念所問之事，再撳「搖籤」。', slipHeader:'黃大仙靈簽',
     fortuneResultTitle:'你求到嘅籤', fortuneResultSub:'籤文錄自黃大仙靈籤通行本，請靜心細讀。',
     fortuneSource:'來源：嗇色園官方籤文（黃大仙祠一百靈籤），籤文、解曰及詳情逐支核對。一百支已齊。籤文屬民俗文化參考，並非命運判決；重要決定請以現實判斷為準。',
     cancel:'取消', shakeBtn:'搖 籤', shakeAgain:'再求一支', receive:'收下籤文', closeSheet:'合十離開',
@@ -647,7 +701,7 @@ var I18N = {
     toastStroll:'沿着石径慢慢走，不用赶。',
     gWalk:'沿径前行', gLake:'去湖边', gTree:'去老树下', gTemple:'入殿参拜',
     soonBody:'这间殿还在筹备之中，工匠正在雕琢神坛。开放日期一到，会在庙门公布。感恩善信耐心等候。',
-    fortuneTitle:'求 签', fortuneSub:'心诚则灵。请在心里默念所问之事，再点「摇签」。',
+    fortuneTitle:'求 签', fortuneSub:'心诚则灵。请在心里默念所问之事，再点「摇签」。', slipHeader:'黄大仙灵签',
     fortuneResultTitle:'你求到的签', fortuneResultSub:'签文录自黄大仙灵签通行本，请静心细读。',
     fortuneSource:'来源：啬色园官方签文（黄大仙祠一百灵签），签文、解曰及详情逐支核对。一百支已齐。签文属民俗文化参考，并非命运判决；重要决定请以现实判断为准。',
     cancel:'取消', shakeBtn:'摇 签', shakeAgain:'再求一支', receive:'收下签文', closeSheet:'合十离开',
@@ -708,7 +762,7 @@ var I18N = {
     toastStroll:'Walk slowly along the stone path — there is no need to hurry.',
     gWalk:'Walk the Path', gLake:'To the Lake', gTree:'Under the Old Tree', gTemple:'Enter the Halls',
     soonBody:"This hall is still in preparation — the craftsmen are carving the altar. When it opens, we'll announce it at the temple gate. Thank you for waiting.",
-    fortuneTitle:'Draw a Fortune Stick', fortuneSub:'Sincerity brings the spirit near. Hold your question quietly in your heart, then tap "Shake".',
+    fortuneTitle:'Draw a Fortune Stick', fortuneSub:'Sincerity brings the spirit near. Hold your question quietly in your heart, then tap "Shake".', slipHeader:'Wong Tai Sin Lots',
     fortuneResultTitle:'Your Fortune Stick', fortuneResultSub:'From the standard Wong Tai Sin fortune-stick book. Read it slowly, with a calm mind.',
     fortuneSource:"Source: the official Sik Sik Yuen stick texts (the 100 sticks of Wong Tai Sin Temple); each poem, interpretation and detail has been checked against them. All 100 sticks are included. Fortune sticks are a folk-culture reference, not a verdict on your fate — for important decisions, trust your own judgement.",
     cancel:'Cancel', shakeBtn:'Shake', shakeAgain:'Draw Again', receive:'Keep This Stick', closeSheet:'Done',
@@ -779,6 +833,12 @@ function applyLang(){
     if (sd != null){ seatedIdx = sd; if (seatRings[sd]) seatRings[sd].visible = false; if (seatGlowDiscs[sd]) seatGlowDiscs[sd].visible = false; }
     updateHint(); renderActions();
   } else if (currentHall){ renderActions(); updateHint(); }
+  /* keep an open slip in the new language too (v46) — the slip's
+     number, grade, title and poem follow the language, and the
+     poem switches between vertical columns and horizontal */
+  var fs = document.getElementById('fortune-stage-result');
+  var fo = document.getElementById('fortune-overlay');
+  if (fs && fo && fs.style.display !== 'none' && fo.classList.contains('open') && currentLot){ renderSlip(currentLot); }
   /* keep an open 解讀 panel in the new language (2026-11-15, v44) */
   var rp = document.getElementById('fortune-reading');
   var rb = document.getElementById('read-btn');
@@ -5285,7 +5345,14 @@ function openFortune(){
   document.getElementById('fortune-stage-result').style.display = 'none';
   document.getElementById('fortune-overlay').classList.add('open');
 }
-/* 簽筒 (v45): the rattle of bamboo sticks inside a bamboo tube —
+/* 簽筒 (v46): denser rattle for the fuller bundle — seventeen sticks
+   knock more often than five, so clusters grow to 3–5 knocks, a touch
+   closer together. Tuned to BAMBOO (the tube is a bamboo tube, not
+   clay or lacquered wood): light hollow bamboo-on-bamboo knocks, a
+   touch brighter (band-pass 900–2600 Hz), a shorter higher hollow
+   tok (550–900 Hz) for the tube's hollow ring, and the lowpass
+   opened to 3.8 kHz so the bamboo clack stays bright, not muffled.
+   (v45): the rattle of bamboo sticks inside a bamboo tube —
    redone, because the v42 version sounded like bright ticks, not
    sticks in a tube. Real sticks in a tube knock in bursts (the
    hand rocks the tube, the sticks hit in clusters), the knocks
@@ -5307,16 +5374,16 @@ function playStickRattle(){
   }
   var now = actx.currentTime, master = actx.createGain();
   master.gain.value = 0.5; master.connect(actx.destination);
-  var lp = actx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 3200; lp.Q.value = .5;
+  var lp = actx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 3800; lp.Q.value = .5;
   lp.connect(master);
   var t = now + 0.02, end = now + 1.45;
   while (t < end){
-    var cluster = 2 + Math.floor(Math.random() * 3);
+    var cluster = 3 + Math.floor(Math.random() * 3);
     for (var c = 0; c < cluster && t < end; c++){
       var bright = Math.random() < 0.55;
       var src = actx.createBufferSource(); src.buffer = rattleBuf;
       var bp = actx.createBiquadFilter(); bp.type = 'bandpass';
-      bp.frequency.value = bright ? 1500 + Math.random() * 900 : 800 + Math.random() * 500;
+      bp.frequency.value = bright ? 1700 + Math.random() * 900 : 900 + Math.random() * 500;
       bp.Q.value = 2.5 + Math.random() * 1.5;
       var g = actx.createGain();
       var vol = 0.3 + Math.random() * 0.5;
@@ -5325,13 +5392,13 @@ function playStickRattle(){
       src.connect(bp); bp.connect(g); g.connect(lp);
       src.start(t); src.stop(t + 0.06);
       var o = actx.createOscillator(), og = actx.createGain();
-      o.type = 'triangle'; o.frequency.value = 480 + Math.random() * 320;
+      o.type = 'triangle'; o.frequency.value = 550 + Math.random() * 350;
       og.gain.setValueAtTime(vol * 0.5, t);
-      og.gain.exponentialRampToValueAtTime(0.001, t + 0.06);
+      og.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
       o.connect(og); og.connect(lp); o.start(t); o.stop(t + 0.07);
-      t += 0.03 + Math.random() * 0.035;
+      t += 0.025 + Math.random() * 0.03;
     }
-    t += 0.10 + Math.random() * 0.14;
+    t += 0.08 + Math.random() * 0.12;
   }
 }
 /* 解讀 (2026-11-15, v44): a plain-language reading of the drawn
@@ -5375,6 +5442,33 @@ function renderReading(lot){
   html += '<p class="rd-src">' + esc(t('readSrc')) + '</p>';
   p.innerHTML = html;
 }
+/* 結果卡 (v46): the slip's text, in the current language. The poem
+   is four seven-character phrases; in Traditional/Simplified it
+   stands as four vertical columns, right to left, exactly as on
+   the real pink paper slip (punctuation is left out, as on the
+   slip); in English it stays horizontal, as English must. */
+function renderSlipVerse(lot){
+  var v = document.getElementById('f-verse');
+  if (!v || !lot) return;
+  if (LANG === 'en'){
+    v.className = 'f-verse flat';
+    v.innerText = lot.verse[LANG];
+    return;
+  }
+  var parts = lot.verse[LANG].split(/[，。\n]/).filter(function(s){ return s; });
+  v.className = 'f-verse cols';
+  var html = '';
+  for (var i=0;i<parts.length;i++){ html += '<span>' + esc(parts[i]) + '</span>'; }
+  v.innerHTML = html;
+}
+function renderSlip(lot){
+  if (!lot) return;
+  document.getElementById('f-no').textContent = LANG === 'en' ? 'Lot No. ' + lot.no : (LANG === 'sc' ? '第 ' + cnNum(lot.no) + ' 签' : '第 ' + cnNum(lot.no) + ' 籤');
+  document.getElementById('f-level').textContent = lot.level[LANG];
+  document.getElementById('f-title').textContent = lot.title[LANG];
+  renderSlipVerse(lot);
+  document.getElementById('f-note').textContent = lot.note[LANG];
+}
 function doShake(){
   var tube = document.getElementById('tube-icon');
   var btn = document.getElementById('shake-btn'); btn.disabled = true;
@@ -5385,11 +5479,7 @@ function doShake(){
     currentLot = lot;
     var rp0 = document.getElementById('fortune-reading'); if (rp0) rp0.style.display = 'none';
     var rb0 = document.getElementById('read-btn'); if (rb0) rb0.textContent = t('readMore');
-    document.getElementById('f-no').textContent = LANG === 'en' ? 'Lot No. ' + lot.no : '第 ' + cnNum(lot.no) + ' 籤';
-    document.getElementById('f-level').textContent = lot.level[LANG];
-    document.getElementById('f-title').textContent = lot.title[LANG];
-    document.getElementById('f-verse').innerText = lot.verse[LANG];
-    document.getElementById('f-note').textContent = lot.note[LANG];
+    renderSlip(lot);
     document.getElementById('fortune-stage-shake').style.display = 'none';
     document.getElementById('fortune-stage-result').style.display = 'block';
     playBell(0.14);
