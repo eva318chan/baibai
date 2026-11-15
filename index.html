@@ -8,7 +8,7 @@
 <title>拜拜 — 線上虛擬廟宇 Demo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700;900&family=Noto+Sans+TC:wght@400;500;700&family=Ma+Shan+Zheng&family=Zhi+Mang+Xing&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700;900&family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+TC:wght@400;500;700&family=Ma+Shan+Zheng&family=Zhi+Mang+Xing&display=swap" rel="stylesheet" />
 <script src="assets/three.min.js"></script>
 <style>
   :root{
@@ -244,25 +244,26 @@
   .btn.ghost{background:transparent; border:1px solid var(--line); color:var(--ink);}
   .btn.goldb{background:#7a5c1e; border:1px solid var(--gold);}
   /* fortune card */
-  /* 結果卡 (v46): a real Wong Tai Sin paper slip （籤紙） — pink
+  /* 結果卡 (v46, v46.2): a real Wong Tai Sin paper slip （籤紙） — pink
      paper, red border and red text, the way the slip a drawer is
      handed in real life looks. The header is printed in a bold
      serif (as on the real slip, whose header is a regular bold
-     print); the number, grade seal, title and poem are in a
-     running script (Zhi Mang Xing, already loaded; Ma Shan Zheng
-     then Noto Serif TC as fallback — the Google calligraphy faces
-     cover ~86% of the slip's characters, the rest fall back to
-     the serif gracefully, never tofu). The poem stands in four
-     vertical columns, right to left, exactly as on the slip
-     (each of the four seven-character phrases is one column);
-     the English version stays horizontal, as English must. */
+     print); the number, title and poem are in a formal Song serif
+     (Noto Serif TC, with Noto Serif SC behind it so the Simplified
+     version reads in Song too — v46.2: the running-script face
+     printed too much like scribbles to read; the grade seal keeps
+     its stamp look in the running script, as a seal should). The
+     poem stands in four vertical columns, right to left, exactly
+     as on the slip (each of the four seven-character phrases is
+     one column); the English version stays horizontal, as English
+     must. */
   .fortune-paper{background:linear-gradient(160deg,#f9d3da,#f6c3cf 55%,#f3bcc9); color:#9c2b1e; border:2px solid #a93226; border-radius:10px; padding:14px 18px 20px; text-align:center; box-shadow:inset 0 0 0 3px #f9d3da, inset 0 0 0 4px #c0392b, 0 4px 14px rgba(60,10,5,.25);}
   .fortune-paper .f-head{font-family:"Noto Serif TC",serif; font-weight:900; font-size:18px; letter-spacing:.35em; text-indent:.35em; color:#a93226; border-bottom:2px solid #a93226; padding-bottom:8px; margin-bottom:10px;}
   .fortune-paper .f-meta{display:flex; justify-content:center; align-items:center; gap:14px; margin:2px 0 8px;}
-  .fortune-paper .f-no{font-family:"Zhi Mang Xing","Ma Shan Zheng","Noto Serif TC",serif; font-size:18px; letter-spacing:.12em; color:#a93226;}
+  .fortune-paper .f-no{font-family:"Noto Serif TC","Noto Serif SC",serif; font-weight:700; font-size:18px; letter-spacing:.12em; color:#a93226;}
   .fortune-paper .f-level{display:inline-block; border:2px solid #a93226; border-radius:6px; color:#a93226; background:rgba(255,255,255,.28); padding:1px 10px; font-family:"Zhi Mang Xing","Ma Shan Zheng","Noto Serif TC",serif; font-size:16px; letter-spacing:.2em;}
-  .fortune-paper .f-title{font-family:"Zhi Mang Xing","Ma Shan Zheng","Noto Serif TC",serif; font-size:25px; margin:4px 0 12px; letter-spacing:.14em; color:#a93226;}
-  .fortune-paper .f-verse{font-family:"Zhi Mang Xing","Ma Shan Zheng","Noto Serif TC",serif; font-size:21px; line-height:1.5; margin:0 auto; color:#a93226;}
+  .fortune-paper .f-title{font-family:"Noto Serif TC","Noto Serif SC",serif; font-weight:700; font-size:25px; margin:4px 0 12px; letter-spacing:.14em; color:#a93226;}
+  .fortune-paper .f-verse{font-family:"Noto Serif TC","Noto Serif SC",serif; font-weight:600; font-size:21px; line-height:1.5; margin:0 auto; color:#a93226;}
   .fortune-paper .f-verse.cols{display:flex; flex-direction:row-reverse; justify-content:center; gap:14px;}
   .fortune-paper .f-verse.cols span{writing-mode:vertical-rl; letter-spacing:.08em;}
   .fortune-paper .f-verse.flat{line-height:1.9; text-align:center;}
@@ -283,24 +284,28 @@
   .shake-stage{text-align:center; padding:10px 0 2px;}
   .tube{width:118px; height:158px; display:inline-block;}
   .tube svg{display:block; width:100%; height:auto;}
-  /* 簽筒 (v46): the tube now matches the real Sik Sik Yuen 籤筒
+  /* 簽筒 (v46, v46.2): the tube now matches the real Sik Sik Yuen 籤筒
      in the user's photo — bamboo body with grain, a plain red band,
      a big red 福 on the belly and a black
      band at the foot, and a dense bundle of thin sticks (not five
      sparse ones, not tips-only): seventeen sticks packed tight,
-     their tips peeking modestly above the rim like a full tube.
-     The shake jostles them against each other — the bundle is
-     split in three, each part rattling on its own slightly
-     different beat, so the sticks visibly shift and knock
-     together inside the tube, never swinging out past the rim. */
-  .tube.shaking{animation:tubeShake .13s linear infinite;}
-  .tube.shaking .sticks-a{animation:sticksRattleA .085s linear infinite; transform-origin:60px 100px;}
-  .tube.shaking .sticks-b{animation:sticksRattleB .075s linear infinite; transform-origin:60px 100px;}
-  .tube.shaking .sticks-c{animation:sticksRattleC .095s linear infinite; transform-origin:60px 100px;}
-  @keyframes tubeShake{0%{transform:rotate(-9deg) translate(-3px,0)}25%{transform:rotate(8deg) translate(3px,-6px)}50%{transform:rotate(-7deg) translate(-2px,-2px)}75%{transform:rotate(9deg) translate(3px,-5px)}100%{transform:rotate(-9deg) translate(-3px,0)}}
-  @keyframes sticksRattleA{0%{transform:translate(0,0) rotate(0deg)}25%{transform:translate(1.2px,-2px) rotate(1.1deg)}50%{transform:translate(-1.2px,-.5px) rotate(-.9deg)}75%{transform:translate(.6px,-1.5px) rotate(.7deg)}100%{transform:translate(0,0) rotate(0deg)}}
-  @keyframes sticksRattleB{0%{transform:translate(0,0) rotate(0deg)}30%{transform:translate(-1px,-2.4px) rotate(-1.2deg)}55%{transform:translate(1.2px,-.8px) rotate(1deg)}80%{transform:translate(-.5px,-1.8px) rotate(-.6deg)}100%{transform:translate(0,0) rotate(0deg)}}
-  @keyframes sticksRattleC{0%{transform:translate(0,0) rotate(0deg)}20%{transform:translate(1px,-1.6px) rotate(.9deg)}45%{transform:translate(-1.4px,-2.2px) rotate(-1.1deg)}70%{transform:translate(.8px,-1px) rotate(.8deg)}100%{transform:translate(0,0) rotate(0deg)}}
+     their tips peeking only 6–14 units above the rim like a full
+     tube, so the bundle reads as sticks INSIDE the tube (the dark
+     mouth and its front rim lip occlude the sticks' lower parts —
+     never pasted on the outside). The shake jostles them against
+     each other — the bundle is split in three, each part rattling
+     on its own slightly different beat with a clear, visible
+     shift (v46.2: the old ±1px jitter was invisible on a phone),
+     so the sticks visibly shift and knock together inside the
+     tube, never swinging out past the rim. */
+  .tube.shaking{animation:tubeShake .16s linear infinite;}
+  .tube.shaking .sticks-a{animation:sticksRattleA .16s linear infinite; transform-box:view-box; transform-origin:60px 100px;}
+  .tube.shaking .sticks-b{animation:sticksRattleB .14s linear infinite; transform-box:view-box; transform-origin:60px 100px;}
+  .tube.shaking .sticks-c{animation:sticksRattleC .18s linear infinite; transform-box:view-box; transform-origin:60px 100px;}
+  @keyframes tubeShake{0%{transform:rotate(-9deg) translate(-4px,0)}25%{transform:rotate(8deg) translate(4px,-6px)}50%{transform:rotate(-7deg) translate(-3px,-2px)}75%{transform:rotate(9deg) translate(4px,-5px)}100%{transform:rotate(-9deg) translate(-4px,0)}}
+  @keyframes sticksRattleA{0%{transform:translate(0,0) rotate(0deg)}25%{transform:translate(3.5px,-3px) rotate(3.5deg)}50%{transform:translate(-3px,-1px) rotate(-3deg)}75%{transform:translate(2px,-2.5px) rotate(2.5deg)}100%{transform:translate(0,0) rotate(0deg)}}
+  @keyframes sticksRattleB{0%{transform:translate(0,0) rotate(0deg)}30%{transform:translate(-3px,-3.5px) rotate(-4deg)}55%{transform:translate(3.5px,-1px) rotate(3deg)}80%{transform:translate(-2px,-2.5px) rotate(-2.5deg)}100%{transform:translate(0,0) rotate(0deg)}}
+  @keyframes sticksRattleC{0%{transform:translate(0,0) rotate(0deg)}20%{transform:translate(3px,-2.5px) rotate(3deg)}45%{transform:translate(-3.5px,-3px) rotate(-3.5deg)}70%{transform:translate(2.5px,-1.5px) rotate(2deg)}100%{transform:translate(0,0) rotate(0deg)}}
   @media (prefers-reduced-motion: reduce){.tube.shaking,.tube.shaking .sticks-a,.tube.shaking .sticks-b,.tube.shaking .sticks-c{animation:none;}}
   /* beads */
   .beads-visual{display:flex; flex-wrap:wrap; gap:5px; justify-content:center; margin:14px 0;}
@@ -484,7 +489,7 @@
     <div id="fortune-stage-shake">
       <h3 data-i18n="fortuneTitle">求 籤</h3>
       <p class="sub" data-i18n="fortuneSub">心誠則靈。請喺心入面默念所問之事，再撳「搖籤」。</p>
-      <!-- 簽筒 (v46): redrawn to match the real Sik Sik Yuen 籤筒 in the user's photo — bamboo body with grain, plain red band, big red 福 on the belly, black band at the foot, and a dense bundle of seventeen thin sticks packed tight, their tips peeking modestly above the rim like a full tube (not the sparse v42 bouquet, not the tips-only v45). -->
+      <!-- 簽筒 (v46, v46.2): redrawn to match the real Sik Sik Yuen 籤筒 in the user's photo — bamboo body with grain, plain red band, big red 福 on the belly, black band at the foot, and a dense bundle of seventeen thin sticks packed tight, their tips peeking only 6–14 units above the rim so they read as inside the tube (dark mouth + front rim lip occlude their lower parts; not the sparse v42 bouquet, not the tips-only v45). -->
       <div class="shake-stage"><div class="tube" id="tube-icon" role="img" aria-label="簽筒"><svg viewBox="0 0 120 160" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <linearGradient id="bambooBody" x1="0" y1="0" x2="1" y2="0">
@@ -496,27 +501,27 @@
         <ellipse cx="60" cy="154" rx="30" ry="5" fill="rgba(0,0,0,.18)"/>
         <g class="tube-sticks">
           <g class="sticks-a">
-            <g transform="rotate(-5 39.6 100)"><rect x="38" y="33" width="3.2" height="115" rx="1.6" fill="#e8d5a8"/></g>
-            <g transform="rotate(-3 42.2 100)"><rect x="40.6" y="30" width="3.2" height="118" rx="1.6" fill="#f0e0b8"/></g>
-            <g transform="rotate(-4 44.8 100)"><rect x="43.2" y="36" width="3.2" height="112" rx="1.6" fill="#dcc088"/></g>
-            <g transform="rotate(-2 47.4 100)"><rect x="45.8" y="31" width="3.2" height="117" rx="1.6" fill="#e8d5a8"/><rect x="45.8" y="31" width="3.2" height="7" rx="1.6" fill="#a32e1f"/></g>
-            <g transform="rotate(-1 50 100)"><rect x="48.4" y="35" width="3.2" height="113" rx="1.6" fill="#e2cd9e"/></g>
-            <g transform="rotate(0 52.6 100)"><rect x="51" y="29" width="3.2" height="119" rx="1.6" fill="#f0e0b8"/></g>
+            <g transform="rotate(-5 39.6 100)"><rect x="38" y="52" width="3.2" height="96" rx="1.6" fill="#e8d5a8"/></g>
+            <g transform="rotate(-3 42.2 100)"><rect x="40.6" y="49" width="3.2" height="99" rx="1.6" fill="#f0e0b8"/></g>
+            <g transform="rotate(-4 44.8 100)"><rect x="43.2" y="55" width="3.2" height="93" rx="1.6" fill="#dcc088"/></g>
+            <g transform="rotate(-2 47.4 100)"><rect x="45.8" y="50" width="3.2" height="98" rx="1.6" fill="#e8d5a8"/><rect x="45.8" y="50" width="3.2" height="7" rx="1.6" fill="#a32e1f"/></g>
+            <g transform="rotate(-1 50 100)"><rect x="48.4" y="54" width="3.2" height="94" rx="1.6" fill="#e2cd9e"/></g>
+            <g transform="rotate(0 52.6 100)"><rect x="51" y="48" width="3.2" height="100" rx="1.6" fill="#f0e0b8"/></g>
           </g>
           <g class="sticks-b">
-            <g transform="rotate(1 55.2 100)"><rect x="53.6" y="34" width="3.2" height="114" rx="1.6" fill="#e8d5a8"/></g>
-            <g transform="rotate(-1 57.8 100)"><rect x="56.2" y="32" width="3.2" height="116" rx="1.6" fill="#dcc088"/></g>
-            <g transform="rotate(2 60.4 100)"><rect x="58.8" y="37" width="3.2" height="111" rx="1.6" fill="#f0e0b8"/><rect x="58.8" y="37" width="3.2" height="7" rx="1.6" fill="#a32e1f"/></g>
-            <g transform="rotate(0 63 100)"><rect x="61.4" y="30" width="3.2" height="118" rx="1.6" fill="#e8d5a8"/></g>
-            <g transform="rotate(1 65.6 100)"><rect x="64" y="34" width="3.2" height="114" rx="1.6" fill="#e2cd9e"/></g>
-            <g transform="rotate(3 68.2 100)"><rect x="66.6" y="31" width="3.2" height="117" rx="1.6" fill="#f0e0b8"/></g>
+            <g transform="rotate(1 55.2 100)"><rect x="53.6" y="53" width="3.2" height="95" rx="1.6" fill="#e8d5a8"/></g>
+            <g transform="rotate(-1 57.8 100)"><rect x="56.2" y="51" width="3.2" height="97" rx="1.6" fill="#dcc088"/></g>
+            <g transform="rotate(2 60.4 100)"><rect x="58.8" y="56" width="3.2" height="92" rx="1.6" fill="#f0e0b8"/><rect x="58.8" y="56" width="3.2" height="7" rx="1.6" fill="#a32e1f"/></g>
+            <g transform="rotate(0 63 100)"><rect x="61.4" y="49" width="3.2" height="99" rx="1.6" fill="#e8d5a8"/></g>
+            <g transform="rotate(1 65.6 100)"><rect x="64" y="53" width="3.2" height="95" rx="1.6" fill="#e2cd9e"/></g>
+            <g transform="rotate(3 68.2 100)"><rect x="66.6" y="50" width="3.2" height="98" rx="1.6" fill="#f0e0b8"/></g>
           </g>
           <g class="sticks-c">
-            <g transform="rotate(-2 70.8 100)"><rect x="69.2" y="36" width="3.2" height="112" rx="1.6" fill="#e8d5a8"/></g>
-            <g transform="rotate(2 73.4 100)"><rect x="71.8" y="33" width="3.2" height="115" rx="1.6" fill="#dcc088"/><rect x="71.8" y="33" width="3.2" height="7" rx="1.6" fill="#a32e1f"/></g>
-            <g transform="rotate(4 76 100)"><rect x="74.4" y="29" width="3.2" height="119" rx="1.6" fill="#f0e0b8"/></g>
-            <g transform="rotate(3 78.6 100)"><rect x="77" y="35" width="3.2" height="113" rx="1.6" fill="#e8d5a8"/></g>
-            <g transform="rotate(5 81.2 100)"><rect x="79.6" y="32" width="3.2" height="116" rx="1.6" fill="#e2cd9e"/></g>
+            <g transform="rotate(-2 70.8 100)"><rect x="69.2" y="55" width="3.2" height="93" rx="1.6" fill="#e8d5a8"/></g>
+            <g transform="rotate(2 73.4 100)"><rect x="71.8" y="52" width="3.2" height="96" rx="1.6" fill="#dcc088"/><rect x="71.8" y="52" width="3.2" height="7" rx="1.6" fill="#a32e1f"/></g>
+            <g transform="rotate(4 76 100)"><rect x="74.4" y="48" width="3.2" height="100" rx="1.6" fill="#f0e0b8"/></g>
+            <g transform="rotate(3 78.6 100)"><rect x="77" y="54" width="3.2" height="94" rx="1.6" fill="#e8d5a8"/></g>
+            <g transform="rotate(5 81.2 100)"><rect x="79.6" y="51" width="3.2" height="97" rx="1.6" fill="#e2cd9e"/></g>
           </g>
         </g>
         <path d="M34,62 L86,62 L82,148 Q81,152 77,152 L43,152 Q39,152 38,148 Z" fill="url(#bambooBody)"/>
@@ -533,8 +538,9 @@
         <path d="M37.6,128 L82.4,128" stroke="#a67c3a" stroke-width="2"/>
         <path d="M37.7,137 L82.3,137" stroke="#c9a24b" stroke-width="1"/>
         <path d="M37.5,138 L82.5,138 L82,148 Q81,152 77,152 L43,152 Q39,152 38,148 Z" fill="#241a12"/>
-        <ellipse cx="60" cy="62" rx="26" ry="7" fill="#8a5a24"/>
-        <ellipse cx="60" cy="61" rx="20" ry="4.5" fill="#5d3c14"/>
+        <ellipse cx="60" cy="62" rx="26" ry="8" fill="#8a5a24"/>
+        <ellipse cx="60" cy="61" rx="21" ry="6" fill="#2e1c0c"/>
+        <path d="M34,62 Q60,72 86,62" stroke="#dcb26a" stroke-width="2.5" fill="none" opacity=".8"/>
       </svg></div></div>
       <div class="close-row" style="gap:10px;">
         <button class="btn ghost" data-close="fortune-overlay" data-i18n="cancel">取消</button>
@@ -553,6 +559,7 @@
       <p class="fortune-note" id="f-note"></p>
       <div style="text-align:center; margin:14px 0 2px;"><button class="btn ghost" id="read-btn">解讀</button></div>
       <div class="fortune-reading" id="fortune-reading" style="display:none;"></div>
+      <div style="text-align:center; margin:12px 0 2px;"><button class="btn" data-close="fortune-overlay" data-i18n="backToGarden">返回庭園</button></div>
       <p class="fortune-note" data-i18n="fortuneSource">來源：嗇色園官方籤文（黃大仙祠一百靈籤），籤文、解曰及詳情逐支核對。一百支已齊。籤文屬民俗文化參考，並非命運判決；重要決定請以現實判斷為準。</p>
       <div class="close-row" style="gap:10px;">
         <button class="btn ghost" id="shake-again" data-i18n="shakeAgain">再求一支</button>
@@ -642,7 +649,7 @@ var I18N = {
     fortuneTitle:'求 籤', fortuneSub:'心誠則靈。請喺心入面默念所問之事，再撳「搖籤」。', slipHeader:'黃大仙靈簽',
     fortuneResultTitle:'你求到嘅籤', fortuneResultSub:'籤文錄自黃大仙靈籤通行本，請靜心細讀。',
     fortuneSource:'來源：嗇色園官方籤文（黃大仙祠一百靈籤），籤文、解曰及詳情逐支核對。一百支已齊。籤文屬民俗文化參考，並非命運判決；重要決定請以現實判斷為準。',
-    cancel:'取消', shakeBtn:'搖 籤', shakeAgain:'再求一支', receive:'收下籤文', closeSheet:'合十離開',
+    cancel:'取消', shakeBtn:'搖 籤', shakeAgain:'再求一支', receive:'收下籤文', backToGarden:'返回庭園', closeSheet:'合十離開',
     readMore:'解讀', readLess:'收起解讀', readOne:'一句話', readSeven:'七方面', readDetail:'傳統詳解 · 作個提醒', readClose:'籤文是提醒，不是定局。靜下心來，好好面對，逢凶可以化吉，化險可以為夷。', readSrc:'白話解讀：kaucim.ai 現代解讀；傳統詳解：嗇色園官方籤文。',
     beadsTitle:'撥 念 珠', beadsSub:'一珠一念，心無雜念。撳下面按鈕逐粒撥，數滿 108 粒為一遍。',
     beadStart:'靜心，開始第一粒。', beadReset:'重新數', beadNext:'撥一粒',
@@ -703,7 +710,7 @@ var I18N = {
     fortuneTitle:'求 签', fortuneSub:'心诚则灵。请在心里默念所问之事，再点「摇签」。', slipHeader:'黄大仙灵签',
     fortuneResultTitle:'你求到的签', fortuneResultSub:'签文录自黄大仙灵签通行本，请静心细读。',
     fortuneSource:'来源：啬色园官方签文（黄大仙祠一百灵签），签文、解曰及详情逐支核对。一百支已齐。签文属民俗文化参考，并非命运判决；重要决定请以现实判断为准。',
-    cancel:'取消', shakeBtn:'摇 签', shakeAgain:'再求一支', receive:'收下签文', closeSheet:'合十离开',
+    cancel:'取消', shakeBtn:'摇 签', shakeAgain:'再求一支', receive:'收下签文', backToGarden:'返回庭园', closeSheet:'合十离开',
     readMore:'解读', readLess:'收起解读', readOne:'一句话', readSeven:'七方面', readDetail:'传统详解 · 作个提醒', readClose:'签文是提醒，不是定局。静下心来，好好面对，逢凶可以化吉，化险可以为夷。', readSrc:'白话解读：kaucim.ai 现代解读；传统详解：啬色园官方签文。',
     beadsTitle:'拨 念 珠', beadsSub:'一珠一念，心无杂念。点下面按钮逐粒拨，数满 108 粒为一遍。',
     beadStart:'静心，开始第一粒。', beadReset:'重新数', beadNext:'拨一粒',
@@ -764,7 +771,7 @@ var I18N = {
     fortuneTitle:'Draw a Fortune Stick', fortuneSub:'Sincerity brings the spirit near. Hold your question quietly in your heart, then tap "Shake".', slipHeader:'Wong Tai Sin Lots',
     fortuneResultTitle:'Your Fortune Stick', fortuneResultSub:'From the standard Wong Tai Sin fortune-stick book. Read it slowly, with a calm mind.',
     fortuneSource:"Source: the official Sik Sik Yuen stick texts (the 100 sticks of Wong Tai Sin Temple); each poem, interpretation and detail has been checked against them. All 100 sticks are included. Fortune sticks are a folk-culture reference, not a verdict on your fate — for important decisions, trust your own judgement.",
-    cancel:'Cancel', shakeBtn:'Shake', shakeAgain:'Draw Again', receive:'Keep This Stick', closeSheet:'Done',
+    cancel:'Cancel', shakeBtn:'Shake', shakeAgain:'Draw Again', receive:'Keep This Stick', backToGarden:'Return to garden', closeSheet:'Done',
     readMore:'Read More', readLess:'Hide Reading', readOne:'In one sentence', readSeven:'Seven areas of life', readDetail:'Traditional detail — as a reminder', readClose:'A stick is a reminder, not a verdict. Quiet your mind and face what comes: misfortune can turn to good fortune, and danger to safety.', readSrc:'Plain-language reading: kaucim.ai modern reading; traditional detail: the official Sik Sik Yuen stick texts.',
     beadsTitle:'Prayer Beads', beadsSub:'One bead, one thought, a mind free of clutter. Tap the button to count bead by bead — 108 beads make one full round.',
     beadStart:'Still your mind. Begin with the first bead.', beadReset:'Start Over', beadNext:'Next Bead',
