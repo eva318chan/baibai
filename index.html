@@ -168,29 +168,53 @@
   .guide-chip{display:flex; align-items:center; gap:10px; max-width:520px; margin:0 auto 6px; background:rgba(20,27,19,.88); backdrop-filter:blur(8px); border:1px solid #4a5a42; border-radius:999px 14px 14px 999px; padding:4px 14px 4px 4px; text-align:left;}
   .guide-chip img{width:40px; height:40px; border-radius:50%; object-fit:cover; border:2px solid var(--gold); flex:none;}
   .guide-chip p{margin:0; color:#eef3df; font-size:12.5px; line-height:1.6;}
-  /* ---------- directional pad (v35, 2026-11-15): four small
-     ▲▼◀▶ buttons for steering the figure mid-walk. It is NOT a
-     permanent control: it fades in only while the figure is
-     walking and hides again the moment it stops, so the view
-     stays clean when idle. All four arrows stay visible (every
-     direction is known to be available); the one matching the
-     figure's current heading is lit — brighter and a touch
-     larger — and follows the turn live. The glyphs are plain
-     geometric shapes (U+25B2/25BC/25C0/25B6), universal on every
-     phone — never emoji (an older phone showed the lotus emoji
-     as a broken glyph). */
-  .dpad{position:absolute; z-index:6; right:12px; display:grid; grid-template-columns:repeat(3,40px); grid-template-rows:repeat(3,40px); gap:3px; opacity:0; pointer-events:none; transition:opacity .35s ease; touch-action:none;}
+  /* ---------- directional pad (v35, 2026-11-15; enlarged and
+     labelled v37): four ▲▼◀▶ buttons for steering the figure
+     mid-walk. It is NOT a permanent control: it fades in only
+     while the figure is walking and hides again the moment it
+     stops, so the view stays clean when idle. All four arrows
+     stay visible (every direction is known to be available); the
+     one matching the figure's current heading is lit — brighter
+     and larger — and follows the turn live. v37: the buttons
+     are bigger (56px, glyph 22px) and every arrow now carries
+     its own word — 前 / 後 / 左 / 右 — so the direction is
+     named, not guessed; the empty centre cell holds a small
+     needle that points the figure's live heading, and a
+     one-line note under the pad says the arrows are relative
+     to the camera. Walking BACKWARD — toward the camera,
+     toward the viewer's own face — is the easiest direction
+     to lose: when the figure heads that way the ▼ button gets
+     a white ring as well as the gold lit state, and the needle
+     points down at the viewer, so "toward you" is
+     unmistakable. The glyphs are plain geometric shapes
+     (U+25B2/25BC/25C0/25B6), universal on every phone — never
+     emoji (an older phone showed the lotus emoji as a broken
+     glyph). */
+  .dpad{position:absolute; z-index:6; right:12px; display:grid; grid-template-columns:repeat(3,56px); grid-template-rows:repeat(3,56px) auto; gap:5px; opacity:0; pointer-events:none; transition:opacity .35s ease; touch-action:none;}
   #view-garden .dpad{bottom:calc(168px + env(safe-area-inset-bottom));}
   #view-hall .dpad{bottom:calc(94px + env(safe-area-inset-bottom));}
   .dpad.on{opacity:1; pointer-events:auto;}
-  .dpad-btn{width:40px; height:40px; border-radius:11px; border:1px solid rgba(255,255,255,.28); background:rgba(18,16,12,.55); backdrop-filter:blur(8px); color:rgba(242,232,216,.78); font-size:17px; line-height:1; display:grid; place-items:center; padding:0; touch-action:none; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; transition:transform .15s ease, background .15s ease, color .15s ease, border-color .15s ease;}
+  .dpad-btn{width:56px; height:56px; border-radius:14px; border:1px solid rgba(255,255,255,.28); background:rgba(18,16,12,.55); backdrop-filter:blur(8px); color:rgba(242,232,216,.78); line-height:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; padding:0; touch-action:none; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; transition:transform .15s ease, background .15s ease, color .15s ease, border-color .15s ease;}
+  .dpad-btn .ag{font-size:22px; line-height:1;}
+  .dpad-btn .al{font-size:10.5px; line-height:1.1; opacity:.85; letter-spacing:.5px;}
   .dpad-btn.up{grid-column:2; grid-row:1;}
   .dpad-btn.left{grid-column:1; grid-row:2;}
   .dpad-btn.right{grid-column:3; grid-row:2;}
   .dpad-btn.down{grid-column:2; grid-row:3;}
+  /* the centre cell: a needle that points the figure's live
+     heading, and rotates as the figure turns */
+  .dpad-centre{grid-column:2; grid-row:2; display:grid; place-items:center;}
+  .dpad-needle{display:block; font-size:16px; line-height:1; color:var(--gold); transition:transform .25s ease;}
+  /* the one-line note under the pad: arrows are camera-relative */
+  .dpad-cap{grid-column:1/4; grid-row:4; text-align:center; font-size:10.5px; line-height:1.3; color:rgba(242,232,216,.72); text-shadow:0 1px 3px rgba(0,0,0,.7); padding:0 2px;}
   /* the arrow matching the way the figure is heading now: lit
      gold and a touch larger, so the direction is clear at a glance */
   .dpad-btn.lit{background:rgba(201,162,75,.88); border-color:#e8c97a; color:#241a08; transform:scale(1.12);}
+  .dpad-btn.lit .al{opacity:1;}
+  /* walking backward, toward the camera and the viewer's face:
+     the lit ▼ button gets a white ring on top of the gold, so
+     the most confusing direction stands out at a glance */
+  .dpad.toward .dpad-btn.down.lit{outline:2px solid rgba(255,255,255,.9); outline-offset:1px;}
   /* held: pressed in */
   .dpad-btn.held{transform:scale(.94); background:rgba(201,162,75,.55); border-color:var(--gold); color:#fff;}
   .dpad-btn.lit.held{transform:scale(1.05);}
@@ -359,10 +383,12 @@
     </div>
   </div>
   <div class="dpad" id="dpad-garden" aria-label="方向箭嘴">
-    <button class="dpad-btn up" data-dir="up" aria-label="向前行">▲</button>
-    <button class="dpad-btn left" data-dir="left" aria-label="向左行">◀</button>
-    <button class="dpad-btn right" data-dir="right" aria-label="向右行">▶</button>
-    <button class="dpad-btn down" data-dir="down" aria-label="向後行">▼</button>
+    <button class="dpad-btn up" data-dir="up" aria-label="向前行"><span class="ag">▲</span><span class="al" data-i18n="dpadFwd">前</span></button>
+    <button class="dpad-btn left" data-dir="left" aria-label="向左行"><span class="ag">◀</span><span class="al" data-i18n="dpadLeft">左</span></button>
+    <button class="dpad-btn right" data-dir="right" aria-label="向右行"><span class="ag">▶</span><span class="al" data-i18n="dpadRight">右</span></button>
+    <button class="dpad-btn down" data-dir="down" aria-label="向後行"><span class="ag">▼</span><span class="al" data-i18n="dpadBack">後</span></button>
+    <div class="dpad-centre" aria-hidden="true"><span class="dpad-needle">▲</span></div>
+    <div class="dpad-cap" data-i18n="dpadHint">箭嘴方向相對鏡頭</div>
   </div>
 </section>
 
@@ -401,10 +427,12 @@
     </div>
   </div>
   <div class="dpad" id="dpad-hall" aria-label="方向箭嘴">
-    <button class="dpad-btn up" data-dir="up" aria-label="向前行">▲</button>
-    <button class="dpad-btn left" data-dir="left" aria-label="向左行">◀</button>
-    <button class="dpad-btn right" data-dir="right" aria-label="向右行">▶</button>
-    <button class="dpad-btn down" data-dir="down" aria-label="向後行">▼</button>
+    <button class="dpad-btn up" data-dir="up" aria-label="向前行"><span class="ag">▲</span><span class="al" data-i18n="dpadFwd">前</span></button>
+    <button class="dpad-btn left" data-dir="left" aria-label="向左行"><span class="ag">◀</span><span class="al" data-i18n="dpadLeft">左</span></button>
+    <button class="dpad-btn right" data-dir="right" aria-label="向右行"><span class="ag">▶</span><span class="al" data-i18n="dpadRight">右</span></button>
+    <button class="dpad-btn down" data-dir="down" aria-label="向後行"><span class="ag">▼</span><span class="al" data-i18n="dpadBack">後</span></button>
+    <div class="dpad-centre" aria-hidden="true"><span class="dpad-needle">▲</span></div>
+    <div class="dpad-cap" data-i18n="dpadHint">箭嘴方向相對鏡頭</div>
   </div>
 </section>
 
@@ -526,7 +554,7 @@ var I18N = {
     toastLake:'湖邊風輕水慢，企一陣，望一望荷花同喺水面慢慢游嘅鯉魚。',
     toastTree:'老樹下有紅繩輕搖，喺樹蔭下歇一歇。',
     toastStroll:'沿住石徑慢慢行，唔使趕。',
-    gWalk:'沿徑前行', gLake:'去湖邊', gTree:'去老樹下', gTemple:'入殿參拜',
+    gWalk:'沿徑前行', gLake:'去湖邊', gTree:'去老樹下', gTemple:'入殿參拜', dpadFwd:'前', dpadBack:'後', dpadLeft:'左', dpadRight:'右', dpadHint:'箭嘴方向相對鏡頭',
     soonBody:'呢間殿仲喺籌備之中，工匠正在雕琢神壇。開放日期一到，會喺廟門公佈。感恩善信耐心等候。',
     fortuneTitle:'求 籤', fortuneSub:'心誠則靈。請喺心入面默念所問之事，再撳「搖籤」。',
     fortuneResultTitle:'你求到嘅籤', fortuneResultSub:'籤文錄自黃大仙靈籤通行本，請靜心細讀。',
@@ -586,7 +614,7 @@ var I18N = {
     toastLake:'湖边风轻水慢，站一会儿，望一望荷花和在水面慢慢游的鲤鱼。',
     toastTree:'老树下有红绳轻摇，在树荫下歇一歇。',
     toastStroll:'沿着石径慢慢走，不用赶。',
-    gWalk:'沿径前行', gLake:'去湖边', gTree:'去老树下', gTemple:'入殿参拜',
+    gWalk:'沿径前行', gLake:'去湖边', gTree:'去老树下', gTemple:'入殿参拜', dpadFwd:'前', dpadBack:'后', dpadLeft:'左', dpadRight:'右', dpadHint:'箭头方向相对镜头',
     soonBody:'这间殿还在筹备之中，工匠正在雕琢神坛。开放日期一到，会在庙门公布。感恩善信耐心等候。',
     fortuneTitle:'求 签', fortuneSub:'心诚则灵。请在心里默念所问之事，再点「摇签」。',
     fortuneResultTitle:'你求到的签', fortuneResultSub:'签文录自黄大仙灵签通行本，请静心细读。',
@@ -646,7 +674,7 @@ var I18N = {
     toastLake:'By the lake the breeze is light and the water slow. Stand a while and watch the lotus — and the koi drifting just under the surface.',
     toastTree:'Red ribbons stir beneath the old tree. Rest a moment in its shade.',
     toastStroll:'Walk slowly along the stone path — there is no need to hurry.',
-    gWalk:'Walk the Path', gLake:'To the Lake', gTree:'Under the Old Tree', gTemple:'Enter the Halls',
+    gWalk:'Walk the Path', gLake:'To the Lake', gTree:'Under the Old Tree', gTemple:'Enter the Halls', dpadFwd:'Fwd', dpadBack:'Back', dpadLeft:'Left', dpadRight:'Right', dpadHint:'Arrows are relative to the camera',
     soonBody:"This hall is still in preparation — the craftsmen are carving the altar. When it opens, we'll announce it at the temple gate. Thank you for waiting.",
     fortuneTitle:'Draw a Fortune Stick', fortuneSub:'Sincerity brings the spirit near. Hold your question quietly in your heart, then tap "Shake".',
     fortuneResultTitle:'Your Fortune Stick', fortuneResultSub:'From the standard Wong Tai Sin fortune-stick book. Read it slowly, with a calm mind.',
@@ -2833,7 +2861,7 @@ function gPondD(x, z, pad){
 }
 /* solid things in the grounds, as circles with the figure's own
    half-width already allowed for: tree trunks (the old pine
-   biggest of all), stone lanterns, the two stone benches, and the
+   biggest of all), stone lanterns, the one stone bench, and the
    bamboo clump. The visitor can stroll under a canopy, but never
    through a trunk, a lantern, or a bench. */
 var G_OBSTACLES = [
@@ -2841,7 +2869,7 @@ var G_OBSTACLES = [
   [5.4, -8.6, .55], [-7.8, 12.6, .5], [9.8, 6.8, .45],
   [-16.5, 4.6, .55], [14.5, -1.5, .5], [-8.0, 7.5, .45], [4.1, .8, .45],
   [11.5, 11.8, .5], [-14.8, 9.8, .45], [15.5, -7.5, .5], [7.6, 1.6, .72],
-  [-1.4, .4, .85], [5.6, 3.6, .85], [11.9, -4, 1.5],
+  [2.5, .4, .9], [11.9, -4, 1.5],
   [8.2, 5.4, .45]
 ];
 [[5.2, 1], [-.6, -1], [-5.8, 1], [11.4, -1], [16.8, 1]].forEach(function(lp){
@@ -3548,9 +3576,19 @@ function buildGarden(){
     makeStoneLantern(pathX(lp[0]) + lp[1] * 3.1, lp[0]);
   });
   makeStoneLantern(8.2, 5.4);
-  /* stone benches: one facing the pond, one under the old pine */
-  box(1.7, .16, .5, 0x8f9089, -1.4, .42, .4); box(.3, .36, .44, 0x7c7d76, -2.0, .18, .4); box(.3, .36, .44, 0x7c7d76, -0.8, .18, .4);
-  box(1.7, .16, .5, 0x8f9089, 5.6, .42, 3.6); box(.3, .36, .44, 0x7c7d76, 5.0, .18, 3.6); box(.3, .36, .44, 0x7c7d76, 6.2, .18, 3.6);
+  /* stone bench (2026-11-15): two benches became one, and the one
+     that stays sits ALONGSIDE the stone path, its long side
+     parallel to the path — never across it, never in the middle
+     of it. The old pond-side bench lay crosswise with its east
+     edge only 0.64 off the path centreline, and it stood right
+     beside the "go to the lake" stopping point (-1.4, 1.2), so
+     the way to the lake read blocked; the old-pine bench lay
+     across the direct walk from the entrance to the old tree.
+     The single bench now stands on the east side of the path at
+     (2.5, 0.4), long side north-south, facing west across the
+     path toward the pond — a seat with a lake view, and the
+     walkway itself is clear all the way to the gate. */
+  box(0.5, .16, 1.7, 0x8f9089, 2.5, .42, .4); box(.44, .36, .3, 0x7c7d76, 2.5, .18, -.2); box(.44, .36, .3, 0x7c7d76, 2.5, .18, 1.0);
 
   /* the gate (山門) — a standalone building in its own right, set
      well in front of the temple so the two never stack: plaster side
@@ -3671,7 +3709,7 @@ function buildGarden(){
      unhurried figures on a slow loop — gate, east lawn, lake
      shore — pausing now and then to look around, so the temple
      outside is lived in too. They wait if you step into their
-     path, and they keep clear of the pond rim, the benches, the
+     path, and they keep clear of the pond rim, the bench, the
      stone lanterns and the tree trunks along the way. Under
      reduced motion the grounds stay still. */
   gWalkers = [];
@@ -4067,14 +4105,25 @@ function padSetLit(id, q){
   for (var i = 0; i < btns.length; i++){
     btns[i].classList.toggle('lit', PAD_DIRS[q] === btns[i].getAttribute('data-dir'));
   }
+  /* the centre needle points the figure's live heading, relative
+     to the camera: up = away from the viewer, down = toward the
+     viewer. Backward (q 2, toward the camera and the viewer's
+     face) is the easiest direction to lose, so the pad itself
+     gets a 'toward' mark — the lit ▼ button then gains a white
+     ring on top of the gold, so "toward you" is unmistakable. */
+  var n = el.querySelector('.dpad-needle');
+  if (n) n.style.transform = 'rotate(' + (q >= 0 ? q * 90 : 0) + 'deg)';
+  el.classList.toggle('toward', q === 2);
 }
 /* hide the pad and clear every held/lit mark — used when a scene
    is torn down, so no stale state survives into the next entry */
 function padReset(id){
   var el = document.getElementById(id); if (!el) return;
-  el.classList.remove('on');
+  el.classList.remove('on', 'toward');
   var btns = el.querySelectorAll('.dpad-btn');
   for (var i = 0; i < btns.length; i++) btns[i].classList.remove('held', 'lit');
+  var n = el.querySelector('.dpad-needle');
+  if (n) n.style.transform = 'rotate(0deg)';
 }
 /* press-and-hold an arrow to steer; letting go stops. Bound once —
    the pad markup is static, so it survives the scenes being
