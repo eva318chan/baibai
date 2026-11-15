@@ -266,13 +266,16 @@
   .shake-stage{text-align:center; padding:10px 0 2px;}
   .tube{width:118px; height:158px; display:inline-block;}
   .tube svg{display:block; width:100%; height:auto;}
-  /* 簽筒 (v42): a real shake — the tube rocks hard and the sticks
-     rattle inside it at their own quicker pace, so the shake reads
-     as a bamboo container full of sticks, not a gentle wobble */
+  /* 簽筒 (v45): the sticks live INSIDE the tube now — only their
+     tips show above the rim, the way a real 籤筒 holds them. The
+     tube still rocks hard, but the sticks only jitter inside it:
+     small offsets and small rotations pivoting mid-tube, never
+     swinging out past the rim, so the shake reads as sticks
+     rattling against the tube walls, not a bouquet waving about */
   .tube.shaking{animation:tubeShake .13s linear infinite;}
-  .tube.shaking .tube-sticks{animation:sticksRattle .085s linear infinite; transform-origin:60px 62px;}
+  .tube.shaking .tube-sticks{animation:sticksRattle .085s linear infinite; transform-origin:60px 100px;}
   @keyframes tubeShake{0%{transform:rotate(-9deg) translate(-3px,0)}25%{transform:rotate(8deg) translate(3px,-6px)}50%{transform:rotate(-7deg) translate(-2px,-2px)}75%{transform:rotate(9deg) translate(3px,-5px)}100%{transform:rotate(-9deg) translate(-3px,0)}}
-  @keyframes sticksRattle{0%{transform:translate(0,0) rotate(0deg)}50%{transform:translate(1.5px,-2px) rotate(1.6deg)}100%{transform:translate(0,0) rotate(0deg)}}
+  @keyframes sticksRattle{0%{transform:translate(0,0) rotate(0deg)}25%{transform:translate(1px,-2px) rotate(1deg)}50%{transform:translate(-1px,-.5px) rotate(-.8deg)}75%{transform:translate(.5px,-1.5px) rotate(.6deg)}100%{transform:translate(0,0) rotate(0deg)}}
   @media (prefers-reduced-motion: reduce){.tube.shaking,.tube.shaking .tube-sticks{animation:none;}}
   /* beads */
   .beads-visual{display:flex; flex-wrap:wrap; gap:5px; justify-content:center; margin:14px 0;}
@@ -456,7 +459,7 @@
     <div id="fortune-stage-shake">
       <h3 data-i18n="fortuneTitle">求 籤</h3>
       <p class="sub" data-i18n="fortuneSub">心誠則靈。請喺心入面默念所問之事，再撳「搖籤」。</p>
-      <!-- 簽筒 (v42): a real bamboo fortune-stick tube replaces the bamboo-plant emoji -->
+      <!-- 簽筒 (v45): the sticks sit INSIDE the tube — only their tips show above the rim, the way a real 籤筒 holds them. The old v42 sticks stuck 50–62 units out of the tube like a bouquet; now each stick runs from its tip down to the tube floor, hidden by the tube body. -->
       <div class="shake-stage"><div class="tube" id="tube-icon" role="img" aria-label="簽筒"><svg viewBox="0 0 120 160" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <linearGradient id="bambooBody" x1="0" y1="0" x2="1" y2="0">
@@ -466,11 +469,11 @@
         </defs>
         <ellipse cx="60" cy="154" rx="30" ry="5" fill="rgba(0,0,0,.18)"/>
         <g class="tube-sticks">
-          <g transform="rotate(-14 55 62)"><rect x="51.5" y="10" width="7" height="54" rx="3.5" fill="#e8d5a8"/></g>
-          <g transform="rotate(-7 63 62)"><rect x="59.5" y="4" width="7" height="58" rx="3.5" fill="#e8d5a8"/><rect x="59.5" y="4" width="7" height="12" rx="3.5" fill="#a32e1f"/></g>
-          <g transform="rotate(0 68 62)"><rect x="64.5" y="0" width="7" height="62" rx="3.5" fill="#f0e0b8"/></g>
-          <g transform="rotate(7 76 62)"><rect x="72.5" y="6" width="7" height="56" rx="3.5" fill="#e8d5a8"/><rect x="72.5" y="6" width="7" height="12" rx="3.5" fill="#a32e1f"/></g>
-          <g transform="rotate(14 84 62)"><rect x="80.5" y="12" width="7" height="50" rx="3.5" fill="#e8d5a8"/></g>
+          <g transform="rotate(-14 55 62)"><rect x="51.5" y="48" width="7" height="100" rx="3.5" fill="#e8d5a8"/></g>
+          <g transform="rotate(-7 63 62)"><rect x="59.5" y="44" width="7" height="104" rx="3.5" fill="#e8d5a8"/><rect x="59.5" y="44" width="7" height="12" rx="3.5" fill="#a32e1f"/></g>
+          <g transform="rotate(0 68 62)"><rect x="64.5" y="41" width="7" height="107" rx="3.5" fill="#f0e0b8"/></g>
+          <g transform="rotate(7 76 62)"><rect x="72.5" y="46" width="7" height="102" rx="3.5" fill="#e8d5a8"/><rect x="72.5" y="46" width="7" height="12" rx="3.5" fill="#a32e1f"/></g>
+          <g transform="rotate(14 84 62)"><rect x="80.5" y="50" width="7" height="98" rx="3.5" fill="#e8d5a8"/></g>
         </g>
         <path d="M34,62 L86,62 L82,148 Q81,152 77,152 L43,152 Q39,152 38,148 Z" fill="url(#bambooBody)"/>
         <path d="M34,66 L86,66 L85.4,78 L34.6,78 Z" fill="#8c2b1d"/>
@@ -4516,17 +4519,34 @@ function buildGarden(){
   var gSignTxt = LANG === 'en' ? 'TEMPLE GATE' : (LANG === 'sc' ? '山门' : '山門');
   var gPlaque = calligraphyPanel(gSignTxt, 1.9, .58, false, '#33302a');
   gPlaque.position.set(0, 4.15, .27); gate.add(gPlaque);
-  /* the doorway glow — layered warm light inside the opening, a
-     point light washing the posts, and a spill of light across the
-     threshold stones, so the entrance reads from anywhere in the
-     grounds, day-bright against the shaded gate walls */
-  var doorGlow = new THREE.Mesh(new THREE.PlaneGeometry(2.3, 3.7),
-    new THREE.MeshBasicMaterial({ color: 0xffca7a, transparent: true, opacity: .5, side: THREE.DoubleSide, depthWrite: false }));
-  doorGlow.position.set(0, 1.85, -.5); gate.add(doorGlow);
-  var doorGlow2 = new THREE.Mesh(new THREE.PlaneGeometry(2.3, 3.7),
-    new THREE.MeshBasicMaterial({ color: 0xffe3ae, transparent: true, opacity: .32, side: THREE.DoubleSide, depthWrite: false }));
-  doorGlow2.position.set(0, 1.85, -1.15); gate.add(doorGlow2);
+  /* the doorway is a REAL opening now (2026-11-15, v45): the two
+     flat glow planes that used to fill it (doorGlow 0xffca7a @ .5,
+     doorGlow2 0xffe3ae @ .32) read from the steps as one flat
+     pale yellow-green wall — warm orange at half opacity over the
+     green grounds behind — with no depth and no interior at all.
+     The v39 hall fix took the same flat panel out of the hall
+     doorway; the gate's pair was never fixed, until now. The
+     opening is left clear, so from the steps you look straight
+     through the gate into the grounds: the stone path running on
+     through it, two lit lanterns flanking it, the mid-ground
+     trees, and the hall itself (green roof, gold walls) standing
+     beyond — a little perspective, a glimpse that invites you in.
+     Warmth comes from light, not from a plane: the post light
+     stays, a second warm light sits just inside the passage, and
+     a spill of light lies across the threshold stones. */
   var doorLight = new THREE.PointLight(0xffbe78, 1.0, 11); doorLight.position.set(0, 2.7, .9); gate.add(doorLight);
+  var passLight = new THREE.PointLight(0xffbe78, .9, 10); passLight.position.set(0, 2.6, -1.6); gate.add(passLight);
+  /* the stone path runs on through the gate and a little way
+     beyond it, so the eye follows it through the doorway into
+     the grounds — the depth cue that makes the opening read as
+     a passage, not a wall. Tapping one of these far slabs simply
+     walks you to the gate: the walkable north edge stays at the
+     gate steps (gClampPos), so nothing here can be walked into. */
+  for (var pz = -14.2; pz >= -19.4; pz -= 1.28) slab(pathX(pz) + (Math.random() - .5) * .14, pz, .82 + Math.random() * .16);
+  /* two lit stone lanterns flanking the path just beyond the
+     gate — warm windows standing in the grounds you glimpse
+     through the doorway, so the near ground has depth too */
+  makeStoneLantern(pathX(-16) - 2.0, -16); makeStoneLantern(pathX(-16) + 2.0, -16);
   var spill = new THREE.Mesh(new THREE.PlaneGeometry(2.8, 3.2),
     new THREE.MeshBasicMaterial({ color: 0xffdf9e, transparent: true, opacity: .22, depthWrite: false }));
   spill.rotation.x = -Math.PI / 2; spill.position.set(0, .03, 1.6); gate.add(spill);
@@ -5265,42 +5285,53 @@ function openFortune(){
   document.getElementById('fortune-stage-result').style.display = 'none';
   document.getElementById('fortune-overlay').classList.add('open');
 }
-/* 簽筒 (v42): the rattle of bamboo sticks inside a bamboo tube —
-   procedural Web Audio, no audio file to fetch: short bright noise
-   clicks (the sticks knocking) plus a lower wooden tok every few
-   beats, scattered irregularly across the shake so it sounds like a
-   real handful of sticks, not a metronome. It obeys the master sound
-   switch exactly like the bells do. */
+/* 簽筒 (v45): the rattle of bamboo sticks inside a bamboo tube —
+   redone, because the v42 version sounded like bright ticks, not
+   sticks in a tube. Real sticks in a tube knock in bursts (the
+   hand rocks the tube, the sticks hit in clusters), the knocks
+   are woody (800–2400 Hz, broad, not a sharp 3–4 kHz tick), each
+   has a hollow wooden body under it, and the tube itself muffles
+   the very top end. So: clusters of 2–4 knocks 0.03–0.065s apart
+   with a gap between rocks, a lowpass bus at 3.2 kHz for the
+   muffle, and a short triangle tok (480–800 Hz) under every knock
+   for the hollow wood. Procedural Web Audio, no audio file; it
+   obeys the master sound switch exactly like the bells do. */
 var rattleBuf = null;
 function playStickRattle(){
   if (!soundOn) return;
   ensureAudio(); if (!actx) return;
   if (!rattleBuf){
-    var len = Math.floor(actx.sampleRate * 0.08), buf = actx.createBuffer(1, len, actx.sampleRate), d = buf.getChannelData(0);
-    for (var i=0;i<len;i++){ d[i] = (Math.random()*2-1) * (1 - i/len); }
+    var len = Math.floor(actx.sampleRate * 0.05), buf = actx.createBuffer(1, len, actx.sampleRate), d = buf.getChannelData(0);
+    for (var i=0;i<len;i++){ d[i] = (Math.random()*2-1) * Math.pow(1 - i/len, 1.6); }
     rattleBuf = buf;
   }
   var now = actx.currentTime, master = actx.createGain();
   master.gain.value = 0.5; master.connect(actx.destination);
-  var n = 16;
-  for (var k=0;k<n;k++){
-    var t0 = now + 0.02 + k * 0.085 + Math.random() * 0.05;
-    if (t0 > now + 1.42) break;
-    var src = actx.createBufferSource(); src.buffer = rattleBuf;
-    var bp = actx.createBiquadFilter(); bp.type = 'bandpass';
-    bp.frequency.value = 2300 + Math.random() * 1900; bp.Q.value = 7;
-    var g = actx.createGain();
-    g.gain.setValueAtTime(0.35 + Math.random() * 0.5, t0);
-    g.gain.exponentialRampToValueAtTime(0.001, t0 + 0.05);
-    src.connect(bp); bp.connect(g); g.connect(master);
-    src.start(t0); src.stop(t0 + 0.09);
-    if (k % 4 === 1){
+  var lp = actx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 3200; lp.Q.value = .5;
+  lp.connect(master);
+  var t = now + 0.02, end = now + 1.45;
+  while (t < end){
+    var cluster = 2 + Math.floor(Math.random() * 3);
+    for (var c = 0; c < cluster && t < end; c++){
+      var bright = Math.random() < 0.55;
+      var src = actx.createBufferSource(); src.buffer = rattleBuf;
+      var bp = actx.createBiquadFilter(); bp.type = 'bandpass';
+      bp.frequency.value = bright ? 1500 + Math.random() * 900 : 800 + Math.random() * 500;
+      bp.Q.value = 2.5 + Math.random() * 1.5;
+      var g = actx.createGain();
+      var vol = 0.3 + Math.random() * 0.5;
+      g.gain.setValueAtTime(vol, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.045);
+      src.connect(bp); bp.connect(g); g.connect(lp);
+      src.start(t); src.stop(t + 0.06);
       var o = actx.createOscillator(), og = actx.createGain();
-      o.type = 'sine'; o.frequency.value = 300 + Math.random() * 90;
-      og.gain.setValueAtTime(0.22, t0);
-      og.gain.exponentialRampToValueAtTime(0.001, t0 + 0.07);
-      o.connect(og); og.connect(master); o.start(t0); o.stop(t0 + 0.08);
+      o.type = 'triangle'; o.frequency.value = 480 + Math.random() * 320;
+      og.gain.setValueAtTime(vol * 0.5, t);
+      og.gain.exponentialRampToValueAtTime(0.001, t + 0.06);
+      o.connect(og); og.connect(lp); o.start(t); o.stop(t + 0.07);
+      t += 0.03 + Math.random() * 0.035;
     }
+    t += 0.10 + Math.random() * 0.14;
   }
 }
 /* 解讀 (2026-11-15, v44): a plain-language reading of the drawn
