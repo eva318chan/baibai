@@ -38,6 +38,7 @@
   .topbar>*{pointer-events:auto;}
   .brand{display:flex; align-items:center; background:rgba(23,19,16,.72); backdrop-filter:blur(8px); border:1px solid var(--gold); border-radius:50%; padding:3px; line-height:0;}
   .brand img{width:42px; height:42px; display:block; border-radius:50%;}
+  body.hide-brand .brand{display:none;}
   .top-actions{display:flex; gap:8px; align-items:center;}
   .pill-btn{background:rgba(23,19,16,.72); backdrop-filter:blur(8px); color:var(--ink); border:1px solid var(--line); border-radius:999px; padding:8px 14px; font-size:13px; font-weight:600;}
   .pill-btn[aria-pressed="true"]{border-color:var(--gold); color:var(--gold-soft);}
@@ -67,10 +68,9 @@
   @media (prefers-reduced-motion: reduce){.lantern{animation:none;}}
   .gate{width:min(520px,88vw); margin-bottom:8px;}
   .entry-logo{margin:14px 0 2px; line-height:0;}
-  .entry-logo img{width:min(300px,66vw); height:auto; display:block; filter:drop-shadow(0 16px 34px rgba(0,0,0,.55));}
+  .entry-logo img{width:min(240px,56vw); height:auto; display:block; filter:drop-shadow(0 16px 34px rgba(0,0,0,.55));}
   /* the name under the badge, written the way a temple sign is
      written — brush calligraphy, not a printed font */
-  .entry-callig{font-family:"Ma Shan Zheng","Zhi Mang Xing","Noto Serif TC",serif; font-size:clamp(62px,16.5vw,100px); line-height:1.12; font-weight:400; color:var(--cream); letter-spacing:.14em; text-indent:.14em; margin:0; text-shadow:0 3px 22px rgba(201,162,75,.28), 0 2px 3px rgba(0,0,0,.6);}
   .entry-sub{font-family:"Noto Serif TC",serif; font-size:clamp(17px,4.6vw,23px); color:var(--gold-soft); letter-spacing:.14em; margin:6px 0 4px;}
   .entry-desc{color:var(--ink-dim); font-size:14.5px; line-height:1.9; max-width:520px; margin:10px auto 0;}
   .rules{display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin:20px 0 4px;}
@@ -270,7 +270,6 @@
     </svg>
     <span class="demo-tag" data-i18n="demoTag">DEMO 示範版</span>
     <div class="entry-logo"><img src="assets/logo-badge.webp" alt="拜拜 Baibai.hk 線上廟宇 — 心誠則靈" /></div>
-    <h1 class="entry-callig" data-i18n="siteTitle">拜拜</h1>
     <p class="entry-sub" data-i18n="tagline">入嚟拜神，休息一陣</p>
     <p class="entry-desc" data-i18n="entryDesc">唔使註冊，唔使下載。嚟拜神，先喺庭院沿石徑慢慢行，去湖邊同松樹下靜一靜，然之後先入殿上炷香、鞠個躬。呢度冇聊天，冇喧嘩，只有雀聲、水聲、鐘聲。</p>
     <div class="rules">
@@ -469,6 +468,7 @@ var I18N = {
     donateDemoNote:'Demo 示範：呢度唔會真係扣錢，撳「添香油」只會送上多謝。',
     donateConfirm:'添香油', amtFree:'隨緣',
     toastIncense:'已上香，煙供裊裊，心意已達。',
+    toastIncenseLimit:'每次入廟只能上三次香。',
     toastBow:'已鞠躬行禮，禮成。',
     toastPalms:'合掌靜心，同大家一齊靜坐。',
     toastLotus:'已獻上一朵蓮花，願心清淨。',
@@ -526,6 +526,7 @@ var I18N = {
     donateDemoNote:'Demo 示范：这里不会真的扣钱，点「添香油」只会送上多谢。',
     donateConfirm:'添香油', amtFree:'随缘',
     toastIncense:'已上香，烟供袅袅，心意已达。',
+    toastIncenseLimit:'每次入庙只能上三次香。',
     toastBow:'已鞠躬行礼，礼成。',
     toastPalms:'合掌静心，跟大家一起静坐。',
     toastLotus:'已献上一朵莲花，愿心清净。',
@@ -583,6 +584,7 @@ var I18N = {
     donateDemoNote:'Demo only: no money is charged here. Tapping "Offer" simply sends our thanks.',
     donateConfirm:'Offer', amtFree:'Any Amount',
     toastIncense:'Incense lit. May your wish rise with the smoke.',
+    toastIncenseLimit:'Three incense offerings per visit, please.',
     toastBow:'You bowed in respect. The rite is complete.',
     toastPalms:'Palms together — sitting quietly with everyone.',
     toastLotus:'A lotus offered. May your heart stay pure.',
@@ -596,7 +598,7 @@ var I18N = {
     standBtn:'Stand Up', toastSeated:'Seated. Let your heart settle, and worship.', toastStand:'Standing. Take your time.',
     open:'Open', soon:'Coming Soon',
     actIncense:'Incense', actPalms:'Palms Together', actBow:'Bow', actFortune:'Fortune Stick', actBeads:'Prayer Beads', actLotus:'Offer Lotus', actBell:'Ring the Bell',
-    beadProgress:'{n} beads counted. Stay with the stillness.', hallSuffix:' Hall', hallScene:'3D temple hall scene', gateLabel:'Temple gate', gatePlaque:'TEMPLE',
+    beadProgress:'{n} beads counted. Stay with the stillness.', hallSuffix:' Hall', hallScene:'3D temple hall scene', gateLabel:'Temple gate', gatePlaque:'廟宇',
     pageTitle:'BaiBai — Online Virtual Temple Demo'
   }
 };
@@ -613,7 +615,9 @@ function applyLang(){
   var amt = document.querySelector('[data-i18n-amt]');
   if (amt) amt.textContent = t('amtFree');
   /* the plaque over the entry gate names the building, not the
-     brand — it follows the language like everything else */
+     brand — and it stays in Chinese in every language (2026-11-15):
+     the plaque is part of the temple building, and the English
+     word TEMPLE overflows its frame */
   var gp = document.getElementById('gate-plaque-text');
   if (gp) gp.textContent = t('gatePlaque');
   renderDeities(); renderPresence();
@@ -786,8 +790,10 @@ function cnNum(n){ if(n===100) return '一百'; if(n<=10) return CN_NUM[n]; retu
    counter uses these counts. */
 var SEAT_TOTAL = 40;
 var SEATS = (function(){
-  var rowZ = [-4.6, -2.3, 0, 2.3, 4.6];
-  var base = [-5.425,-3.875,-2.325,-0.775, 0.775, 2.325, 3.875, 5.425];
+  /* seat spacing widened 2026-11-15 — the hall should feel spacious
+     and relaxed, never crammed (columns 1.55 → 1.95, rows 2.3 → 2.6) */
+  var rowZ = [-5.2, -2.6, 0, 2.6, 5.2];
+  var base = [-6.825,-4.875,-2.925,-0.975, 0.975, 2.925, 4.875, 6.825];
   var empty = { '0,3':1, '0,4':1, '1,1':1, '1,6':1, '2,4':1, '2,7':1, '3,2':1,
                 '3,5':1, '4,3':1, '4,6':1 };
   var list = [];
@@ -823,6 +829,9 @@ function showView(id){
   if (id !== 'view-hall' && typeof stopChantNow === 'function') stopChantNow();
   /* the two 3D scenes pin the page itself (see body.scene-locked);
      scrollable pages (entry / select / soon) keep vertical scroll */
+  /* the entry page already shows the big central logo — the small
+     top-left brand mark is redundant there, so it is hidden (2026-11-15) */
+  document.body.classList.toggle('hide-brand', id === 'view-entry');
   document.body.classList.toggle('scene-locked', id === 'view-hall' || id === 'view-garden');
   window.scrollTo(0,0);
 }
@@ -1079,6 +1088,16 @@ var hallBreathers = [], visitorFigure = null, visitorWalk = null, visitorWalkPha
 var camAngle = 0, camTarget = 0, camPitch = 0, camPitchT = 0, bowAnim = 0, bowDur = 1.6, bowPower = .55, clockT = 0;
 var pendingBow = false;
 var smokeSystems = [], smokeBoost = 0, burnerGroup = null, incenseBusy = false;
+/* incense offering (2026-11-15): at most three sticks per visit to
+   the hall — the count resets every time you leave and come back;
+   the hall smoke stays dark until the first offering lights it */
+var hallSmokeSystems = [], hallSmokeLit = false, incenseOffered = 0;
+function lightHallSmoke(){
+  if (hallSmokeLit) return;
+  hallSmokeLit = true;
+  if (hallSmokeSystems[0]) hallSmokeSystems[0].baseOp = .3;
+  if (hallSmokeSystems[1]) hallSmokeSystems[1].baseOp = .2;
+}
 var visitorStandAt = { x: 0, z: 7.6 };
 
 function mat(color, rough){ return new THREE.MeshStandardMaterial({ color: color, roughness: rough == null ? .85 : rough, metalness: .05 }); }
@@ -1548,10 +1567,11 @@ function buildCommon(kind){
   });
   /* a proper bronze burner, lathe-turned: three feet, a swelling
      body, a rolled rim, twin handles and a bed of pale ash. One
-     stands on the altar table before the deity; a larger twin
-     stands on the platform edge in front of the altar — that is
-     the worship burner, close enough to read from any seat, and
-     the one your own incense goes into. */
+     stands on the altar table before the deity; a twin sized to
+     the figure stands on the platform edge in front of the altar
+     (2026-11-15: shrunk to the Korean site's figure-to-burner
+     proportion) — that is the worship burner, close enough to read
+     from any seat, and the one your own incense goes into. */
   function buildBurner(scale){
     var bg = new THREE.Group();
     for (var fi2 = 0; fi2 < 3; fi2++){
@@ -1583,7 +1603,7 @@ function buildCommon(kind){
     var at = new THREE.Mesh(new THREE.SphereGeometry(.019,8,8), new THREE.MeshBasicMaterial({ color: 0xff7b3a }));
     at.position.set(x + (ai - 1) * .055, 1.37 + .36 + .48, -9.55); scene.add(at);
   });
-  burnerGroup = buildBurner(1.25); burnerGroup.position.set(0, .35, -6.6); scene.add(burnerGroup);
+  burnerGroup = buildBurner(0.85); burnerGroup.position.set(0, .35, -6.6); scene.add(burnerGroup);
   incenseGroup = new THREE.Group(); incenseGroup.position.set(0, .56, 0); burnerGroup.add(incenseGroup);
   /* centre aisle carpet, kept clear between the seat rows */
   box(1.7,.03,15.5, isGY?0x4c5540:0x6e2a20, 0,.015,0.4);
@@ -1635,10 +1655,12 @@ function buildCommon(kind){
     var pl2 = new THREE.PointLight(isGY?0xcfe0a0:0xff9c3f,.55,8); pl2.position.set(p[0],5.9,p[1]); scene.add(pl2);
   });
   /* smoke — two living columns: a full one curling up from the
-     worship burner in front of the altar (it thickens for a while
-     after you offer incense), and a thinner wisp from the altar
-     burner. Each particle rises, drifts wider as it climbs, and
-     loops — readable as real smoke from anywhere in the hall. */
+     worship burner in front of the altar, and a thinner wisp from
+     the altar burner. They start dark — nothing rises until the
+     visitor offers incense (2026-11-15) — and the worship column
+     thickens for a while after each offering. Each particle rises,
+     drifts wider as it climbs, and loops — readable as real smoke
+     from anywhere in the hall. */
   smokeSystems = [];
   function makeSmoke(x, y, z, n, size, op, spread){
     var pos = new Float32Array(n * 3), seeds = [];
@@ -1655,6 +1677,12 @@ function buildCommon(kind){
   }
   smokePts = makeSmoke(0, 2.1, -6.6, 130, .42, .3, .3);
   makeSmoke(0, 2.35, -9.55, 60, .34, .2, .2);
+  /* the hall starts smokeless: no smoke rises from either burner
+     until the visitor offers incense — the two columns are built
+     but held at zero opacity until lit */
+  hallSmokeSystems = smokeSystems.slice();
+  hallSmokeSystems.forEach(function(s){ s.baseOp = 0; s.obj.material.opacity = 0; });
+  hallSmokeLit = false;
 }
 
 /* Smooth turned profile (lathe) — gives robes and vessels one flowing,
@@ -2221,20 +2249,17 @@ function buildStatueGY(){
   box(3.6,.14,1,0x39473c,0,.42,-6.9);
   makeLotus(-1.1,.56,-6.9,.8,lotusGroup); makeLotus(1.15,.56,-6.9,.8,lotusGroup);
 }
-/* One offering is one bunch of three sticks （一炷香三支）, and
-   the three must read as three from every angle (fixed
-   2026-11-14: the old placement dropped each stick at a random
-   spot inside a small disc, so two routinely landed on top of
-   each other and a bunch of three looked like two). The three
-   now stand on the points of a wide triangle — front-centre,
-   back-left, back-right, a clear span apart at the base — and
-   fan outward as they rise, so the ember tips sit further apart
-   still; each tip carries its own thin wisp of smoke. A later
-   offering's triangle is rotated a little and drawn slightly
-   inward, so bunches never land exactly on top of each other,
-   and the burner still never holds more than a believable
-   bundle: the oldest sticks (and their smoke) leave as new
-   ones come. */
+/* One offering is one stick, and a visit holds at most three
+   (2026-11-15) — one per press of 上香， the third press being
+   the last, and the count resetting when you leave the hall and
+   come back. The three stand on the points of a wide triangle —
+   front-centre, back-left, back-right, a clear span apart at the
+   base — and fan outward as they rise, so the ember tips sit
+   further apart still; each tip carries its own thin wisp of
+   smoke, and the three must read as three from every angle
+   (fixed 2026-11-14: the old placement dropped each stick at a
+   random spot inside a small disc, so two routinely landed on
+   top of each other and a bunch of three looked like two). */
 var INCENSE_SLOTS = [ [0, .19], [-.175, -.095], [.175, -.095] ];
 var incenseSlotInBunch = 0, incenseBunchCount = 0;
 var stickSmokeTex = null;
@@ -2304,6 +2329,7 @@ function disposeScene(){
   seatHitMeshes = []; seatRings = []; seatGlowDiscs = []; seatedIdx = null;
   hallBreathers = []; visitorFigure = null; visitorWalk = null; pendingBow = false;
   smokeSystems = []; smokeBoost = 0; burnerGroup = null; incenseBusy = false;
+  hallSmokeSystems = []; hallSmokeLit = false; incenseOffered = 0;
   incenseSlotInBunch = 0; incenseBunchCount = 0;
   visitorStandAt = { x: 0, z: STAND_Z }; camPitch = 0; camPitchT = 0;
 }
@@ -2545,6 +2571,22 @@ var gButterflies = [], gTempleBtn = null, gClouds = [], gSunGlow = null;
 /* pond life: koi cruising at the surface, dragonflies over the
    lotus, and the lily pads themselves (kept so they can bob) */
 var gKoi = [], gDragonflies = [], gPads = [], gPondT = 0;
+var gNextPondRollAt = 0;
+/* pond life appears at random, never all at once (2026-11-15):
+   sometimes one fish, sometimes one dragonfly, sometimes two
+   dragonflies and a fish — a few, spread out, never a crowd */
+function rollPondLife(){
+  function pick(arr, n){
+    var idx = arr.map(function(_, i){ return i; });
+    for (var i = idx.length - 1; i > 0; i--){ var j = Math.floor(Math.random() * (i + 1)); var t = idx[i]; idx[i] = idx[j]; idx[j] = t; }
+    return idx.slice(0, n);
+  }
+  var nk = 1 + Math.floor(Math.random() * 3);       /* 1-3 koi */
+  var nd = Math.floor(Math.random() * 3);           /* 0-2 dragonflies */
+  var ki = pick(gKoi, nk), di = pick(gDragonflies, nd);
+  gKoi.forEach(function(k, i){ k.vis = ki.indexOf(i) >= 0; });
+  gDragonflies.forEach(function(d, i){ d.vis = di.indexOf(i) >= 0; });
+}
 var gAvatar = null, gWalkPhase = 0, gWalkAmt = 0;
 var REDUCED_MOTION = false;
 try { REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch(e){}
@@ -2552,8 +2594,9 @@ try { REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').mat
 function pathX(z){ return Math.sin(z * .16) * 1.35; }
 /* the pond as an ellipse (centre, radii) — the radii reach a step
    beyond the water, to the ring of rim stones, so a destination
-   always lands on the shore path, never at the water's lip */
-var POND = { x: -11, z: -1, rx: 7.95, rz: 5.4 };
+   always lands on the shore path, never at the water's lip.
+   Enlarged 2026-11-15, outward toward the edges. */
+var POND = { x: -11.4, z: -1, rx: 9.4, rz: 6.4 };
 function gPondD(x, z, pad){
   var dx = (x - POND.x) / (POND.rx + (pad || 0)), dz = (z - POND.z) / (POND.rz + (pad || 0));
   return Math.sqrt(dx * dx + dz * dz);
@@ -2566,10 +2609,10 @@ function gPondD(x, z, pad){
 var G_OBSTACLES = [
   [-4.6, 9.5, .5], [4.9, 10.5, .5], [-5.6, 3.4, .55], [6.2, -3.4, .55],
   [-5.2, -6.4, .5], [5.4, -8.6, .55], [-7.8, 12.6, .5], [9.8, 6.8, .45],
-  [-16.5, 4.6, .55], [14.5, -1.5, .5], [-3.9, -2.8, .45], [4.1, .8, .45],
+  [-16.5, 4.6, .55], [14.5, -1.5, .5], [-8.0, 7.5, .45], [4.1, .8, .45],
   [11.5, 11.8, .5], [-14.8, 9.8, .45], [15.5, -7.5, .5], [7.6, 1.6, .72],
-  [-4.2, .4, .85], [5.6, 3.6, .85], [11.9, -4, 1.5],
-  [-3, -2.4, .45], [8.2, 5.4, .45]
+  [-1.4, .4, .85], [5.6, 3.6, .85], [11.9, -4, 1.5],
+  [-0.5, -2.4, .45], [8.2, 5.4, .45]
 ];
 [[5.2, 1], [-.6, -1], [-5.8, 1], [-10.6, -1], [11.4, -1], [16.8, 1]].forEach(function(lp){
   G_OBSTACLES.push([pathX(lp[0]) + lp[1] * 3.1, lp[0], .45]);
@@ -2578,6 +2621,11 @@ var G_OBSTACLES = [
    — inside the walkable meadow, so their trunks are solid too */
 [[-24, 18, .55], [22, 20, .55], [-28, 6, .55], [27, 12, .5],
  [30, -12, .55], [-27, -14, .55], [18, 26, .5], [-16, 27, .5]].forEach(function(ob){
+  G_OBSTACLES.push(ob);
+});
+/* the third ring's trunks (2026-11-15, map doubled) */
+[[-46, 38, .55], [44, 42, .55], [-52, 10, .55], [50, 22, .5],
+ [58, -20, .55], [-56, -28, .5], [36, 52, .5], [-34, 54, .5]].forEach(function(ob){
   G_OBSTACLES.push(ob);
 });
 G_OBSTACLES.push([pathX(-12.6) - 3.6, -11.9, .45], [pathX(-12.6) + 3.6, -11.9, .45]);
@@ -2600,13 +2648,14 @@ function gResolveCollisions(p){
   return p;
 }
 function gClampPos(p){
-  /* the grounds were enlarged (2026-11-14): the walkable meadow
-     now runs about twice as wide east–west and the stone path
-     stretches much further south, so a stroll feels like crossing
-     real temple grounds. The north edge still stops just before
-     the gate steps, as before. */
-  p.x = Math.max(-34, Math.min(34, p.x));
-  p.z = Math.max(-12.2, Math.min(30, p.z));
+  /* the grounds were enlarged twice: 2026-11-14 the walkable meadow
+     ran about twice as wide east–west; 2026-11-15 the whole map
+     doubled again, so a stroll can reach the foot of the mountains
+     and turn back — the ground runs on toward the horizon, with
+     room held in reserve outside for shops that may come later.
+     The north edge still stops just before the gate steps. */
+  p.x = Math.max(-68, Math.min(68, p.x));
+  p.z = Math.max(-12.2, Math.min(60, p.z));
   /* keep the destination itself on the shore, never in the pond,
      and never inside a tree, lantern, or bench */
   return gResolveCollisions(p);
@@ -2630,8 +2679,8 @@ function gSegCrossesPond(ax, az, bx, bz){
    the shorter way round, and leaves it at the point nearest its
    destination: a proper walk around the lake, never across it. */
 var G_CHAIN = [
-  [-15.8, -8.2], [-11, -7.7], [-6.4, -6.6], [-2.2, -2.8],
-  [-3.3, 2.1], [-5.6, 5.2], [-11, 6.1], [-15.8, 5.6]
+  [-17.1, -9.5], [-11.4, -8.9], [-6.0, -7.6], [-1.0, -3.1],
+  [-2.3, 2.7], [-5.0, 6.3], [-11.4, 7.4], [-17.1, 6.8]
 ];
 var gFinalTarget = null, gWaypoints = [], gFinalYaw = null;
 function gNearestChain(x, z){
@@ -2933,23 +2982,25 @@ function makeKoi(bodyColor, patchColor){
 }
 function spawnKoi(pond){
   var defs = [
-    { c: 0xe8762a, p: 0,        rx: 5.2, rz: 3.0, sp: .11,  ph: .4 },
-    { c: 0xf5f0e6, p: 0xd23c22, rx: 4.1, rz: 2.3, sp: .14,  ph: 2.4 },
-    { c: 0xf0b93e, p: 0,        rx: 3.2, rz: 1.8, sp: .17,  ph: 4.2 },
-    { c: 0xd23c22, p: 0xf5f0e6, rx: 5.7, rz: 3.3, sp: .085, ph: 5.5 },
-    { c: 0xf2d8d0, p: 0xe8762a, rx: 4.6, rz: 2.6, sp: .125, ph: 1.3 }
+    { c: 0xe8762a, p: 0,        rx: 6.1, rz: 3.5, sp: .11,  ph: .4 },
+    { c: 0xf5f0e6, p: 0xd23c22, rx: 4.8, rz: 2.7, sp: .14,  ph: 2.4 },
+    { c: 0xf0b93e, p: 0,        rx: 3.8, rz: 2.1, sp: .17,  ph: 4.2 },
+    { c: 0xd23c22, p: 0xf5f0e6, rx: 6.7, rz: 3.9, sp: .085, ph: 5.5 },
+    { c: 0xf2d8d0, p: 0xe8762a, rx: 5.4, rz: 3.1, sp: .125, ph: 1.3 }
   ];
   defs.forEach(function(d, i){
     var k = makeKoi(d.c, d.p || null);
     var ring = new THREE.Mesh(new THREE.TorusGeometry(.5, .013, 6, 36),
       new THREE.MeshBasicMaterial({ color: 0xeaf5ee, transparent: true, opacity: .25 }));
     ring.rotation.x = Math.PI / 2; ring.position.y = .065; pond.add(ring);
-    gKoi.push({ obj: k, inner: k.userData.inner, tail: k.userData.tail, ring: ring,
+    gKoi.push({ vis: true, obj: k, inner: k.userData.inner, tail: k.userData.tail, ring: ring,
       rx: d.rx, rz: d.rz, sp: d.sp * (i % 2 ? -1 : 1), ph: d.ph, wag: 5 + i * .7 });
   });
 }
 function updateKoi(){
   gKoi.forEach(function(k){
+    if (!k.vis){ k.obj.visible = false; k.ring.visible = false; return; }
+    k.obj.visible = true; k.ring.visible = true;
     var a = k.ph + gPondT * k.sp;
     var x = POND.x + Math.cos(a) * k.rx, z = POND.z + Math.sin(a) * k.rz;
     /* heading from the path's own tangent, so the fish always
@@ -2990,13 +3041,13 @@ function makeDragonfly(color){
 }
 function spawnDragonflies(){
   var defs = [
-    { c: 0x3e7dc4, cx: -13.4, cz: -2.0, rx: 2.0, rz: 1.2, h: 1.05, sp: .5,  ph: 0 },
-    { c: 0x59a83e, cx: -9.2,  cz: -.4,  rx: 1.6, rz: 1.5, h: .8,  sp: .62, ph: 2.6 },
-    { c: 0xc44a3e, cx: -11.6, cz: .6,   rx: 2.4, rz: .9,  h: 1.3, sp: .42, ph: 4.7 }
+    { c: 0x3e7dc4, cx: -14.2, cz: -2.2, rx: 2.4, rz: 1.4, h: 1.05, sp: .5,  ph: 0 },
+    { c: 0x59a83e, cx: -9.3,  cz: -.3,  rx: 1.9, rz: 1.8, h: .8,  sp: .62, ph: 2.6 },
+    { c: 0xc44a3e, cx: -12.1, cz: .9,   rx: 2.8, rz: 1.1,  h: 1.3, sp: .42, ph: 4.7 }
   ];
   defs.forEach(function(d){
     var obj = makeDragonfly(d.c);
-    gDragonflies.push({ obj: obj, wings: obj.userData.wings, cx: d.cx, cz: d.cz,
+    gDragonflies.push({ vis: true, obj: obj, wings: obj.userData.wings, cx: d.cx, cz: d.cz,
       rx: d.rx, rz: d.rz, h: d.h, sp: d.sp, ph: d.ph, px: d.cx, pz: d.cz });
   });
 }
@@ -3009,6 +3060,8 @@ function dflyPos(d, tt, out){
 var _dfA = { x: 0, y: 0, z: 0 }, _dfB = { x: 0, y: 0, z: 0 };
 function updateDragonflies(){
   gDragonflies.forEach(function(d){
+    if (!d.vis){ d.obj.visible = false; return; }
+    d.obj.visible = true;
     dflyPos(d, gPondT, _dfA); dflyPos(d, gPondT + .05, _dfB);
     d.obj.position.set(_dfA.x, _dfA.y, _dfA.z);
     var vx = _dfB.x - _dfA.x, vz = _dfB.z - _dfA.z;
@@ -3039,7 +3092,7 @@ function buildGarden(){
   skyGr.addColorStop(.78, '#cdeefb'); skyGr.addColorStop(1, '#fdf3d8');
   skyCx.fillStyle = skyGr; skyCx.fillRect(0, 0, 4, 512);
   scene.background = new THREE.CanvasTexture(skyCv);
-  scene.fog = new THREE.Fog(0xd6eef8, 55, 190);
+  scene.fog = new THREE.Fog(0xd6eef8, 70, 200);
   scene.add(new THREE.AmbientLight(0xfff6e0, .95));
   var hemi = new THREE.HemisphereLight(0xbfe3ff, 0x7a9a5e, .6); scene.add(hemi);
   var sun = new THREE.DirectionalLight(0xffdf9e, 1.3); sun.position.set(-10, 18, 7); scene.add(sun);
@@ -3079,23 +3132,29 @@ function buildGarden(){
      held by mountains rather than boxed in. Pushed much further
      out when the grounds were enlarged, with two more ridges
      behind the visitor's side, so turning right round still
-     meets hills, never a void */
-  makeMountain(-44, -72, 26, 21, 0x8ab5a0); makeMountain(-12, -78, 32, 26, 0x7aa98f);
-  makeMountain(22, -74, 27, 22, 0x8ab5a0); makeMountain(52, -68, 23, 17, 0x96bda9);
-  makeMountain(-62, -48, 20, 16, 0x96bda9); makeMountain(64, -46, 20, 15, 0xa4c6ae);
-  makeMountain(-50, 64, 24, 18, 0x96bda9); makeMountain(48, 62, 22, 16, 0xa4c6ae);
+     meets hills, never a void. Raised taller and grander
+     2026-11-15; the southern pair stand further out so their feet
+     lie just past the doubled walkable edge, and one great ridge
+     stands due south for the visitor to walk toward. */
+  makeMountain(-44, -72, 33, 32, 0x8ab5a0); makeMountain(-12, -78, 40, 39, 0x7aa98f);
+  makeMountain(22, -74, 34, 33, 0x8ab5a0); makeMountain(52, -68, 29, 26, 0x96bda9);
+  makeMountain(-62, -48, 25, 24, 0x96bda9); makeMountain(64, -46, 25, 23, 0xa4c6ae);
+  makeMountain(-50, 78, 30, 27, 0x96bda9); makeMountain(48, 76, 28, 24, 0xa4c6ae);
+  makeMountain(0, 84, 36, 34, 0x7aa98f);
   var mist = new THREE.Mesh(new THREE.PlaneGeometry(180, 9),
     new THREE.MeshBasicMaterial({ color: 0xf4faf2, transparent: true, opacity: .16, depthWrite: false }));
   mist.position.set(0, 4.6, -58); scene.add(mist);
 
-  /* open meadow — nearly twice the old width and half as deep
-     again, so the grounds read as temple grounds, not a yard */
-  var ground = new THREE.Mesh(new THREE.PlaneGeometry(175, 145), mat(0x69a34b, 1));
+  /* open meadow — doubled again 2026-11-15, so the grounds read as
+     temple grounds with room to walk to the mountain foot, not a yard */
+  var ground = new THREE.Mesh(new THREE.PlaneGeometry(230, 200), mat(0x69a34b, 1));
   ground.rotation.x = -Math.PI / 2; ground.position.set(0, -.02, -12); scene.add(ground);
   gGroundHits.push(ground);
   [[-6, 8, 7, 0x74b356], [9, -4, 6, 0x5f9c42], [-2, -8, 8, 0x6cab4e], [13, 9, 5, 0x74b356],
    [24, 17, 8, 0x6cab4e], [-25, 20, 9, 0x5f9c42], [28, -14, 7, 0x74b356], [-29, -5, 8, 0x6cab4e],
-   [2, 27, 9, 0x5f9c42], [-17, -17, 7, 0x74b356], [19, -20, 8, 0x5f9c42]].forEach(function(p){
+   [2, 27, 9, 0x5f9c42], [-17, -17, 7, 0x74b356], [19, -20, 8, 0x5f9c42],
+   [40, 35, 8, 0x74b356], [-42, 40, 9, 0x5f9c42], [50, -8, 7, 0x6cab4e], [-48, -18, 8, 0x74b356],
+   [55, 25, 7, 0x5f9c42], [-55, 30, 8, 0x6cab4e], [35, 50, 9, 0x74b356], [-35, 48, 8, 0x5f9c42]].forEach(function(p){
     var patch = new THREE.Mesh(new THREE.CircleGeometry(p[2], 22), mat(p[3], 1));
     patch.rotation.x = -Math.PI / 2; patch.position.set(p[0], -.005, p[1]); scene.add(patch);
   });
@@ -3121,25 +3180,25 @@ function buildGarden(){
   /* lotus pond, west side — still water, stone rim, lily pads,
      lotus in bloom, a low wooden footbridge at its near corner */
   var pond = new THREE.Group(); scene.add(pond);
-  var water = new THREE.Mesh(new THREE.CircleGeometry(7, 36),
+  var water = new THREE.Mesh(new THREE.CircleGeometry(8.3, 36),
     new THREE.MeshStandardMaterial({ color: 0x63b7d9, roughness: .22, metalness: .12, transparent: true, opacity: .94 }));
-  water.rotation.x = -Math.PI / 2; water.scale.set(1.08, .68, 1); water.position.set(-11, .02, -1); pond.add(water);
-  var deep = new THREE.Mesh(new THREE.CircleGeometry(4.6, 30),
+  water.rotation.x = -Math.PI / 2; water.scale.set(1.08, .68, 1); water.position.set(-11.4, .02, -1); pond.add(water);
+  var deep = new THREE.Mesh(new THREE.CircleGeometry(5.4, 30),
     new THREE.MeshStandardMaterial({ color: 0x3f97c4, roughness: .3, transparent: true, opacity: .8 }));
-  deep.rotation.x = -Math.PI / 2; deep.scale.set(1.05, .65, 1); deep.position.set(-11.4, .035, -1.2); pond.add(deep);
+  deep.rotation.x = -Math.PI / 2; deep.scale.set(1.05, .65, 1); deep.position.set(-11.8, .035, -1.2); pond.add(deep);
   for (var r = 0; r < 22; r++){
     var ang = (r / 22) * Math.PI * 2;
-    gStone(-11 + Math.cos(ang) * 7.7, .04, -1 + Math.sin(ang) * 5.05, .3 + Math.random() * .3, pond);
+    gStone(-11.4 + Math.cos(ang) * 9.1, .04, -1 + Math.sin(ang) * 5.96, .3 + Math.random() * .3, pond);
   }
   /* lotus leaves in clusters, not a scattering: broad notched
      pads in two greens, a few small round ones between them, all
      resting on the water and kept (in gPads) so the pond loop can
      let them bob almost imperceptibly */
   var padGreens = [0x4f9e46, 0x3f8f3e, 0x5cab52];
-  [[-15.8, -2.4, .55], [-14.9, -.9, .4], [-13.6, -3.1, .62], [-12.4, -1.2, .38],
-   [-10.8, -3.6, .5], [-9.3, -2.1, .44], [-8.1, .9, .52], [-9.8, .4, .36],
-   [-12.9, .8, .48], [-14.2, 1.6, .4], [-16.3, .3, .46], [-7.2, -3, .38],
-   [-11.5, -2.2, .3], [-13.5, -2.6, .45], [-10, -2, .34]].forEach(function(p, pi){
+  [[-17.1, -2.7, .65], [-16.0, -.9, .47], [-14.5, -3.5, .73], [-13.1, -1.2, .45],
+   [-11.2, -4.1, .59], [-9.4, -2.3, .52], [-8.0, 1.2, .61], [-10.0, .7, .42],
+   [-13.6, 1.1, .57], [-15.2, 2.1, .47], [-17.7, .5, .54], [-6.9, -3.4, .45],
+   [-12.0, -2.4, .35], [-14.4, -2.9, .53], [-10.2, -2.2, .4]].forEach(function(p, pi){
     var notched = pi % 3 !== 2;
     var geo = notched ? new THREE.CircleGeometry(p[2], 14, .5, Math.PI * 2 - .9)
                       : new THREE.CircleGeometry(p[2], 14);
@@ -3157,10 +3216,10 @@ function buildGarden(){
   });
   /* lotus in bloom across the pond, buds still closed beside
      them, and small white and gold water flowers drifting free */
-  makeLotus(-13.2, .02, -1.8, .85, pond); makeLotus(-9.4, .02, -2.9, .7, pond); makeLotus(-11.8, .02, .9, .62, pond);
-  makeLotus(-15.6, .02, -1.7, .6, pond); makeLotus(-8.7, .02, -.7, .55, pond); makeLotus(-12.6, .02, -3.9, .5, pond);
-  makeLotusBud(-14.6, -3.3, .9, pond); makeLotusBud(-10.2, 1.3, .8, pond); makeLotusBud(-8.3, -1.9, .7, pond);
-  [[-12, -1.9, 0xfdf3f8], [-9.9, -3.1, 0xffd94d], [-14.8, .9, 0xfdf3f8], [-11.2, .2, 0xffe9a8]].forEach(function(f){
+  makeLotus(-14.0, .02, -1.9, 1.0, pond); makeLotus(-9.5, .02, -3.2, .83, pond); makeLotus(-12.3, .02, 1.2, .73, pond);
+  makeLotus(-16.8, .02, -1.8, .71, pond); makeLotus(-8.7, .02, -.7, .65, pond); makeLotus(-13.3, .02, -4.4, .59, pond);
+  makeLotusBud(-15.7, -3.7, 1.06, pond); makeLotusBud(-10.5, 1.7, .94, pond); makeLotusBud(-8.2, -2.1, .83, pond);
+  [[-12.6, -2.1, 0xfdf3f8], [-10.1, -3.5, 0xffd94d], [-15.9, 1.2, 0xfdf3f8], [-11.6, .4, 0xffe9a8]].forEach(function(f){
     var fg = new THREE.Group();
     for (var fp2 = 0; fp2 < 5; fp2++){
       var fa = fp2 / 5 * Math.PI * 2;
@@ -3173,23 +3232,25 @@ function buildGarden(){
     fg.position.set(f[0], .06, f[1]); pond.add(fg);
     gPads.push({ obj: fg, baseY: .06, ph: f[0] * 1.7 });
   });
-  /* the pond's residents: koi at the surface, dragonflies above */
+  /* the pond's residents: koi at the surface, dragonflies above —
+     which ones show is rolled at random, never all at once (2026-11-15) */
   spawnKoi(pond);
   spawnDragonflies();
+  rollPondLife();
   for (var rp = 0; rp < 3; rp++){
     var ring = new THREE.Mesh(new THREE.TorusGeometry(.5, .014, 6, 40),
       new THREE.MeshBasicMaterial({ color: 0xeaf5ee, transparent: true, opacity: .3 }));
-    ring.rotation.x = Math.PI / 2; ring.position.set(-13 + rp * 2.1, .06, -2.6 + rp * 1.4);
+    ring.rotation.x = Math.PI / 2; ring.position.set(-13.8 + rp * 2.5, .06, -2.9 + rp * 1.65);
     pond.add(ring); gRipples.push({ ring: ring, off: rp * .37 });
   }
   for (var bp = 0; bp < 5; bp++){
-    var plank = box(1.5, .07, .44, 0x77603f, -4.6 + bp * .1, .16 + Math.sin(bp / 4 * Math.PI) * .22, 1.9 - bp * .46, pond);
+    var plank = box(1.5, .07, .44, 0x77603f, -3.85 + bp * .12, .16 + Math.sin(bp / 4 * Math.PI) * .22, 2.42 - bp * .54, pond);
     plank.rotation.y = .42;
   }
-  box(1.7, .1, .3, 0x6b543a, -3.9, .1, 3.1, pond); box(1.7, .1, .3, 0x6b543a, -5.1, .1, .6, pond);
+  box(1.7, .1, .3, 0x6b543a, -3.0, .1, 3.8, pond); box(1.7, .1, .3, 0x6b543a, -4.4, .1, .9, pond);
   /* pond mist — a low drift of soft points above the water */
   var mN = 40, mPos = new Float32Array(mN * 3);
-  for (var mi = 0; mi < mN; mi++){ mPos[mi * 3] = -11 + (Math.random() - .5) * 11; mPos[mi * 3 + 1] = .25 + Math.random() * .5; mPos[mi * 3 + 2] = -1 + (Math.random() - .5) * 6; }
+  for (var mi = 0; mi < mN; mi++){ mPos[mi * 3] = -11.4 + (Math.random() - .5) * 13; mPos[mi * 3 + 1] = .25 + Math.random() * .5; mPos[mi * 3 + 2] = -1 + (Math.random() - .5) * 7.2; }
   var mGeo = new THREE.BufferGeometry(); mGeo.setAttribute('position', new THREE.BufferAttribute(mPos, 3));
   var mCv = document.createElement('canvas'); mCv.width = mCv.height = 64;
   var mCx = mCv.getContext('2d'), mGr = mCx.createRadialGradient(32, 32, 2, 32, 32, 30);
@@ -3201,11 +3262,11 @@ function buildGarden(){
   /* trees — pines in the Korean manner, a flowering tree or two,
      bamboo clumps to the east, and one old pine hung with a few
      quiet red wish-ribbons (a nod to home, kept subtle) */
-  makePine(-4.6, 9.5, 1.25); makePine(4.9, 10.5, 1.1); makePine(-5.6, 3.4, 1.4);
-  makePine(6.2, -3.4, 1.35); makePine(-5.2, -6.4, 1.2); makePine(5.4, -8.6, 1.45);
-  makePine(-7.8, 12.6, 1.15); makePine(9.8, 6.8, 1.05); makePine(-16.5, 4.6, 1.3);
-  makePine(14.5, -1.5, 1.25); makeTree(-3.9, -2.8, 1.0, true); makeTree(4.1, .8, .95, true);
-  makeTree(11.5, 11.8, 1.15); makeTree(-14.8, 9.8, 1.05); makeTree(15.5, -7.5, 1.1);
+  makePine(-4.6, 9.5, 1.25); makePine(4.9, 10.5, 1.1); makePine(-5.6, 3.4, 1.7);
+  makePine(6.2, -3.4, 1.35); makePine(-5.2, -6.4, 1.2); makePine(5.4, -8.6, 1.75);
+  makePine(-7.8, 12.6, 1.15); makePine(9.8, 6.8, 1.05); makePine(-16.5, 4.6, 1.6);
+  makePine(14.5, -1.5, 1.55); makeTree(-8.0, 7.5, 1.0, true); makeTree(4.1, .8, .95, true);
+  makeTree(11.5, 11.8, 1.45); makeTree(-14.8, 9.8, 1.35); makeTree(15.5, -7.5, 1.4);
   var oldPine = makePine(7.6, 1.6, 1.8);
   for (var rb = 0; rb < 7; rb++){
     var rib = box(.05, .42, .012, 0xa52a1e, 7.6 + (Math.random() - .5) * 1.7, 3.3 + Math.random() * .3, 1.6 + (Math.random() - .5) * .9);
@@ -3219,7 +3280,7 @@ function buildGarden(){
   }
   /* flower beds along the path — the scent half of 鳥語花香 */
   makeFlowerBed(pathX(8.6) - 1.9, 8.6, 12); makeFlowerBed(pathX(6.2) + 2.0, 6.2, 12);
-  makeFlowerBed(pathX(-1.5) + 2.1, -1.5, 10); makeFlowerBed(-4.4, 3.6, 10); makeFlowerBed(4.9, -5.6, 10);
+  makeFlowerBed(pathX(-1.5) + 2.1, -1.5, 10); makeFlowerBed(-2.8, 4.2, 10); makeFlowerBed(4.9, -5.6, 10);
   makeFlowerBed(-14, 16, 10); makeFlowerBed(15, 18, 10); makeFlowerBed(-20, -2, 10); makeFlowerBed(21, 2, 10);
 
   /* the outer planting — a second, looser ring of pines and
@@ -3229,10 +3290,16 @@ function buildGarden(){
      trees, then ridges, instead of one row of trees at the
      fence. The walkable ones are in G_OBSTACLES, so nobody
      strolls through a trunk out there either */
-  makePine(-24, 18, 1.5); makePine(22, 20, 1.4); makeTree(-28, 6, 1.3, false);
-  makeTree(27, 12, 1.35, true); makePine(30, -12, 1.5); makePine(-27, -14, 1.45);
-  makeTree(18, 26, 1.3, false); makeTree(-16, 27, 1.25, true);
-  makePine(12, -19, 1.35); makePine(-13, -20, 1.4);
+  makePine(-24, 18, 1.85); makePine(22, 20, 1.7); makeTree(-28, 6, 1.6, false);
+  makeTree(27, 12, 1.65, true); makePine(30, -12, 1.85); makePine(-27, -14, 1.7);
+  makeTree(18, 26, 1.6, false); makeTree(-16, 27, 1.55, true);
+  makePine(12, -19, 1.65); makePine(-13, -20, 1.7);
+  /* a third, looser ring further out still (2026-11-15, map doubled):
+     far trees for the far meadow, so the doubled grounds keep their
+     depth — near trees, far trees, then ridges */
+  makePine(-46, 38, 1.6); makePine(44, 42, 1.55); makeTree(-52, 10, 1.5, false);
+  makeTree(50, 22, 1.55, true); makePine(58, -20, 1.6); makePine(-56, -28, 1.5);
+  makeTree(36, 52, 1.5, false); makeTree(-34, 54, 1.45, true);
 
   /* stone lanterns guide the eye to the gate — from the verges,
      never from the walkway. They stand a good three paces off the
@@ -3248,9 +3315,9 @@ function buildGarden(){
   [[5.2, 1], [-.6, -1], [-5.8, 1], [-10.6, -1], [11.4, -1], [16.8, 1]].forEach(function(lp){
     makeStoneLantern(pathX(lp[0]) + lp[1] * 3.1, lp[0]);
   });
-  makeStoneLantern(-3.0, -2.4); makeStoneLantern(8.2, 5.4);
+  makeStoneLantern(-0.5, -2.4); makeStoneLantern(8.2, 5.4);
   /* stone benches: one facing the pond, one under the old pine */
-  box(1.7, .16, .5, 0x8f9089, -4.2, .42, .4); box(.3, .36, .44, 0x7c7d76, -4.8, .18, .4); box(.3, .36, .44, 0x7c7d76, -3.6, .18, .4);
+  box(1.7, .16, .5, 0x8f9089, -1.4, .42, .4); box(.3, .36, .44, 0x7c7d76, -2.0, .18, .4); box(.3, .36, .44, 0x7c7d76, -0.8, .18, .4);
   box(1.7, .16, .5, 0x8f9089, 5.6, .42, 3.6); box(.3, .36, .44, 0x7c7d76, 5.0, .18, 3.6); box(.3, .36, .44, 0x7c7d76, 6.2, .18, 3.6);
 
   /* the gate (山門) — a standalone building in its own right, set
@@ -3306,23 +3373,29 @@ function buildGarden(){
   /* low stone wall running off either side of the gate */
   box(7.5, .8, .4, 0xa3a294, pathX(-12.6) - 6.1, .4, -13.8); box(7.5, .8, .4, 0xa3a294, pathX(-12.6) + 6.1, .4, -13.8);
   /* mid-ground trees between gate and temple — a living layer that
-     deepens the space and keeps the two buildings visually apart */
-  makePine(0.5, -26, 1.5); makePine(-4.8, -28, 1.7); makeTree(11.5, -27, 1.35); makePine(-12, -25, 1.4); makeTree(17, -30, 1.3);
+     deepens the space and keeps the two buildings visually apart.
+     Moved deeper with the temple (2026-11-15), so the gap between
+     gate and hall reads as a real walk, not a step. */
+  makePine(0.5, -33, 1.85); makePine(-4.8, -35, 2.0); makeTree(11.5, -34, 1.35); makePine(-12, -32, 1.7); makeTree(17, -37, 1.3);
   /* the temple itself — pushed far deeper into the grounds and
      shifted well off the gate's axis, raised on its own two-tier
      stone terrace with steps of its own, so from the path it reads
      as a separate, distant hall glimpsed beyond the gate, never as
-     part of the gate */
-  box(17, .55, 10.5, 0xa8a294, 5.5, .28, -35); box(15, .55, 9.0, 0x9d9c8e, 5.5, .83, -35);
-  for (var st2 = 0; st2 < 3; st2++) box(3.4 - st2 * .4, .16, .7, 0xa3a294, 5.5, .08 + st2 * .16, -29.6 - st2 * .45);
-  var temple = new THREE.Group(); temple.position.set(5.5, 1.1, -35); scene.add(temple); gGateHits.push(temple);
+     part of the gate. Pushed further back still 2026-11-15
+     (z -35 → -46), so gate and hall stand well apart and the
+     grounds gain real front-to-back depth. */
+  box(17, .55, 10.5, 0xa8a294, 5.5, .28, -46); box(15, .55, 9.0, 0x9d9c8e, 5.5, .83, -46);
+  for (var st2 = 0; st2 < 3; st2++) box(3.4 - st2 * .4, .16, .7, 0xa3a294, 5.5, .08 + st2 * .16, -40.6 - st2 * .45);
+  var temple = new THREE.Group(); temple.position.set(5.5, 1.1, -46); scene.add(temple); gGateHits.push(temple);
   box(13.5, 1.0, 7.2, 0xa8a294, 0, .5, 0, temple);
   box(10.5, 3.4, 5.4, 0xe6dcc2, 0, 2.7, 0, temple);
   [-4.3, -1.45, 1.45, 4.3].forEach(function(px){ cyl(.15, .17, 3.4, 0x8c2b1d, px, 2.7, 2.7, temple, 10); });
   var troof = new THREE.Mesh(new THREE.ConeGeometry(8.0, 3.0, 4), mat(0x556270, .95));
   troof.rotation.y = Math.PI / 4; troof.scale.set(1.3, 1, .68); troof.position.y = 5.9; temple.add(troof);
   box(4.4, .14, .2, 0x646a71, 0, 7.3, 0, temple);
-  var tSignTxt = LANG === 'en' ? 'TEMPLE' : (LANG === 'sc' ? '庙宇' : '廟宇');
+  /* the temple plaque stays Chinese in every language (2026-11-15):
+     it is part of the temple building, and TEMPLE overflows its frame */
+  var tSignTxt = LANG === 'sc' ? '庙宇' : '廟宇';
   var tPlaque = calligraphyPanel(tSignTxt, 2.9, .84, false, '#2e2119');
   tPlaque.position.set(0, 4.0, 2.74); temple.add(tPlaque);
 
@@ -3386,7 +3459,7 @@ function renderGardenActions(){
     gPendingEnter = next === -11.6;
     gGoTo(pathX(next), next, Math.PI); toast(t('toastStroll'));
   });
-  btn('🪷', t('gLake'), function(){ gPendingEnter = false; gGoTo(-4.6, 1.2, Math.atan2(-11 - -4.6, -1 - 1.2)); toast(t('toastLake')); });
+  btn('🪷', t('gLake'), function(){ gPendingEnter = false; gGoTo(-1.4, 1.2, Math.atan2(-11.4 - -1.4, -1 - 1.2)); toast(t('toastLake')); });
   btn('🌲', t('gTree'), function(){ gPendingEnter = false; gGoTo(4.7, 4.3, Math.atan2(7.6 - 4.7, 1.6 - 4.3)); toast(t('toastTree')); });
   gTempleBtn = btn('⛩️', t('gTemple'), function(){
     /* one tap, straight in — no stroll to the gate needed */
@@ -3422,6 +3495,7 @@ function enterGarden(keepSpot){
   gTime = 0; gAtGate = false; gGateToastShown = false; gPendingEnter = false;
   gNextBirdAt = REDUCED_MOTION ? 1e9 : 9 + Math.random() * 9;
   gNextSquirrelAt = REDUCED_MOTION ? 1e9 : 15 + Math.random() * 14;
+  gNextPondRollAt = REDUCED_MOTION ? 1e9 : 45 + Math.random() * 45;
   buildGarden();
   renderGardenActions(); syncNatureBtn();
   gActive = true;
@@ -3596,6 +3670,9 @@ function enterGarden(keepSpot){
        rest, the pads stop bobbing */
     gPondT += REDUCED_MOTION ? 0 : gDt;
     updateKoi(); updateDragonflies();
+    /* pond life turns over every minute or so — a different few
+       each time, so the pond never shows the same crowd twice */
+    if (!REDUCED_MOTION && gTime > gNextPondRollAt){ rollPondLife(); gNextPondRollAt = gTime + 45 + Math.random() * 45; }
     gPads.forEach(function(pd){
       pd.obj.position.y = pd.baseY + Math.sin(gPondT * .8 + pd.ph) * .008;
     });
@@ -3617,13 +3694,21 @@ function renderActions(){
   btn('🪔', t('actIncense'), function(){
     ensureAudio();
     if (incenseBusy) return;
+    /* three sticks per visit, no more (2026-11-15): the count
+       resets every time you leave the hall and come back. The
+       limit is never announced in advance — only on the third
+       (last) offering is it gently mentioned. */
+    if (incenseOffered >= 3){ toast(t('toastIncenseLimit')); return; }
+    incenseOffered++;
+    var third = incenseOffered === 3;
+    function incenseToast(){ toast(third ? t('toastIncenseLimit') : t('toastIncense')); }
     /* in the middle of another walk, the offering is made from
-       where you stand — the sticks still appear in the burner */
-    if (visitorWalk || !visitorFigure){ addIncenseSticks(3); smokeBoost = 1; playBell(0.08); toast(t('toastIncense')); return; }
+       where you stand — the stick still appears in the burner */
+    if (visitorWalk || !visitorFigure){ addIncenseSticks(1); lightHallSmoke(); smokeBoost = 1; playBell(0.08); incenseToast(); return; }
     /* the full offering, the way it is done in a real hall: you
        rise, walk the aisle to the great burner before the altar,
-       bow, and place the incense stick by stick while the smoke
-       thickens — then walk back to your cushion or standing place.
+       bow, and place one incense stick while the smoke rises —
+       then walk back to your cushion or standing place.
        The camera follows you the whole way. */
     incenseBusy = true;
     var prevSeat = seatedIdx;
@@ -3633,8 +3718,7 @@ function renderActions(){
       visitorStandAt = { x: 0, z: -5.4 };
       bowDur = 1.5; bowPower = .5; bowAnim = 1.5; playBell(0.08);
       setTimeout(function(){ addIncenseSticks(1); }, 650);
-      setTimeout(function(){ addIncenseSticks(1); }, 1000);
-      setTimeout(function(){ addIncenseSticks(1); smokeBoost = 1; toast(t('toastIncense')); }, 1350);
+      setTimeout(function(){ lightHallSmoke(); smokeBoost = 1; incenseToast(); }, 1350);
       setTimeout(function(){
         if (prevSeat != null && SEATS[prevSeat]) sitSeat(prevSeat);
         else { visitorStandAt = { x: 0, z: STAND_Z }; startWalkTo(0, STAND_Z, null); }
@@ -3760,7 +3844,10 @@ document.getElementById('back-entry').addEventListener('click', function(){ ente
 document.getElementById('leave-garden').addEventListener('click', function(){ disposeGarden(); showView('view-entry'); });
 document.getElementById('nature-toggle').addEventListener('click', function(){ ensureAudio(); setNature(!natureOn); });
 document.getElementById('back-select').addEventListener('click', function(){ showView('view-select'); });
-document.getElementById('leave-hall').addEventListener('click', function(){ disposeScene(); currentHall = null; showView('view-select'); syncChant(); });
+/* leaving the hall goes straight back to the courtyard (2026-11-15):
+   the hall-selection page belonged to the days of several halls —
+   the public launch has only Wong Tai Sin */
+document.getElementById('leave-hall').addEventListener('click', function(){ disposeScene(); currentHall = null; enterGarden(); syncChant(); });
 document.querySelectorAll('.lang-opt').forEach(function(b){
   b.addEventListener('click', function(){
     var nl = b.getAttribute('data-lang');
