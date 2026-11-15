@@ -433,7 +433,7 @@
         <p class="f-verse" id="f-verse"></p>
       </div>
       <p class="fortune-note" id="f-note"></p>
-      <p class="fortune-note" data-i18n="fortuneSource">來源：黃大仙靈籤通行本（嗇色園黃大仙祠一百靈籤）。Demo 只收錄經多個公開籤譜來源交叉核實嘅 16 支籤文，未核實嘅唔會放入，以免誤傳。籤文屬民俗文化參考，並非命運判決；重要決定請以現實判斷為準。</p>
+      <p class="fortune-note" data-i18n="fortuneSource">來源：黃大仙靈籤（嗇色園黃大仙祠一百靈籤），籤文、解曰及詳情按嗇色園官方籤文核對。現已收錄 28 支。籤文屬民俗文化參考，並非命運判決；重要決定請以現實判斷為準。</p>
       <div class="close-row" style="gap:10px;">
         <button class="btn ghost" id="shake-again" data-i18n="shakeAgain">再求一支</button>
         <button class="btn" data-close="fortune-overlay" data-i18n="receive">收下籤文</button>
@@ -520,7 +520,7 @@ var I18N = {
     soonBody:'呢間殿仲喺籌備之中，工匠正在雕琢神壇。開放日期一到，會喺廟門公佈。感恩善信耐心等候。',
     fortuneTitle:'求 籤', fortuneSub:'心誠則靈。請喺心入面默念所問之事，再撳「搖籤」。',
     fortuneResultTitle:'你求到嘅籤', fortuneResultSub:'籤文錄自黃大仙靈籤通行本，請靜心細讀。',
-    fortuneSource:'來源：黃大仙靈籤通行本（嗇色園黃大仙祠一百靈籤）。Demo 只收錄經多個公開籤譜來源交叉核實嘅 16 支籤文，未核實嘅唔會放入，以免誤傳。籤文屬民俗文化參考，並非命運判決；重要決定請以現實判斷為準。',
+    fortuneSource:'來源：黃大仙靈籤（嗇色園黃大仙祠一百靈籤），籤文、解曰及詳情按嗇色園官方籤文核對。現已收錄 28 支。籤文屬民俗文化參考，並非命運判決；重要決定請以現實判斷為準。',
     cancel:'取消', shakeBtn:'搖 籤', shakeAgain:'再求一支', receive:'收下籤文', closeSheet:'合十離開',
     beadsTitle:'撥 念 珠', beadsSub:'一珠一念，心無雜念。撳下面按鈕逐粒撥，數滿 108 粒為一遍。',
     beadStart:'靜心，開始第一粒。', beadReset:'重新數', beadNext:'撥一粒',
@@ -580,7 +580,7 @@ var I18N = {
     soonBody:'这间殿还在筹备之中，工匠正在雕琢神坛。开放日期一到，会在庙门公布。感恩善信耐心等候。',
     fortuneTitle:'求 签', fortuneSub:'心诚则灵。请在心里默念所问之事，再点「摇签」。',
     fortuneResultTitle:'你求到的签', fortuneResultSub:'签文录自黄大仙灵签通行本，请静心细读。',
-    fortuneSource:'来源：黄大仙灵签通行本（啬色园黄大仙祠一百灵签）。Demo 只收录经多个公开签谱来源交叉核实的 16 支签文，未核实的不会放入，以免误传。签文属民俗文化参考，并非命运判决；重要决定请以现实判断为准。',
+    fortuneSource:'来源：黄大仙灵签（啬色园黄大仙祠一百灵签），签文、解曰及详情按啬色园官方签文核对。现已收录 28 支。签文属民俗文化参考，并非命运判决；重要决定请以现实判断为准。',
     cancel:'取消', shakeBtn:'摇 签', shakeAgain:'再求一支', receive:'收下签文', closeSheet:'合十离开',
     beadsTitle:'拨 念 珠', beadsSub:'一珠一念，心无杂念。点下面按钮逐粒拨，数满 108 粒为一遍。',
     beadStart:'静心，开始第一粒。', beadReset:'重新数', beadNext:'拨一粒',
@@ -640,7 +640,7 @@ var I18N = {
     soonBody:"This hall is still in preparation — the craftsmen are carving the altar. When it opens, we'll announce it at the temple gate. Thank you for waiting.",
     fortuneTitle:'Draw a Fortune Stick', fortuneSub:'Sincerity brings the spirit near. Hold your question quietly in your heart, then tap "Shake".',
     fortuneResultTitle:'Your Fortune Stick', fortuneResultSub:'From the standard Wong Tai Sin fortune-stick book. Read it slowly, with a calm mind.',
-    fortuneSource:"Source: the standard Wong Tai Sin fortune-stick book (the 100 sticks of Sik Sik Yuen Wong Tai Sin Temple). This demo includes only 16 sticks, each cross-checked against several published sources; unverified sticks are left out to avoid passing on errors. Fortune sticks are a folk-culture reference, not a verdict on your fate — for important decisions, trust your own judgement.",
+    fortuneSource:"Source: the Wong Tai Sin fortune sticks (the 100 sticks of Sik Sik Yuen Wong Tai Sin Temple); the poems, interpretations and details are checked against the official Sik Sik Yuen stick texts. 28 sticks are included so far. Fortune sticks are a folk-culture reference, not a verdict on your fate — for important decisions, trust your own judgement.",
     cancel:'Cancel', shakeBtn:'Shake', shakeAgain:'Draw Again', receive:'Keep This Stick', closeSheet:'Done',
     beadsTitle:'Prayer Beads', beadsSub:'One bead, one thought, a mind free of clutter. Tap the button to count bead by bead — 108 beads make one full round.',
     beadStart:'Still your mind. Begin with the first bead.', beadReset:'Start Over', beadNext:'Next Bead',
@@ -743,12 +743,14 @@ var DEITIES = [
    back here. */
 var LAUNCH_DEITY_IDS = ['wts'];
 
-/* Verified Wong Tai Sin lots — cross-checked against multiple published
-   簽譜 sources (通行本). Only these 16 are included (Nos. 1–15 and 100);
-   unverified lots are deliberately omitted per the brief. Lots 6 and 14
-   carry variant titles in other editions; the notes flag the variant
-   and follow the 普濟壇 / main edition. Modern paraphrase notes are
-   editorial rewrites, not traditional text. */
+/* Wong Tai Sin lots — poems, interpretations (解曰) and details (詳情)
+   copied verbatim from the official Sik Sik Yuen TaoNet texts
+   (taonet.siksikyuen.org.hk/StickEnquiry/<n>/zh-TW); titles and
+   grades cross-checked against kaucim.ai. Original 16 lots (Nos.
+   1–15 and 100) were cross-checked against several published 簽譜
+   sources and keep their modern paraphrase notes; lots 16–27
+   carry the TaoNet 解曰 as their note and a `detail` field with
+   the 詳情. Currently 28 of 100 lots included. */
 var LOTS = [
   { no:1, level:{tc:'上上',sc:'上上',en:'Excellent'}, title:{tc:'姜公封相',sc:'姜公封相',en:'Jiang Ziya Receives His Title'},
     verse:{tc:'靈籤求得第一枝，龍虎風雲際會時。\n一旦凌霄揚自樂，任君來往赴瑤池。',
@@ -825,6 +827,78 @@ var LOTS = [
            sc:'仙槎一叶泛中流，月殿蟾宫任尔游。\n盈耳霓裳声渐歇，酒诗吟饮几时休。',
            en:'An immortal raft drifts on the mid-stream,\nfree to roam the Moon Palace and the Toad Court.\nThe rainbow-skirt music fades from the ear —\nwhen will the wine and poetry ever end?'},
     note:{tc:'籤意淺釋：遊月殿、聽霓裳，主難得嘅奇遇同眼界大開。所問之事有意想不到嘅際遇；但籤尾一句「幾時休」係輕輕提醒——再好嘅享受都要知節制，樂極勿忘形。',sc:'签意浅释：游月殿、听霓裳，主难得的奇遇和眼界大开。所问之事有意想不到的际遇；但签尾一句「几时休」是轻轻提醒——再好的享受都要知节制，乐极勿忘形。',en:'In brief: roaming the Moon Palace to celestial music — a rare encounter that opens your eyes. What you ask about holds an unexpected opportunity; but the closing line, "when will it ever end?", is a gentle warning — even the finest pleasure needs measure. Do not let joy carry you away.'} },
+  { no:16, level:{tc:'中吉',sc:'中吉',en:'Good'}, title:{tc:'牧童歸家',sc:'牧童归家',en:'The Shepherd Boy Returns Home'},
+    verse:{tc:'天邊鴉背夕陽回，隴外兒童跨犢來。\n羗笛頻吹聲切耳，短長腔調樂何哉。',
+           sc:'天边鸦背夕阳回，陇外儿童跨犊来。\n羗笛频吹声切耳，短长腔调乐何哉。',
+           en:'Crows against the sunset return home,\nbeyond the ridge a boy rides his calf in.\nThe reed flute sounds, again and again —\nshort notes, long notes, what joy in them.'},
+    note:{tc:'日落岡時候。天邊之鴉雀歸巢。塱上看牛童。又騎牛歸家。吹得竹笛之聲滿耳。此童子亦快樂矣。此籤有快樂之意。則凡事亦平穩無碍。不用憂心也。',sc:'日落冈时候。天边之鸦雀归巢。塱上看牛童。又骑牛归家。吹得竹笛之声满耳。此童子亦快乐矣。此签有快乐之意。则凡事亦平稳无碍。不用忧心也。',en:'At sunset the crows return to their nests; the cowherd boy rides his ox home, the bamboo flute sounding in his ears, and the boy is happy. This lot carries joy: all things will run smoothly and without trouble, so do not worry.'},
+    detail:{tc:'名與利 在晚成\n若看蚕 晚造勝\n婚可合 孕無驚\n問疾病 保安寧\n問行人 有歸程\n謀望者 合心情\n問風水 平穩無有碍\n問遺失 細查亦可得\n問自身 平安無病來\n問天時 晴和人意美\n問出行 歸結有可喜',sc:'名与利 在晚成\n若看蚕 晚造胜\n婚可合 孕无惊\n问疾病 保安宁\n问行人 有归程\n谋望者 合心情\n问风水 平稳无有碍\n问遗失 细查亦可得\n问自身 平安无病来\n问天时 晴和人意美\n问出行 归结有可喜',en:'Fame and fortune — late in coming\nSilkworms — the late crop does better\nMarriage — can be agreed; pregnancy — without alarm\nIllness — peace and safety\nThe traveller — has a road home\nPlans — turn out as hoped\nFeng shui — steady, no hindrance\nLost things — a careful search can find them\nYourself — peace, no illness comes\nThe weather — clear and fair, as people wish\nTravel — the outcome brings joy'} },
+  { no:17, level:{tc:'中平',sc:'中平',en:'Fair'}, title:{tc:'月光圓滿',sc:'月光圆满',en:'Moonlight in Full'},
+    verse:{tc:'秋水兼葭白露盈，盈庭月色浸階清。\n清風吹動馬鈴響，響接晨鐘不斷聲。',
+           sc:'秋水兼葭白露盈，盈庭月色浸阶清。\n清风吹动马铃响，响接晨钟不断声。',
+           en:'Autumn waters, reeds, and heavy white dew;\nmoonlight fills the courtyard, washing the steps clean.\nA clear wind sets the horse-bells ringing,\ntheir sound meeting the morning bell without end.'},
+    note:{tc:'秋天多露。月色滿階。風吹馬鈴。響接鐘聲。此景象無甚可歡喜。亦無防碍之處。凡事亦平穩而已。論籤則有吉而無凶。',sc:'秋天多露。月色满阶。风吹马铃。响接钟声。此景象无甚可欢喜。亦无防碍之处。凡事亦平稳而已。论签则有吉而无凶。',en:'In autumn the dew is heavy, moonlight fills the steps, wind moves the horse-bells and their sound meets the tolling bell. The scene brings neither great joy nor harm; all things are simply steady. This lot has good fortune and no ill.'},
+    detail:{tc:'名可望 財不大\n問六甲 求神助\n婚亦宜 病無害\n謀望者 謹慎可\n畜與蚕 亦無碍\n宅平安 行無阻\n問風水 平常無有碍\n問遺失 尋之恐難得\n問自身 修善愈平安\n問天時 平常便可喜\n問出行 無補亦無傷',sc:'名可望 财不大\n问六甲 求神助\n婚亦宜 病无害\n谋望者 谨慎可\n畜与蚕 亦无碍\n宅平安 行无阻\n问风水 平常无有碍\n问遗失 寻之恐难得\n问自身 修善愈平安\n问天时 平常便可喜\n问出行 无补亦无伤',en:'Fame — hopeful; wealth — not great\nPregnancy — seek the gods\' help\nMarriage — also fitting; illness — no harm\nPlans — caution will do\nLivestock and silkworms — no hindrance either\nHome — at peace; the traveller — unimpeded\nFeng shui — ordinary, no hindrance\nLost things — searching may not find them\nYourself — doing good brings more peace\nThe weather — ordinary can still be welcome\nTravel — no gain, but no harm either'} },
+  { no:18, level:{tc:'下下',sc:'下下',en:'Poor'}, title:{tc:'杜鵑',sc:'杜鹃',en:'The Cuckoo'},
+    verse:{tc:'杜鵑啼血淚悲聲，聲怨霜寒夢乍驚。\n驚動異鄉為異客，客心更觸故園情。',
+           sc:'杜鹃啼血泪悲声，声怨霜寒梦乍惊。\n惊动异乡为异客，客心更触故园情。',
+           en:'The cuckoo cries blood, its voice a lament;\nin the cold frost the sound startles the sleeper awake.\nA stranger in a strange land, startled —\nand the traveller\'s heart is stirred with thoughts of home.'},
+    note:{tc:'杜鵑雀啼到出血。其聲又悲。驚醒人家之夢。觸動思念家鄉之情。此一種悶愁氣象。求得此籤者。凶多吉少。凡事要留心謹慎。且要修善。方能化凶為吉也。宜防小人口舌。',sc:'杜鹃雀啼到出血。其声又悲。惊醒人家之梦。触动思念家乡之情。此一种闷愁气象。求得此签者。凶多吉少。凡事要留心谨慎。且要修善。方能化凶为吉也。宜防小人口舌。',en:'The cuckoo cries until it bleeds; its voice is sorrowful, startling people\'s dreams and stirring longing for home. This is a heavy, gloomy picture. Whoever draws this lot faces more ill than good; in all things be careful and cautious, and do good deeds — only then can ill fortune be turned to good. Beware of small people\'s gossip.'},
+    detail:{tc:'蚕與畜 有損傷\n行人遠 未回鄉\n孕有驚 婚不良\n問疾病 宜禱禳\n財難得 宅有殃\n若謀望 總不良\n問風水 恐有損丁財\n問遺失 追尋亦難得\n問自身 運滯當自防\n問天時 風色多不美\n問出行 往來皆可憂',sc:'蚕与畜 有损伤\n行人远 未回乡\n孕有惊 婚不良\n问疾病 宜祷禳\n财难得 宅有殃\n若谋望 总不良\n问风水 恐有损丁财\n问遗失 追寻亦难得\n问自身 运滞当自防\n问天时 风色多不美\n问出行 往来皆可忧',en:'Silkworms and livestock — losses\nThe traveller — far away, not yet home\nPregnancy — cause for alarm; marriage — not good\nIllness — pray for deliverance\nWealth — hard to get; home — afflicted\nPlans — generally not good\nFeng shui — may harm people and wealth\nLost things — hard to recover even by searching\nYourself — luck is blocked, guard yourself\nThe weather — mostly unfavourable\nTravel — going and coming both bring worry'} },
+  { no:19, level:{tc:'中吉',sc:'中吉',en:'Good'}, title:{tc:'伏羲畫八卦',sc:'伏羲画八卦',en:'Fu Xi Draws the Eight Trigrams'},
+    verse:{tc:'乾卦三連號太陽，潛龍勿用第一章。\n其中爻象能參透，百福駢臻大吉昌。',
+           sc:'乾卦三连号太阳，潜龙勿用第一章。\n其中爻象能参透，百福骈臻大吉昌。',
+           en:'The Qian trigram, three unbroken lines, is the great yang;\n\'The hidden dragon — do not act\' is the first chapter.\nIf you can see through the lines and their signs,\na hundred blessings gather — great fortune and prosperity.'},
+    note:{tc:'乾卦純陽無陰。能想透第一章之句。語隱藏其剛強之氣。而不用。則百吉百福至而大吉昌矣。凡事要隱忍退避。靜以待時。有善氣而無惡氣。方能受褔而吉昌也。若太剛強則不吉。',sc:'乾卦纯阳无阴。能想透第一章之句。语隐藏其刚强之气。而不用。则百吉百福至而大吉昌矣。凡事要隐忍退避。静以待时。有善气而无恶气。方能受褔而吉昌也。若太刚强则不吉。',en:'The Qian trigram is pure yang, without yin. If you grasp the first chapter\'s words — hiding your strength and not using it — then a hundred blessings arrive and great fortune follows. In all things, endure in silence and withdraw, waiting quietly for the right time; with good energy and no ill, you can receive blessing and prosper. Too much force brings no good.'},
+    detail:{tc:'孕生女 病宜禱\n行人遲 歸有路\n名與利 遲乃到\n若謀望 勿輕躁\n蚕與婚 謹慎好\n宅平安 積善補\n問風水 壞處當更改\n問遺失 求之勿心急\n問自身 和平無病生\n問天時 風雨合時宜\n問出行 火氣勿太猛',sc:'孕生女 病宜祷\n行人迟 归有路\n名与利 迟乃到\n若谋望 勿轻躁\n蚕与婚 谨慎好\n宅平安 积善补\n问风水 坏处当更改\n问遗失 求之勿心急\n问自身 和平无病生\n问天时 风雨合时宜\n问出行 火气勿太猛',en:'Pregnancy — a daughter; illness — pray\nThe traveller — delayed, but has a road home\nFame and fortune — late in coming\nPlans — do not rush headlong\nSilkworms and marriage — caution is best\nHome — at peace; do good to make up for losses\nFeng shui — what is bad should be changed\nLost things — seek them without haste\nYourself — peaceful, no illness\nThe weather — wind and rain in season\nTravel — do not let temper flare'} },
+  { no:20, level:{tc:'中平',sc:'中平',en:'Fair'}, title:{tc:'天上仙花',sc:'天上仙花',en:'The Heavenly Fairy Flowers'},
+    verse:{tc:'天上仙花難問種，人間塵事幾多更。\n前程已注公私簿，罰賞分明濁與清。',
+           sc:'天上仙花难问种，人间尘事几多更。\n前程已注公私簿，罚赏分明浊与清。',
+           en:'The fairy flowers of heaven — who can ask after their seed?\nThe dusty world of men — how many changes it sees.\nYour prospects are already written in the book of deeds;\nreward and punishment are clear — the muddy and the pure.'},
+    note:{tc:'天上仙花。難得其種。人間世事。甚多變遷。凡人日中所用工程。菩薩逐一登記在部。善而清者有賞。惡而濁者有罰。分得明明白白。求得此籤者。急宜改過遷善。以待賞。切勿作惡以自誤。凡事要安份。不必妄求也。',sc:'天上仙花。难得其种。人间世事。甚多变迁。凡人日中所用工程。菩萨逐一登记在部。善而清者有赏。恶而浊者有罚。分得明明白白。求得此签者。急宜改过迁善。以待赏。切勿作恶以自误。凡事要安份。不必妄求也。',en:'The fairy flowers of heaven are hard to obtain; the affairs of men change endlessly. Every deed a person does each day is recorded by the bodhisattva in the book: the good and pure are rewarded, the evil and muddy are punished, all clearly sorted. Whoever draws this lot should quickly correct faults and do good, and wait for reward; do not do evil and ruin yourself. In all things be content with your lot and do not grasp blindly.'},
+    detail:{tc:'名與利 付之命\n宅平常 要修省\n行欲歸 難定日\n病審醫 婚未定\n孕與蚕 作福吉\n若謀望 修善得\n問風水 全憑心地發\n問遺失 由命求不得\n問自身 禍福自己求\n問天時 隨人事轉移\n問出行 修善者可去',sc:'名与利 付之命\n宅平常 要修省\n行欲归 难定日\n病审医 婚未定\n孕与蚕 作福吉\n若谋望 修善得\n问风水 全凭心地发\n问遗失 由命求不得\n问自身 祸福自己求\n问天时 随人事转移\n问出行 修善者可去',en:'Fame and fortune — leave them to fate\nHome — ordinary; examine yourself\nThe traveller — wants to return, but the day is uncertain\nIllness — consult a doctor; marriage — not settled\nPregnancy and silkworms — doing good brings fortune\nPlans — doing good brings success\nFeng shui — it all comes from the heart\nLost things — fate says you will not get them back\nYourself — fortune and misfortune are your own seeking\nThe weather — follows the affairs of men\nTravel — those who do good may go'} },
+  { no:21, level:{tc:'中吉',sc:'中吉',en:'Good'}, title:{tc:'吳穩之會宴',sc:'吴稳之会宴',en:'Wu Wenzhi at the Feast'},
+    verse:{tc:'天外紅霞如抹錦，檻邊桃杏鬭新粧。\n盈眸爛熳誰居首，美酒頻斟且酌量。',
+           sc:'天外红霞如抹锦，槛边桃杏鬭新粧。\n盈眸烂熳谁居首，美酒频斟且酌量。',
+           en:'Beyond the sky, red clouds like spread brocade;\nby the railing, peach and apricot vie in new finery.\nThe eyes are filled with splendour — who is first among them?\nFine wine poured again and again — drink in measure.'},
+    note:{tc:'霞紅似錦。桃花杏花又鬥紅。不知誰為第一。飲杯酒然後酌量。此籤語意。凡事要從容淡定。不可心急。恐忙中有錯也。論籤則有吉無凶。',sc:'霞红似锦。桃花杏花又斗红。不知谁为第一。饮杯酒然后酌量。此签语意。凡事要从容淡定。不可心急。恐忙中有错也。论签则有吉无凶。',en:'The red clouds are like brocade; peach and apricot blossoms compete in red, and no one knows which is first. Drink the wine, then take stock. The sense of this lot: in all things be unhurried and calm, do not rush — haste brings mistakes. This lot has good fortune and no ill.'},
+    detail:{tc:'名利有 莫躁求\n畜與蚕 要子細\n行漸至 病漸瘳\n若謀望 躁則敝\n婚緩約 孕無憂\n宅將興 修善貴\n問風水 小小發丁財\n問遺失 不久亦可復\n問自身 身体亦平安\n問天時 晴必多於雨\n問出行 子細亦有利',sc:'名利有 莫躁求\n畜与蚕 要子细\n行渐至 病渐瘳\n若谋望 躁则敝\n婚缓约 孕无忧\n宅将兴 修善贵\n问风水 小小发丁财\n问遗失 不久亦可复\n问自身 身体亦平安\n问天时 晴必多于雨\n问出行 子细亦有利',en:'Fame and fortune — present; do not chase them impatiently\nLivestock and silkworms — take care over details\nThe traveller — gradually arrives; illness — gradually heals\nPlans — haste brings harm\nMarriage — a slow engagement; pregnancy — no worry\nHome — about to prosper; doing good is precious\nFeng shui — a small gain in people and wealth\nLost things — soon recovered\nYourself — body at peace\nThe weather — more sun than rain\nTravel — care over details brings gain'} },
+  { no:22, level:{tc:'下下',sc:'下下',en:'Poor'}, title:{tc:'他鄉作客',sc:'他乡作客',en:'A Guest in a Strange Land'},
+    verse:{tc:'秋水伊人各一方，天南地北恨偏長。\n相思詩問憑誰寄，不盡淒涼幾斷腸。',
+           sc:'秋水伊人各一方，天南地北恨偏长。\n相思诗问凭谁寄，不尽凄凉几断肠。',
+           en:'Autumn waters — the one I love is on the far side;\nsouth of heaven, north of earth, the regret runs long.\nPoems of longing — to whom can I send them?\nEndless desolation, a heart nearly broken.'},
+    note:{tc:'天南地北。各居一方。書信又無人寄。思念到肝腸都斷。此淒涼景象。求得此籤者。要修善以感動人心。則凡事有貴人。可以寄託。免至淒涼也。此籤凶多吉少。',sc:'天南地北。各居一方。书信又无人寄。思念到肝肠都断。此凄凉景象。求得此签者。要修善以感动人心。则凡事有贵人。可以寄托。免至凄凉也。此签凶多吉少。',en:'South of heaven, north of earth, each in a different place, and no one to carry the letters; longing until the heart breaks. This is a desolate scene. Whoever draws this lot should do good so as to move people\'s hearts; then in all things there will be noble people to rely on, and the desolation will be eased. This lot has more ill than good.'},
+    detail:{tc:'孕不吉 病擇醫\n名無利 婚不宜\n宅蹇滯 行人遲\n若謀望 要待時\n蚕與畜 費心機\n凡有事 當禱祈\n問風水 運滯未能發\n問遺失 阻隔尋不得\n問自身 勞心未平安\n問天時 多不如人意\n問出行 去之必不美',sc:'孕不吉 病择医\n名无利 婚不宜\n宅蹇滞 行人迟\n若谋望 要待时\n蚕与畜 费心机\n凡有事 当祷祈\n问风水 运滞未能发\n问遗失 阻隔寻不得\n问自身 劳心未平安\n问天时 多不如人意\n问出行 去之必不美',en:'Pregnancy — not good; illness — choose a doctor\nFame — no gain; marriage — not fitting\nHome — hindered; the traveller — delayed\nPlans — wait for the right time\nSilkworms and livestock — much trouble\nIn all matters — pray\nFeng shui — blocked fortune, cannot yet prosper\nLost things — cut off, cannot be found\nYourself — troubled in mind, not at peace\nThe weather — mostly not as people wish\nTravel — going will not be good'} },
+  { no:23, level:{tc:'中平',sc:'中平',en:'Fair'}, title:{tc:'夢中得寶',sc:'梦中得宝',en:'Treasure Found in a Dream'},
+    verse:{tc:'邯鄲一夢幻無邊，數載身榮是熟眠。\n換却錦衣歸故里，睡醒還記在心田。',
+           sc:'邯郸一梦幻无边，数载身荣是熟眠。\n换却锦衣归故里，睡醒还记在心田。',
+           en:'The dream of Handan — illusion without end;\nyears of glory were but sound sleep.\nChanged into brocade, he returned to his old village;\nwaking, he still held it in his heart.'},
+    note:{tc:'夢中得富貴。着錦綉衣服。醒後仍記在心。此乃虛假情形。雖無防碍。亦無可取也。',sc:'梦中得富贵。着锦绣衣服。醒后仍记在心。此乃虚假情形。虽无防碍。亦无可取也。',en:'In a dream he gained wealth and wore brocade; waking, he still remembered it in his heart. This is a false picture: though harmless, there is nothing to gain from it.'},
+    detail:{tc:'名與利 似虛花\n謀望凶 徒咨嗟\n婚不成 孕亦假\n速修善 實繁華\n宅平安 行人賒\n蚕少利 病未瘥\n問風水 無脉空有局\n問遺失 尋之空費力\n問自身 暗病恐有之\n問天時 似好而實非\n問出行 得之恐復失',sc:'名与利 似虚花\n谋望凶 徒咨嗟\n婚不成 孕亦假\n速修善 实繁华\n宅平安 行人赊\n蚕少利 病未瘥\n问风水 无脉空有局\n问遗失 寻之空费力\n问自身 暗病恐有之\n问天时 似好而实非\n问出行 得之恐复失',en:'Fame and fortune — like false flowers\nPlans — ill; only sighs\nMarriage — will not succeed; pregnancy — also false\nQuickly do good — real prosperity follows\nHome — at peace; the traveller — delayed\nSilkworms — little gain; illness — not yet healed\nFeng shui — no vein, only an empty pattern\nLost things — searching wastes effort\nYourself — hidden illness may be present\nThe weather — seems good but is not\nTravel — what is gained may be lost again'} },
+  { no:24, level:{tc:'下下',sc:'下下',en:'Poor'}, title:{tc:'秦琼賣馬',sc:'秦琼卖马',en:'Qin Qiong Sells His Horse'},
+    verse:{tc:'詩酒琴棋可解愁，座中無客樂難休。\n或彈或唱誰知美，吟飲須多亦是憂。',
+           sc:'诗酒琴棋可解愁，座中无客乐难休。\n或弹或唱谁知美，吟饮须多亦是忧。',
+           en:'Poems, wine, zither and chess can ease sorrow;\nwith no guest in the seat, pleasure cannot rest.\nWhether I play or sing, who knows the beauty?\nSinging and drinking more is still sorrow.'},
+    note:{tc:'詩酒琴棋。可以解人愁悶。而無人家未講話。獨自己彈琴唱歌。無人知我之好處。為此冷淡。雖多飲亦是憂也。求得此籤者。自己雖處順境。而未免有憂愁。急宜廣結緣。務使善與人同。則應求多而無憂愁矣。此籤凶多吉少。',sc:'诗酒琴棋。可以解人愁闷。而无人家未讲话。独自己弹琴唱歌。无人知我之好处。为此冷淡。虽多饮亦是忧也。求得此签者。自己虽处顺境。而未免有忧愁。急宜广结缘。务使善与人同。则应求多而无忧愁矣。此签凶多吉少。',en:'Poems, wine, zither and chess can ease sorrow, but with no one to talk to, you play the zither and sing alone and no one knows your gifts — this coldness remains, and even much drinking is still sorrow. Whoever draws this lot, though in a smooth situation, cannot escape worry and should quickly make wide friendships, letting goodness be shared with others; then many wishes will be met and sorrow will be gone. This lot has more ill than good.'},
+    detail:{tc:'財與貴 忌貪求\n行人滯 病未瘳\n蚕與畜 亦可憂\n孕不吉 婚莫求\n問謀望 恐惹愁\n論家宅 德宜修\n問風水 砂水不灣抱\n問遺失 尋之無人力\n問自身 修善免憂愁\n問天時 無雨亦可憂\n問出行 去之惹禍愁',sc:'财与贵 忌贪求\n行人滞 病未瘳\n蚕与畜 亦可忧\n孕不吉 婚莫求\n问谋望 恐惹愁\n论家宅 德宜修\n问风水 砂水不湾抱\n问遗失 寻之无人力\n问自身 修善免忧愁\n问天时 无雨亦可忧\n问出行 去之惹祸愁',en:'Wealth and rank — do not grasp greedily\nThe traveller — delayed; illness — not healed\nSilkworms and livestock — cause for worry too\nPregnancy — not good; marriage — do not seek it\nPlans — may bring sorrow\nHome — cultivate virtue\nFeng shui — the sands and waters do not embrace\nLost things — searching finds no help\nYourself — do good to be free of sorrow\nThe weather — no rain, yet still cause for worry\nTravel — going brings trouble and sorrow'} },
+  { no:25, level:{tc:'上吉',sc:'上吉',en:'Very Good'}, title:{tc:'五岳泰山',sc:'五岳泰山',en:'The Five Peaks: Mount Tai'},
+    verse:{tc:'群山擾擾朝中嶽，有似為臣列鵠班。\n拱立兩行齊整肅，自居此地豈無歡。',
+           sc:'群山扰扰朝中岳，有似为臣列鹄班。\n拱立两行齐整肃，自居此地岂无欢。',
+           en:'The many mountains crowd to court the central peak,\nlike ministers standing in their ranks.\nBowing in two rows, orderly and solemn —\ndwelling in this place, how could there be no joy?'},
+    note:{tc:'天下之山。以中岳為至高。四山朝拱。齊齊整整。如人臣拱手。排班而立。居此地者。有為君之使臣。一呼即應。真歡喜矣。求得此籤者。必事事為意。無不快活也。',sc:'天下之山。以中岳为至高。四山朝拱。齐齐整整。如人臣拱手。排班而立。居此地者。有为君之使臣。一呼即应。真欢喜矣。求得此签者。必事事为意。无不快活也。',en:'Of all the mountains under heaven, the central peak is the highest; the four mountains bow to it in good order, like ministers with folded hands standing in line. Whoever dwells in this place is like a ruler with his ministers — one call and all respond. True joy. Whoever draws this lot will find every matter to their liking, with nothing but happiness.'},
+    detail:{tc:'名與利 求則應\n孕生男 婚可訂\n疾遇醫 可無病\n蚕與畜 造造勝\n行人回 家道盛\n問謀望 往有慶\n問風水 此地必發貴\n問遺失 求之可以得\n問自身 積善大吉昌\n問天時 風雨皆應期\n問出行 處處有貴人',sc:'名与利 求则应\n孕生男 婚可订\n疾遇医 可无病\n蚕与畜 造造胜\n行人回 家道盛\n问谋望 往有庆\n问风水 此地必发贵\n问遗失 求之可以得\n问自身 积善大吉昌\n问天时 风雨皆应期\n问出行 处处有贵人',en:'Fame and fortune — seek and they answer\nPregnancy — a son; marriage — can be settled\nIllness — meet a doctor, and be free of it\nSilkworms and livestock — each crop better\nThe traveller — returns; the household prospers\nPlans — going brings celebration\nFeng shui — this place will surely bring rank\nLost things — seeking can recover them\nYourself — doing good brings great fortune\nThe weather — wind and rain arrive on time\nTravel — noble helpers everywhere'} },
+  { no:26, level:{tc:'中平',sc:'中平',en:'Fair'}, title:{tc:'水月鏡花',sc:'水月镜花',en:'Flowers in the Mirror, Moon in the Water'},
+    verse:{tc:'花影遲遲侵砌上，遙知月鏡掛長空。\n忽聞鶴淚聲淒切，早買歸舟返里中。',
+           sc:'花影迟迟侵砌上，遥知月镜挂长空。\n忽闻鹤泪声凄切，早买归舟返里中。',
+           en:'The flower\'s shadow slowly creeps over the terrace;\nfar off, the moon-mirror hangs in the long sky.\nSuddenly the crane\'s cry is heard, mournful and sharp —\nquickly buy a boat home and return to the village.'},
+    note:{tc:'花影侵於花基之上。知係月鏡掛在空中。忽聞鶴聲啼得悲切。即要買艇回家。此籤大意。言人當知機。一聞不吉消息。如聞鶴聲之淒切。要及早回頭。歸於善路。為行家之買艇回家也。此籤於吉中有凶。逢凶亦可化吉。知趨避則無防碍也。宜防小人是非口舌。',sc:'花影侵于花基之上。知系月镜挂在空中。忽闻鹤声啼得悲切。即要买艇回家。此签大意。言人当知机。一闻不吉消息。如闻鹤声之凄切。要及早回头。归于善路。为行家之买艇回家也。此签于吉中有凶。逢凶亦可化吉。知趋避则无防碍也。宜防小人是非口舌。',en:'The flower\'s shadow falls on the terrace; the moon-mirror hangs in the sky. Suddenly the crane\'s cry sounds sorrowful, and you must buy a boat home. The great meaning: a person should know the signs — on hearing bad news, like the crane\'s mournful cry, turn back early and return to the good road, like the traveller who buys the boat home. This lot has ill within good fortune; meeting ill can turn to good. Know how to advance and retreat, and there is no harm. Beware of small people\'s gossip.'},
+    detail:{tc:'蚕與畜 財亦有\n一見凶 即收手\n謀望事 看時勢\n早收功 遲則敝\n有病者 早積功\n問家宅 亦相同\n行將歸 孕有驚\n問風水 見凶即要避\n問遺失 難得莫強追\n問自身 有壞要修行\n問天時 好不能到尾\n問出行 到底不甚宜',sc:'蚕与畜 财亦有\n一见凶 即收手\n谋望事 看时势\n早收功 迟则敝\n有病者 早积功\n问家宅 亦相同\n行将归 孕有惊\n问风水 见凶即要避\n问遗失 难得莫强追\n问自身 有坏要修行\n问天时 好不能到尾\n问出行 到底不甚宜',en:'Silkworms and livestock — wealth is there too\nAt the first sign of ill — stop at once\nPlans — watch the times\nReap early; late brings harm\nThe ill — do good deeds early\nHome — the same\nThe traveller — about to return; pregnancy — cause for alarm\nFeng shui — on seeing ill, avoid it at once\nLost things — hard to get; do not force the search\nYourself — what is bad needs mending\nThe weather — good, but not to the end\nTravel — in the end, not very fitting'} },
+  { no:27, level:{tc:'中平',sc:'中平',en:'Fair'}, title:{tc:'蟻子知時',sc:'蚁子知时',en:'The Ants Know the Season'},
+    verse:{tc:'天晴粉蝶翻衣曬，又看庭前蟻陣排。\n隊伍整齊趨或退，時開時合思何佳。',
+           sc:'天晴粉蝶翻衣晒，又看庭前蚁阵排。\n队伍整齐趋或退，时开时合思何佳。',
+           en:'In clear skies the pale butterfly turns its wings to the sun,\nand the ants are ranked in the courtyard.\nTheir ranks in order, advancing or retreating —\nnow opening, now closing — how fine the thought.'},
+    note:{tc:'天晴則蝶晒其翼。將雨則蟻出為擺陣。或進或退。時開時合。在蟻子亦甚得意矣。人與物同。各得其意。便是快活。此籤亦平穩無防碍也。',sc:'天晴则蝶晒其翼。将雨则蚁出为摆阵。或进或退。时开时合。在蚁子亦甚得意矣。人与物同。各得其意。便是快活。此签亦平稳无防碍也。',en:'When the sky clears, the butterfly suns its wings; when rain comes, the ants form their ranks, advancing or retreating, opening and closing — and the ants are also content. Men and creatures alike are content when each finds its place; that is happiness. This lot is steady and without hindrance.'},
+    detail:{tc:'財微有 宅平常\n病可醫 行歸遲\n婚僅可 孕無防\n問謀望 要觀時\n蚕與畜 亦無傷\n進與退 要知機\n問風水 平穩無防碍\n問遺失 或者可尋得\n問自身 出入亦平安\n問天時 風雨合人意\n問出行 去之亦無防',sc:'财微有 宅平常\n病可医 行归迟\n婚仅可 孕无防\n问谋望 要观时\n蚕与畜 亦无伤\n进与退 要知机\n问风水 平稳无防碍\n问遗失 或者可寻得\n问自身 出入亦平安\n问天时 风雨合人意\n问出行 去之亦无防',en:'Wealth — a little; home — ordinary\nIllness — can be treated; the traveller — returns late\nMarriage — barely fitting; pregnancy — no obstacle\nPlans — watch the times\nSilkworms and livestock — no harm either\nAdvance and retreat — know the signs\nFeng shui — steady, no hindrance\nLost things — perhaps recoverable\nYourself — going out and coming in, at peace\nThe weather — wind and rain as people wish\nTravel — going is also without hindrance'} },
   { no:100, level:{tc:'中吉',sc:'中吉',en:'Good'}, title:{tc:'唐明皇賞花',sc:'唐明皇赏花',en:'Emperor Minghuang Admires the Flowers'},
     verse:{tc:'百花競放賀陽春，萬物從今盡轉新。\n末數莫言窮運至，不知否極泰來頻。',
            sc:'百花竞放贺阳春，万物从今尽转新。\n末数莫言穷运至，不知否极泰来频。',
