@@ -110,8 +110,8 @@
   .select-note{text-align:center; color:var(--ink-faint); font-size:12.5px; margin-top:24px; line-height:1.9;}
 
   /* ---------- hall ---------- */
-  #view-hall{position:relative; height:100dvh; overflow:hidden; background:#0d0a08;}
-  #hall-canvas-wrap{position:absolute; inset:0;}
+  #view-hall{position:relative; height:100dvh; overflow:hidden; background:#0d0a08; isolation:isolate;}
+  #hall-canvas-wrap{position:absolute; inset:0; z-index:0;}
   #hall-canvas-wrap canvas{display:block; width:100%; height:100%; touch-action:none;}
   .hall-hud{position:absolute; inset:0; z-index:5; pointer-events:none; display:flex; flex-direction:column; justify-content:space-between;}
   .hall-top{padding:64px 16px 0; display:flex; justify-content:space-between; align-items:flex-start; gap:10px;}
@@ -138,8 +138,8 @@
   .entry-foot.credit-line{margin-top:-14px; font-size:11px; opacity:.8;}
 
   /* ---------- garden (outer grounds) ---------- */
-  #view-garden{position:relative; height:100dvh; overflow:hidden; background:#a9d6f2;}
-  #garden-canvas-wrap{position:absolute; inset:0;}
+  #view-garden{position:relative; height:100dvh; overflow:hidden; background:#a9d6f2; isolation:isolate;}
+  #garden-canvas-wrap{position:absolute; inset:0; z-index:0;}
   #garden-canvas-wrap canvas{display:block; width:100%; height:100%; touch-action:none;}
   .garden-hud{position:absolute; inset:0; z-index:5; pointer-events:none; display:flex; flex-direction:column; justify-content:space-between;}
   .garden-top{padding:64px 16px 0; display:flex; justify-content:space-between; align-items:flex-start; gap:10px;}
@@ -190,11 +190,11 @@
      (U+25B2/25BC/25C0/25B6), universal on every phone — never
      emoji (an older phone showed the lotus emoji as a broken
      glyph). */
-  .dpad{position:absolute; z-index:6; right:12px; display:grid; grid-template-columns:repeat(3,56px); grid-template-rows:repeat(3,56px) auto; gap:5px; opacity:0; pointer-events:none; transition:opacity .35s ease; touch-action:none;}
+  .dpad{position:absolute; z-index:30; right:8px; display:grid; grid-template-columns:repeat(3,56px); grid-template-rows:repeat(3,56px) auto; gap:5px; opacity:0; pointer-events:none; transition:opacity .35s ease; touch-action:none;}
   #view-garden .dpad{bottom:calc(168px + env(safe-area-inset-bottom));}
   #view-hall .dpad{bottom:calc(94px + env(safe-area-inset-bottom));}
   .dpad.on{opacity:1; pointer-events:auto;}
-  .dpad-btn{width:56px; height:56px; border-radius:14px; border:1px solid rgba(255,255,255,.28); background:rgba(18,16,12,.55); backdrop-filter:blur(8px); color:rgba(242,232,216,.78); line-height:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; padding:0; touch-action:none; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; transition:transform .15s ease, background .15s ease, color .15s ease, border-color .15s ease;}
+  .dpad-btn{width:56px; height:56px; border-radius:14px; border:1px solid rgba(255,255,255,.38); background:rgba(18,16,12,.88); backdrop-filter:blur(8px); color:rgba(242,232,216,.78); line-height:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; padding:0; touch-action:none; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; transition:transform .15s ease, background .15s ease, color .15s ease, border-color .15s ease;}
   .dpad-btn .ag{font-size:22px; line-height:1;}
   .dpad-btn .al{font-size:10.5px; line-height:1.1; opacity:.85; letter-spacing:.5px;}
   .dpad-btn.up{grid-column:2; grid-row:1;}
@@ -206,7 +206,7 @@
   .dpad-centre{grid-column:2; grid-row:2; display:grid; place-items:center;}
   .dpad-needle{display:block; font-size:16px; line-height:1; color:var(--gold); transition:transform .25s ease;}
   /* the one-line note under the pad: arrows are camera-relative */
-  .dpad-cap{grid-column:1/4; grid-row:4; text-align:center; font-size:10.5px; line-height:1.3; color:rgba(242,232,216,.72); text-shadow:0 1px 3px rgba(0,0,0,.7); padding:0 2px;}
+  .dpad-cap{grid-column:1/4; grid-row:4; text-align:center; font-size:10.5px; line-height:1.3; color:rgba(242,232,216,.85); text-shadow:0 1px 3px rgba(0,0,0,.7); padding:2px 8px; background:rgba(18,16,12,.72); border-radius:999px;}
   /* the arrow matching the way the figure is heading now: lit
      gold and a touch larger, so the direction is clear at a glance */
   .dpad-btn.lit{background:rgba(201,162,75,.88); border-color:#e8c97a; color:#241a08; transform:scale(1.12);}
