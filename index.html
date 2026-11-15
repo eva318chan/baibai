@@ -168,66 +168,28 @@
   .guide-chip{display:flex; align-items:center; gap:10px; max-width:520px; margin:0 auto 6px; background:rgba(20,27,19,.88); backdrop-filter:blur(8px); border:1px solid #4a5a42; border-radius:999px 14px 14px 999px; padding:4px 14px 4px 4px; text-align:left;}
   .guide-chip img{width:40px; height:40px; border-radius:50%; object-fit:cover; border:2px solid var(--gold); flex:none;}
   .guide-chip p{margin:0; color:#eef3df; font-size:12.5px; line-height:1.6;}
-  /* ---------- directional pad (v35, 2026-11-15; enlarged and
-     labelled v37; 8-way and 48px v38): eight buttons for steering
-     the figure mid-walk — the four cardinals (▲▼◀▶) plus the four
-     diagonals (↖↗↙↘) in the corner cells, so every direction
-     including forward-right is walkable. It is NOT a permanent
-     control: it fades in only while the figure is walking and
-     hides again the moment it stops, so the view stays clean when
-     idle. All eight arrows stay visible (every direction is known
-     to be available); the one matching the figure's current
-     heading is lit — brighter and larger — and follows the turn
-     live. v37: the buttons are bigger and every arrow now carries
-     its own word — 前 / 後 / 左 / 右 (diagonals 前左 / 前右 /
-     後左 / 後右) — so the direction is named, not guessed; the
-     centre cell holds a small needle that points the figure's live
-     heading, and a one-line note under the pad says the arrows are
-     relative to the camera. v38: the buttons are cut back to 48px
-     (glyph 19px) — the 56px of v37 overlapped the figure — and the
-     pad is pinned above the 3D scene (z-index 30, canvas wraps
-     z-index 0) with near-opaque buttons, so the figure can never
-     cover an arrow. Walking BACKWARD — toward the camera,
-     toward the viewer's own face — is the easiest direction to
-     lose: when the figure heads that way the ▼ button gets a
-     white ring as well as the gold lit state, and the needle
-     points down at the viewer, so "toward you" is
-     unmistakable. The glyphs are plain geometric shapes
-     (U+25B2/25BC/25C0/25B6 and the diagonals U+2196/2197/21A7/2199),
-     universal on every phone — never emoji (an older phone showed
-     the lotus emoji as a broken glyph). */
-  .dpad{position:absolute; z-index:30; right:8px; display:grid; grid-template-columns:repeat(3,48px); grid-template-rows:repeat(3,48px) auto; gap:5px; opacity:0; pointer-events:none; transition:opacity .35s ease; touch-action:none;}
-  #view-garden .dpad{bottom:calc(168px + env(safe-area-inset-bottom));}
-  #view-hall .dpad{bottom:calc(94px + env(safe-area-inset-bottom));}
-  .dpad.on{opacity:1; pointer-events:auto;}
-  .dpad-btn{width:48px; height:48px; border-radius:12px; border:1px solid rgba(255,255,255,.38); background:rgba(18,16,12,.88); backdrop-filter:blur(8px); color:rgba(242,232,216,.78); line-height:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; padding:0; touch-action:none; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; transition:transform .15s ease, background .15s ease, color .15s ease, border-color .15s ease;}
-  .dpad-btn .ag{font-size:19px; line-height:1;}
-  .dpad-btn .al{font-size:10.5px; line-height:1.1; opacity:.85; letter-spacing:.5px;}
-  .dpad-btn.up{grid-column:2; grid-row:1;}
-  .dpad-btn.left{grid-column:1; grid-row:2;}
-  .dpad-btn.right{grid-column:3; grid-row:2;}
-  .dpad-btn.down{grid-column:2; grid-row:3;}
-  .dpad-btn.up-right{grid-column:3; grid-row:1;}
-  .dpad-btn.down-right{grid-column:3; grid-row:3;}
-  .dpad-btn.down-left{grid-column:1; grid-row:3;}
-  .dpad-btn.up-left{grid-column:1; grid-row:1;}
-  /* the centre cell: a needle that points the figure's live
-     heading, and rotates as the figure turns */
-  .dpad-centre{grid-column:2; grid-row:2; display:grid; place-items:center;}
-  .dpad-needle{display:block; font-size:16px; line-height:1; color:var(--gold); transition:transform .25s ease;}
-  /* the one-line note under the pad: arrows are camera-relative */
-  .dpad-cap{grid-column:1/4; grid-row:4; text-align:center; font-size:10.5px; line-height:1.3; color:rgba(242,232,216,.85); text-shadow:0 1px 3px rgba(0,0,0,.7); padding:2px 8px; background:rgba(18,16,12,.72); border-radius:999px;}
-  /* the arrow matching the way the figure is heading now: lit
-     gold and a touch larger, so the direction is clear at a glance */
-  .dpad-btn.lit{background:rgba(201,162,75,.88); border-color:#e8c97a; color:#241a08; transform:scale(1.12);}
-  .dpad-btn.lit .al{opacity:1;}
-  /* walking backward, toward the camera and the viewer's face:
-     the lit ▼ button gets a white ring on top of the gold, so
-     the most confusing direction stands out at a glance */
-  .dpad.toward .dpad-btn.down.lit{outline:2px solid rgba(255,255,255,.9); outline-offset:1px;}
-  /* held: pressed in */
-  .dpad-btn.held{transform:scale(.94); background:rgba(201,162,75,.55); border-color:var(--gold); color:#fff;}
-  .dpad-btn.lit.held{transform:scale(1.05);}
+  /* ---------- virtual stick (v40, 2026-11-15): one round joystick
+     replaces the 8-way D-pad. The pad only ever gave eight fixed
+     directions — never true 360° — and its arrows kept fighting the
+     figure for the same patch of screen. The stick gives continuous
+     steering: drag it any way and the figure walks that way,
+     camera-relative (up = away from the viewer, down = toward the
+     viewer), and letting go stops the stroll where it is. How far
+     the knob is pushed sets the pace — a gentle nudge is a slow
+     stroll, a full push the normal pace — so the temple stays
+     unhurried, never a game. One compact round control (120px) in
+     the bottom-right corner, the same spot the pad proved clear of
+     the figure and the bottom HUD; pinned above the 3D scene
+     (z-index 30, canvas wraps z-index 0) and near-opaque, so the
+     figure can never cover it or show through it. Tap-to-walk on
+     the ground still works alongside it. */
+  .joy{position:absolute; z-index:30; right:12px; opacity:0; pointer-events:none; transition:opacity .35s ease; touch-action:none;}
+  .joy.on{opacity:1; pointer-events:auto;}
+  #view-garden .joy{bottom:calc(168px + env(safe-area-inset-bottom));}
+  #view-hall .joy{bottom:calc(94px + env(safe-area-inset-bottom));}
+  .joy-base{width:120px; height:120px; border-radius:50%; border:1px solid rgba(255,255,255,.38); background:rgba(18,16,12,.88); backdrop-filter:blur(8px); position:relative; touch-action:none; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none;}
+  .joy-knob{position:absolute; left:50%; top:50%; width:54px; height:54px; margin:-27px 0 0 -27px; border-radius:50%; background:rgba(201,162,75,.92); border:1px solid #e8c97a; box-shadow:0 2px 10px rgba(0,0,0,.5); pointer-events:none;}
+  .joy.active .joy-knob{background:rgba(201,162,75,1); box-shadow:0 2px 14px rgba(201,162,75,.45), 0 2px 10px rgba(0,0,0,.5);}
   .hud-btn{white-space:nowrap;}
 
   /* ---------- small screens: top UI never overlaps ----------
@@ -392,17 +354,8 @@
       <div class="garden-actions" id="garden-actions"></div>
     </div>
   </div>
-  <div class="dpad" id="dpad-garden" aria-label="方向箭嘴">
-    <button class="dpad-btn up-left" data-dir="up-left" aria-label="向前左行"><span class="ag">↖</span><span class="al" data-i18n="dpadFwdL">前左</span></button>
-    <button class="dpad-btn up" data-dir="up" aria-label="向前行"><span class="ag">▲</span><span class="al" data-i18n="dpadFwd">前</span></button>
-    <button class="dpad-btn up-right" data-dir="up-right" aria-label="向前右行"><span class="ag">↗</span><span class="al" data-i18n="dpadFwdR">前右</span></button>
-    <button class="dpad-btn left" data-dir="left" aria-label="向左行"><span class="ag">◀</span><span class="al" data-i18n="dpadLeft">左</span></button>
-    <button class="dpad-btn right" data-dir="right" aria-label="向右行"><span class="ag">▶</span><span class="al" data-i18n="dpadRight">右</span></button>
-    <button class="dpad-btn down-left" data-dir="down-left" aria-label="向後左行"><span class="ag">↙</span><span class="al" data-i18n="dpadBackL">後左</span></button>
-    <button class="dpad-btn down" data-dir="down" aria-label="向後行"><span class="ag">▼</span><span class="al" data-i18n="dpadBack">後</span></button>
-    <button class="dpad-btn down-right" data-dir="down-right" aria-label="向後右行"><span class="ag">↘</span><span class="al" data-i18n="dpadBackR">後右</span></button>
-    <div class="dpad-centre" aria-hidden="true"><span class="dpad-needle">▲</span></div>
-    <div class="dpad-cap" data-i18n="dpadHint">箭嘴方向相對鏡頭</div>
+  <div class="joy on" id="joy-garden" aria-label="搖桿行路">
+    <div class="joy-base"><div class="joy-knob"></div></div>
   </div>
 </section>
 
@@ -440,17 +393,8 @@
       <div class="action-bar" id="action-bar"></div>
     </div>
   </div>
-  <div class="dpad" id="dpad-hall" aria-label="方向箭嘴">
-    <button class="dpad-btn up-left" data-dir="up-left" aria-label="向前左行"><span class="ag">↖</span><span class="al" data-i18n="dpadFwdL">前左</span></button>
-    <button class="dpad-btn up" data-dir="up" aria-label="向前行"><span class="ag">▲</span><span class="al" data-i18n="dpadFwd">前</span></button>
-    <button class="dpad-btn up-right" data-dir="up-right" aria-label="向前右行"><span class="ag">↗</span><span class="al" data-i18n="dpadFwdR">前右</span></button>
-    <button class="dpad-btn left" data-dir="left" aria-label="向左行"><span class="ag">◀</span><span class="al" data-i18n="dpadLeft">左</span></button>
-    <button class="dpad-btn right" data-dir="right" aria-label="向右行"><span class="ag">▶</span><span class="al" data-i18n="dpadRight">右</span></button>
-    <button class="dpad-btn down-left" data-dir="down-left" aria-label="向後左行"><span class="ag">↙</span><span class="al" data-i18n="dpadBackL">後左</span></button>
-    <button class="dpad-btn down" data-dir="down" aria-label="向後行"><span class="ag">▼</span><span class="al" data-i18n="dpadBack">後</span></button>
-    <button class="dpad-btn down-right" data-dir="down-right" aria-label="向後右行"><span class="ag">↘</span><span class="al" data-i18n="dpadBackR">後右</span></button>
-    <div class="dpad-centre" aria-hidden="true"><span class="dpad-needle">▲</span></div>
-    <div class="dpad-cap" data-i18n="dpadHint">箭嘴方向相對鏡頭</div>
+  <div class="joy" id="joy-hall" aria-label="搖桿行路">
+    <div class="joy-base"><div class="joy-knob"></div></div>
   </div>
 </section>
 
@@ -572,7 +516,7 @@ var I18N = {
     toastLake:'湖邊風輕水慢，企一陣，望一望荷花同喺水面慢慢游嘅鯉魚。',
     toastTree:'老樹下有紅繩輕搖，喺樹蔭下歇一歇。',
     toastStroll:'沿住石徑慢慢行，唔使趕。',
-    gWalk:'沿徑前行', gLake:'去湖邊', gTree:'去老樹下', gTemple:'入殿參拜', dpadFwd:'前', dpadBack:'後', dpadLeft:'左', dpadRight:'右', dpadFwdR:'前右', dpadBackR:'後右', dpadBackL:'後左', dpadFwdL:'前左', dpadHint:'箭嘴方向相對鏡頭',
+    gWalk:'沿徑前行', gLake:'去湖邊', gTree:'去老樹下', gTemple:'入殿參拜',
     soonBody:'呢間殿仲喺籌備之中，工匠正在雕琢神壇。開放日期一到，會喺廟門公佈。感恩善信耐心等候。',
     fortuneTitle:'求 籤', fortuneSub:'心誠則靈。請喺心入面默念所問之事，再撳「搖籤」。',
     fortuneResultTitle:'你求到嘅籤', fortuneResultSub:'籤文錄自黃大仙靈籤通行本，請靜心細讀。',
@@ -632,7 +576,7 @@ var I18N = {
     toastLake:'湖边风轻水慢，站一会儿，望一望荷花和在水面慢慢游的鲤鱼。',
     toastTree:'老树下有红绳轻摇，在树荫下歇一歇。',
     toastStroll:'沿着石径慢慢走，不用赶。',
-    gWalk:'沿径前行', gLake:'去湖边', gTree:'去老树下', gTemple:'入殿参拜', dpadFwd:'前', dpadBack:'后', dpadLeft:'左', dpadRight:'右', dpadFwdR:'前右', dpadBackR:'后右', dpadBackL:'后左', dpadFwdL:'前左', dpadHint:'箭头方向相对镜头',
+    gWalk:'沿径前行', gLake:'去湖边', gTree:'去老树下', gTemple:'入殿参拜',
     soonBody:'这间殿还在筹备之中，工匠正在雕琢神坛。开放日期一到，会在庙门公布。感恩善信耐心等候。',
     fortuneTitle:'求 签', fortuneSub:'心诚则灵。请在心里默念所问之事，再点「摇签」。',
     fortuneResultTitle:'你求到的签', fortuneResultSub:'签文录自黄大仙灵签通行本，请静心细读。',
@@ -692,7 +636,7 @@ var I18N = {
     toastLake:'By the lake the breeze is light and the water slow. Stand a while and watch the lotus — and the koi drifting just under the surface.',
     toastTree:'Red ribbons stir beneath the old tree. Rest a moment in its shade.',
     toastStroll:'Walk slowly along the stone path — there is no need to hurry.',
-    gWalk:'Walk the Path', gLake:'To the Lake', gTree:'Under the Old Tree', gTemple:'Enter the Halls', dpadFwd:'Fwd', dpadBack:'Back', dpadLeft:'Left', dpadRight:'Right', dpadFwdR:'Fwd-R', dpadBackR:'Back-R', dpadBackL:'Back-L', dpadFwdL:'Fwd-L', dpadHint:'Arrows are relative to the camera',
+    gWalk:'Walk the Path', gLake:'To the Lake', gTree:'Under the Old Tree', gTemple:'Enter the Halls',
     soonBody:"This hall is still in preparation — the craftsmen are carving the altar. When it opens, we'll announce it at the temple gate. Thank you for waiting.",
     fortuneTitle:'Draw a Fortune Stick', fortuneSub:'Sincerity brings the spirit near. Hold your question quietly in your heart, then tap "Shake".',
     fortuneResultTitle:'Your Fortune Stick', fortuneResultSub:'From the standard Wong Tai Sin fortune-stick book. Read it slowly, with a calm mind.',
@@ -2029,10 +1973,12 @@ function makePilgrim(robeColor, trimColor, female){
      people note above): a draped silhouette, never a cone */
   var torso = latheMesh([[0,-.14],[.315,-.14],[.33,-.07],[.28,.14],[.245,.32],[.255,.48],[.22,.61],[.15,.72],[.075,.78]], robeColor, 26);
   upper.add(torso);
-  /* cloth sash at the waist, knotted at the back */
+  /* cloth sash at the waist, knotted at the back — the knot is the
+     back marker (the face and the gold collar are the front),
+     enlarged v40 so front and back read at a glance at phone size */
   var sash = new THREE.Mesh(new THREE.TorusGeometry(.25, .027, 8, 26), mat(trimColor));
   sash.rotation.x = Math.PI / 2; sash.position.y = .3; upper.add(sash);
-  box(.07, .09, .03, trimColor, 0, .29, -.235, upper);
+  box(.1, .13, .04, trimColor, 0, .29, -.24, upper);
   /* cross collar （交領） lying on the chest, and the placket
      line running down from it — flat on the cloth, never floating */
   [-1, 1].forEach(function(s){
@@ -2492,7 +2438,7 @@ function disposeScene(){
   seatHitMeshes = []; seatRings = []; seatGlowDiscs = []; seatedIdx = null;
   hallBreathers = []; visitorFigure = null; visitorWalk = null; pendingBow = false;
   ambientSeatIdx = []; hallAmbient = []; seatDoorView = false;
-  hPadDir = null; hPadQuad = -1; padReset('dpad-hall');
+  hJoy = null; joyReset('joy-hall');
   smokeSystems = []; smokeBoost = 0; burnerGroup = null; incenseBusy = false;
   hallSmokeSystems = []; hallSmokeLit = false; incenseOffered = 0;
   incenseSlotInBunch = 0; incenseBunchCount = 0;
@@ -2663,14 +2609,15 @@ function enterHall(d){
        before sitting; it turns with your gaze and bows when you bow */
     if (visitorFigure){
       var vu = visitorFigure.userData;
-      /* ---- directional pad: while an arrow is held (standing,
-         not seated, not mid-offering), steer the figure in that
-         camera-relative direction. The walk re-targets every
-         frame, so it strolls on until the arrow is let go;
+      /* ---- virtual stick (v40): while it is held (standing, not
+         seated, not mid-offering), steer the figure in that
+         camera-relative direction — any angle. The walk re-targets
+         every frame, so it strolls on until the stick is let go;
          steering away from a seat walk cancels its queued bow */
-      if (hPadDir && seatedIdx == null && !incenseBusy){
+      if (hJoy && seatedIdx == null && !incenseBusy){
         pendingBow = false;
-        var hv = padVec(Math.PI - camAngle, hPadDir);
+        var hv = joyVec(Math.PI - camAngle, hJoy.jx, hJoy.jy);
+        if (!hv) hv = { x: 0, z: 0 };
         var hp = visitorFigure.position;
         visitorWalk = { x1: Math.max(-9.5, Math.min(9.5, hp.x + hv.x * 6)),
                         z1: Math.max(-5.0, Math.min(10.6, hp.z + hv.z * 6)),
@@ -2716,13 +2663,15 @@ function enterHall(d){
           vu.rise();
           if (wAlign > .28){
             var wSpeed = 1.9 * (0.28 + 0.72 * wAlign * wAlign) * Math.min(1, wDist / .55 + .25);
+            /* stick pace: how far it is pushed sets the speed */
+            if (hJoy) wSpeed *= 0.3 + 0.7 * Math.min(1, Math.hypot(hJoy.jx, hJoy.jy));
             var wStep = Math.min(wDist, wSpeed * dt);
             visitorFigure.position.x += Math.sin(visitorFigure.rotation.y) * wStep;
             visitorFigure.position.z += Math.cos(visitorFigure.rotation.y) * wStep;
-            /* pad steering only: slide around the cushions
+            /* stick steering only: slide around the cushions
                instead of through them (scripted seat walks are
                left alone — they must land exactly on a cushion) */
-            if (hPadDir){
+            if (hJoy){
               for (var pi = 0; pi < SEATS.length; pi++){
                 var ps = SEATS[pi];
                 var pdx = visitorFigure.position.x - ps.x, pdz = visitorFigure.position.z - ps.z;
@@ -2907,16 +2856,10 @@ function enterHall(d){
       }
     }
     if (statueGroup) statueGroup.position.y = .75 + Math.sin(clockT*.5)*.012;
-    /* the pad only shows while walking (a walk in progress, not
-       the scripted incense offering): the moment the figure
-       stops it fades out again. The lit arrow follows the
-       figure's live heading. */
-    var hPadShow = (visitorWalk != null && !incenseBusy) || hPadDir != null;
-    padSetVisible('dpad-hall', hPadShow);
-    if (hPadShow && visitorFigure){
-      var hq = padQuad(visitorFigure.rotation.y, Math.PI - camAngle);
-      if (hq !== hPadQuad){ hPadQuad = hq; padSetLit('dpad-hall', hq); }
-    } else hPadQuad = -1;
+    /* the stick is there whenever you are standing and free to
+       walk (not seated, not mid-offering): it hides while you
+       sit, so nothing invites a walk you cannot take. */
+    joySetVisible('joy-hall', seatedIdx == null && !incenseBusy);
     renderer.render(scene, camera);
   }
   loop();
@@ -3930,7 +3873,7 @@ function buildGarden(){
 
 function disposeGarden(){
   gActive = false; gPendingEnter = false; gWaypoints = []; gFinalTarget = null; gFinalYaw = null;
-  gPadDir = null; gPadQuad = -1; padReset('dpad-garden');
+  gJoy = null; joyReset('joy-garden');
   stopNature();
   if (rafId) cancelAnimationFrame(rafId); rafId = null;
   if (renderer){ renderer.dispose(); var w = document.getElementById('garden-canvas-wrap'); if (w) w.innerHTML = ''; renderer = null; }
@@ -4063,15 +4006,18 @@ function enterGarden(keepSpot){
        slides sideways, and it can head to any compass point:
        north to the gate, south back toward the viewer, east,
        west, and every diagonal between. */
-    /* ---- directional pad: while an arrow is held, steer the
-       figure in that camera-relative direction, overriding any
-       tap route (and cancelling a queued walk into the hall);
-       the pond, the trunks and the map edge still push back
-       every step, so it can only ever skirt the shore */
-    if (gPadDir){
-      var pv = padVec(gCamYaw, gPadDir);
-      gWaypoints = []; gFinalYaw = null; gPendingEnter = false;
-      gTargetPos = gClampPos({ x: gPos.x + pv.x * 8, z: gPos.z + pv.z * 8 });
+    /* ---- virtual stick (v40): while it is held, steer the figure
+       in that camera-relative direction — any angle, not eight
+       fixed ones — overriding any tap route (and cancelling a
+       queued walk into the hall); the pond, the trunks and the
+       map edge still push back every step, so it can only ever
+       skirt the shore */
+    if (gJoy){
+      var jv = joyVec(gCamYaw, gJoy.jx, gJoy.jy);
+      if (jv){
+        gWaypoints = []; gFinalYaw = null; gPendingEnter = false;
+        gTargetPos = gClampPos({ x: gPos.x + jv.x * 8, z: gPos.z + jv.z * 8 });
+      }
     }
     var dx = gTargetPos.x - gPos.x, dz = gTargetPos.z - gPos.z;
     var dist = Math.hypot(dx, dz), travelling = dist > .12;
@@ -4088,6 +4034,9 @@ function enterGarden(keepSpot){
       dh = gWrapPi(wantH - gHeading);
       var align = Math.max(0, Math.cos(dh));
       var speed = 1.65 * (0.3 + 0.7 * align * align);
+      /* stick pace: how far it is pushed sets the speed — a gentle
+         nudge is a slow stroll, a full push the normal pace */
+      if (gJoy) speed *= 0.3 + 0.7 * Math.min(1, Math.hypot(gJoy.jx, gJoy.jy));
       stepNow = Math.min(dist, speed * gDt);
       if (align > .22){
         /* step only along the heading, homing in as the turn
@@ -4280,128 +4229,116 @@ function enterGarden(keepSpot){
       pd.obj.position.y = pd.baseY + Math.sin(gPondT * .8 + pd.ph) * .008;
     });
     updateBirds(gDt); updateSquirrel(gDt);
-    /* the pad only shows while walking (a route underway, or an
-       arrow held): the moment the stroll ends it fades out
-       again, so the view is clean when idle. The lit arrow
-       follows the figure's live heading. */
-    var gPadShow = travelling || gPadDir != null;
-    padSetVisible('dpad-garden', gPadShow);
-    if (gPadShow){
-      var gq = padQuad(gHeading, gCamYaw);
-      if (gq !== gPadQuad){ gPadQuad = gq; padSetLit('dpad-garden', gq); }
-    } else gPadQuad = -1;
+    /* (v40) the stick is a permanent control in the garden — always
+       visible, so there is no show-while-walking logic any more;
+       the figure's heading is read from the figure itself, which
+       turns to face wherever it walks. */
     renderer.render(scene, camera);
   }
   loop();
 }
 
-/* ================= directional pad (v35, 2026-11-15) ================
-   Eight small buttons for steering the figure mid-walk — four
-   cardinals (▲▼◀▶) plus the four diagonals (↖↗↙↘) in the corners,
-   so every direction including forward-right is walkable (v38).
-   They are NOT a permanent control: they fade in only while the
-   figure is walking (a tap route or destination walk already
-   underway) and hide again the moment it stops, so the view stays
-   clean when idle. While visible they are tappable to steer —
-   press and hold an arrow and the figure walks that way,
-   camera-relative (up = away from the viewer, down = toward the
-   viewer); letting go stops the stroll where it is. All four
-   arrows stay visible (every direction is known to be available);
-   the one matching the figure's current heading is lit and
-   follows the turn live.
-   The glyphs are plain geometric shapes (U+25B2/25BC/25C0/25B6 and
-   the diagonal arrows U+2196/2197/21A7/2199) —
-   never emoji: an older phone showed the lotus emoji as a broken
-   glyph, and these shapes predate every phone. */
-var gPadDir = null, gPadQuad = -1, hPadDir = null, hPadQuad = -1;
-/* camera-relative world direction for a pad arrow. camYaw is the
-   orbit angle whose forward is (sin, cos) — in the garden that is
-   gCamYaw; in the hall it is PI - camAngle. */
-function padVec(camYaw, dir){
+/* ================= virtual stick (v40, 2026-11-15) =================
+   One round joystick replaces the 8-way D-pad. The pad only ever
+   gave eight fixed directions — never true 360° — and its arrows
+   kept fighting the figure for the same patch of screen. The stick
+   gives continuous steering: drag it any way and the figure walks
+   that way, camera-relative (up = away from the viewer, down =
+   toward the viewer), and letting go stops the stroll where it is.
+   How far the knob is pushed sets the pace — a nudge is a slow
+   stroll, a full push the normal pace — so the temple stays
+   unhurried, never a game. The direction is read fresh from the
+   stick every frame in the scene loops, so the figure keeps walking
+   the same screen way even as the camera orbits. The stick is a
+   permanent control in the garden (always visible) and appears in
+   the hall whenever you are standing and free to walk. Tap-to-walk
+   on the ground is untouched — the two live side by side. */
+var gJoy = null, hJoy = null;
+/* screen-space stick offset (jx right, jy up, both -1..1) to a
+   camera-relative world direction. camYaw is the orbit angle whose
+   forward is (sin, cos) — in the garden that is gCamYaw; in the
+   hall it is PI - camAngle. Returns a unit direction; the pace
+   (how far the stick is pushed, 0..1) is read from the offset
+   itself at the call site. */
+function joyVec(camYaw, jx, jy){
   var s = Math.sin(camYaw), c = Math.cos(camYaw);
-  if (dir === 'up') return { x: s, z: c };
-  if (dir === 'down') return { x: -s, z: -c };
-  if (dir === 'left') return { x: c, z: -s };
-  var R2 = 1 / Math.SQRT2;
-  if (dir === 'up-right') return { x: (s - c) * R2, z: (c + s) * R2 };
-  if (dir === 'down-right') return { x: (-s - c) * R2, z: (-c + s) * R2 };
-  if (dir === 'down-left') return { x: (-s + c) * R2, z: (-c - s) * R2 };
-  if (dir === 'up-left') return { x: (s + c) * R2, z: (c - s) * R2 };
-  return { x: -c, z: s }; /* right */
+  var x = s * jy - c * jx, z = c * jy + s * jx;
+  var len = Math.hypot(x, z);
+  if (len < 1e-4) return null;
+  return { x: x / len, z: z / len };
 }
-/* which arrow matches a heading, relative to the camera, in
-   8 octants: 0 up (away from the viewer), 1 up-right, 2 right,
-   3 down-right, 4 down (toward the viewer), 5 down-left,
-   6 left, 7 up-left — the lit highlight follows the figure's
-   live heading, diagonals included */
-function padQuad(heading, camYaw){
-  var rel = heading - camYaw;
-  while (rel > Math.PI) rel -= Math.PI * 2;
-  while (rel < -Math.PI) rel += Math.PI * 2;
-  /* round to the nearest 45-degree step, then map to the PAD_DIRS
-     order. Positive rel turns toward the left side, so the step
-     count is negated; the double modulo keeps +4 and -4 the same
-     octant (straight down, toward the viewer). */
-  var k = Math.round(rel / (Math.PI / 4));
-  return (((-k) % 8) + 8) % 8;
-}
-var PAD_DIRS = ['up', 'up-right', 'right', 'down-right', 'down', 'down-left', 'left', 'up-left'];
-function padSetVisible(id, show){
+function joySetVisible(id, show){
   var el = document.getElementById(id); if (!el) return;
   el.classList.toggle('on', !!show);
 }
-function padSetLit(id, q){
+/* recentre the knob and clear any held mark — used when a scene is
+   torn down, so no stale drag survives into the next entry */
+function joyReset(id){
   var el = document.getElementById(id); if (!el) return;
-  var btns = el.querySelectorAll('.dpad-btn');
-  for (var i = 0; i < btns.length; i++){
-    btns[i].classList.toggle('lit', PAD_DIRS[q] === btns[i].getAttribute('data-dir'));
+  var k = el.querySelector('.joy-knob');
+  if (k) k.style.transform = 'translate(0px,0px)';
+  el.classList.remove('active');
+}
+/* drag the stick to steer; letting go stops. Bound once — the stick
+   markup is static, so it survives the scenes being rebuilt on
+   every entry. getJoy/setJoy are the scene's own state closures
+   (the loops do the steering, where the camera state is in scope).
+   The knob stays inside the base (its travel is the base radius
+   minus the knob half-width); a nudge inside the dead zone (5px)
+   does nothing, so a brush of the rim never starts a walk. Pointer
+   capture keeps the drag smooth even past the base edge; touch
+   handlers are there as well, for older WebViews that fire touch
+   before pointer events. */
+function bindJoy(id, getJoy, setJoy){
+  var el = document.getElementById(id); if (!el) return;
+  var base = el.querySelector('.joy-base'), knob = el.querySelector('.joy-knob');
+  if (!base || !knob) return;
+  var active = false, pid = null;
+  function vecFromEvent(e){
+    var r = base.getBoundingClientRect();
+    var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    var R = r.width / 2 - 27; /* knob half-width: the knob stays inside the base */
+    var ox = e.clientX - cx, oy = e.clientY - cy, m = Math.hypot(ox, oy);
+    if (m > R){ ox *= R / m; oy *= R / m; m = R; }
+    return { ox: ox, oy: oy, m: m, R: R };
   }
-  /* the centre needle points the figure's live heading, relative
-     to the camera: up = away from the viewer, down = toward the
-     viewer. Backward (octant 4, toward the camera and the viewer's
-     face) is the easiest direction to lose, so the pad itself
-     gets a 'toward' mark — the lit ▼ button then gains a white
-     ring on top of the gold, so "toward you" is unmistakable. */
-  var n = el.querySelector('.dpad-needle');
-  if (n) n.style.transform = 'rotate(' + (q >= 0 ? q * 45 : 0) + 'deg)';
-  el.classList.toggle('toward', q === 4);
-}
-/* hide the pad and clear every held/lit mark — used when a scene
-   is torn down, so no stale state survives into the next entry */
-function padReset(id){
-  var el = document.getElementById(id); if (!el) return;
-  el.classList.remove('on', 'toward');
-  var btns = el.querySelectorAll('.dpad-btn');
-  for (var i = 0; i < btns.length; i++) btns[i].classList.remove('held', 'lit');
-  var n = el.querySelector('.dpad-needle');
-  if (n) n.style.transform = 'rotate(0deg)';
-}
-/* press-and-hold an arrow to steer; letting go stops. Bound once —
-   the pad markup is static, so it survives the scenes being
-   rebuilt on every entry. getDir/setDir are the scene's own
-   state closures (the loops do the steering, where the camera
-   state is in scope). */
-function bindPad(id, getDir, setDir){
-  var el = document.getElementById(id); if (!el) return;
-  var btns = el.querySelectorAll('.dpad-btn');
+  function apply(v){
+    knob.style.transform = 'translate(' + v.ox + 'px,' + v.oy + 'px)';
+    if (v.m < 5) { setJoy(null); return; } /* dead zone */
+    setJoy({ jx: v.ox / v.R, jy: -v.oy / v.R });
+  }
   function release(){
-    setDir(null);
-    for (var i = 0; i < btns.length; i++) btns[i].classList.remove('held');
+    if (!active) return;
+    active = false; pid = null;
+    knob.style.transform = 'translate(0px,0px)';
+    el.classList.remove('active');
+    setJoy(null);
   }
-  for (var i = 0; i < btns.length; i++){
-    (function(b){
-      var dir = b.getAttribute('data-dir');
-      b.addEventListener('pointerdown', function(e){ e.preventDefault(); setDir(dir); b.classList.add('held'); });
-      b.addEventListener('pointerup', function(){ if (getDir() === dir) release(); });
-      b.addEventListener('pointercancel', function(){ if (getDir() === dir) release(); });
-      b.addEventListener('pointerleave', function(){ if (getDir() === dir) release(); });
-      /* touchstart as well — some older WebViews fire touch
-         before pointer events, and the press must answer at once */
-      b.addEventListener('touchstart', function(e){ e.preventDefault(); setDir(dir); b.classList.add('held'); }, { passive: false });
-      b.addEventListener('touchend', function(){ if (getDir() === dir) release(); });
-      b.addEventListener('touchcancel', function(){ if (getDir() === dir) release(); });
-    })(btns[i]);
-  }
+  base.addEventListener('pointerdown', function(e){
+    e.preventDefault();
+    active = true; pid = e.pointerId;
+    try { base.setPointerCapture(e.pointerId); } catch (err) {}
+    el.classList.add('active');
+    apply(vecFromEvent(e));
+  });
+  base.addEventListener('pointermove', function(e){
+    if (!active || (pid != null && e.pointerId !== pid)) return;
+    apply(vecFromEvent(e));
+  });
+  base.addEventListener('pointerup', function(e){ if (active && (pid == null || e.pointerId === pid)) release(); });
+  base.addEventListener('pointercancel', function(e){ if (active && (pid == null || e.pointerId === pid)) release(); });
+  base.addEventListener('touchstart', function(e){
+    e.preventDefault(); active = true; pid = null;
+    el.classList.add('active');
+    apply(vecFromEvent(e.touches[0]));
+  }, { passive: false });
+  base.addEventListener('touchmove', function(e){
+    if (!active) return;
+    e.preventDefault();
+    apply(vecFromEvent(e.touches[0]));
+  }, { passive: false });
+  base.addEventListener('touchend', function(){ release(); });
+  base.addEventListener('touchcancel', function(){ release(); });
   /* a finger that lifts anywhere else still ends the hold —
      otherwise the figure would walk on alone */
   window.addEventListener('pointerup', function(){ release(); });
@@ -4575,26 +4512,27 @@ function renderBeads(){
 
 /* ================= wire up ================= */
 document.getElementById('enter-btn').addEventListener('click', function(){ ensureAudio(); unlockChant(); if (soundOn) playBell(.2, 'gate'); enterGarden(); });
-/* directional pad (v35): garden steering — letting go stops the
-   stroll where it is, with no resuming a tap route steered away from */
-bindPad('dpad-garden',
-  function(){ return gPadDir; },
-  function(dir){
-    if (dir){ gPadDir = dir; return; }
-    if (gPadDir){
-      gPadDir = null;
+/* virtual stick (v40): garden steering — drag any way and the figure
+   walks that way; letting go stops the stroll where it is, with no
+   resuming a tap route steered away from */
+bindJoy('joy-garden',
+  function(){ return gJoy; },
+  function(v){
+    if (v){ gJoy = v; return; }
+    if (gJoy){
+      gJoy = null;
       if (gActive && gPos){ gTargetPos = { x: gPos.x, z: gPos.z }; gWaypoints = []; gFinalYaw = null; }
     }
   });
-/* directional pad (v35): hall steering — letting go stops where it
+/* virtual stick (v40): hall steering — letting go stops where it
    is, and the standing spot moves with the figure, so the idle
    branch does not snap it back to the rear of the nave */
-bindPad('dpad-hall',
-  function(){ return hPadDir; },
-  function(dir){
-    if (dir){ hPadDir = dir; return; }
-    if (hPadDir){
-      hPadDir = null;
+bindJoy('joy-hall',
+  function(){ return hJoy; },
+  function(v){
+    if (v){ hJoy = v; return; }
+    if (hJoy){
+      hJoy = null;
       if (visitorFigure){
         visitorStandAt = { x: visitorFigure.position.x, z: visitorFigure.position.z };
         visitorWalk = null;
