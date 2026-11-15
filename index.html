@@ -182,13 +182,19 @@
      the figure and the bottom HUD; pinned above the 3D scene
      (z-index 30, canvas wraps z-index 0) and near-opaque, so the
      figure can never cover it or show through it. Tap-to-walk on
-     the ground still works alongside it. */
-  .joy{position:absolute; z-index:30; right:12px; opacity:0; pointer-events:none; transition:opacity .35s ease; touch-action:none;}
+     the ground still works alongside it.
+     v41 (2026-11-15): the stick is slimmed to a 96px visual circle
+     (knob 44px) — 120px felt bulky — but the grab area stays a
+     generous 120px, so a thumb still finds it easily. The stick is
+     also raised to bottom 240px in both scenes, so it clears the
+     toast (now at bottom 150px, above the bottom HUD); toast, stick
+     and bottom texts stack without touching. */
+  .joy{position:absolute; z-index:30; right:12px; width:120px; height:120px; display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity .35s ease; touch-action:none;}
   .joy.on{opacity:1; pointer-events:auto;}
-  #view-garden .joy{bottom:calc(168px + env(safe-area-inset-bottom));}
-  #view-hall .joy{bottom:calc(94px + env(safe-area-inset-bottom));}
-  .joy-base{width:120px; height:120px; border-radius:50%; border:1px solid rgba(255,255,255,.38); background:rgba(18,16,12,.88); backdrop-filter:blur(8px); position:relative; touch-action:none; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none;}
-  .joy-knob{position:absolute; left:50%; top:50%; width:54px; height:54px; margin:-27px 0 0 -27px; border-radius:50%; background:rgba(201,162,75,.92); border:1px solid #e8c97a; box-shadow:0 2px 10px rgba(0,0,0,.5); pointer-events:none;}
+  #view-garden .joy{bottom:calc(240px + env(safe-area-inset-bottom));}
+  #view-hall .joy{bottom:calc(240px + env(safe-area-inset-bottom));}
+  .joy-base{width:96px; height:96px; border-radius:50%; border:1px solid rgba(255,255,255,.38); background:rgba(18,16,12,.88); backdrop-filter:blur(8px); position:relative; flex:none; touch-action:none; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none;}
+  .joy-knob{position:absolute; left:50%; top:50%; width:44px; height:44px; margin:-22px 0 0 -22px; border-radius:50%; background:rgba(201,162,75,.92); border:1px solid #e8c97a; box-shadow:0 2px 10px rgba(0,0,0,.5); pointer-events:none;}
   .joy.active .joy-knob{background:rgba(201,162,75,1); box-shadow:0 2px 14px rgba(201,162,75,.45), 0 2px 10px rgba(0,0,0,.5);}
   .hud-btn{white-space:nowrap;}
 
@@ -260,8 +266,12 @@
   .donate-opts{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:6px 0 4px;}
   .donate-opts button{background:var(--panel); color:var(--ink); border:1px solid var(--line); border-radius:10px; padding:12px 4px; font-size:15px; font-weight:700;}
   .donate-opts button.sel{border-color:var(--gold); color:var(--gold-soft); background:#3a2f1c;}
-  /* toast */
-  #toast{position:fixed; left:50%; bottom:110px; transform:translateX(-50%) translateY(16px); z-index:120; background:rgba(24,19,14,.92); border:1px solid var(--gold); color:var(--cream); border-radius:999px; padding:11px 22px; font-size:14px; opacity:0; pointer-events:none; transition:opacity .25s, transform .25s; max-width:88vw; text-align:center;}
+  /* toast — sits at bottom 150px (v41): high enough to clear the
+     whole bottom HUD stack (garden guide chip + hint + action
+     buttons, worst case ~130px), so a spot bubble never covers the
+     guide line again; the joystick is raised to match, so the toast
+     clears it too. */
+  #toast{position:fixed; left:50%; bottom:150px; transform:translateX(-50%) translateY(16px); z-index:120; background:rgba(24,19,14,.92); border:1px solid var(--gold); color:var(--cream); border-radius:999px; padding:11px 22px; font-size:14px; opacity:0; pointer-events:none; transition:opacity .25s, transform .25s; max-width:88vw; text-align:center;}
   #toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
   /* soon view */
   #view-soon{background:linear-gradient(180deg,#1d1611,#120e0b);}
@@ -4803,7 +4813,7 @@ function bindJoy(id, getJoy, setJoy){
   function vecFromEvent(e){
     var r = base.getBoundingClientRect();
     var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
-    var R = r.width / 2 - 27; /* knob half-width: the knob stays inside the base */
+    var R = r.width / 2 - 22; /* knob half-width (44px knob, v41): the knob stays inside the base */
     var ox = e.clientX - cx, oy = e.clientY - cy, m = Math.hypot(ox, oy);
     if (m > R){ ox *= R / m; oy *= R / m; m = R; }
     return { ox: ox, oy: oy, m: m, R: R };
@@ -4820,31 +4830,34 @@ function bindJoy(id, getJoy, setJoy){
     el.classList.remove('active');
     setJoy(null);
   }
-  base.addEventListener('pointerdown', function(e){
+  /* the listeners sit on the whole 120px grab area (v41), not just
+     the 96px visual base, so a thumb that lands on the rim still
+     steers; the vector is still measured from the visual base. */
+  el.addEventListener('pointerdown', function(e){
     e.preventDefault();
     active = true; pid = e.pointerId;
-    try { base.setPointerCapture(e.pointerId); } catch (err) {}
+    try { el.setPointerCapture(e.pointerId); } catch (err) {}
     el.classList.add('active');
     apply(vecFromEvent(e));
   });
-  base.addEventListener('pointermove', function(e){
+  el.addEventListener('pointermove', function(e){
     if (!active || (pid != null && e.pointerId !== pid)) return;
     apply(vecFromEvent(e));
   });
-  base.addEventListener('pointerup', function(e){ if (active && (pid == null || e.pointerId === pid)) release(); });
-  base.addEventListener('pointercancel', function(e){ if (active && (pid == null || e.pointerId === pid)) release(); });
-  base.addEventListener('touchstart', function(e){
+  el.addEventListener('pointerup', function(e){ if (active && (pid == null || e.pointerId === pid)) release(); });
+  el.addEventListener('pointercancel', function(e){ if (active && (pid == null || e.pointerId === pid)) release(); });
+  el.addEventListener('touchstart', function(e){
     e.preventDefault(); active = true; pid = null;
     el.classList.add('active');
     apply(vecFromEvent(e.touches[0]));
   }, { passive: false });
-  base.addEventListener('touchmove', function(e){
+  el.addEventListener('touchmove', function(e){
     if (!active) return;
     e.preventDefault();
     apply(vecFromEvent(e.touches[0]));
   }, { passive: false });
-  base.addEventListener('touchend', function(){ release(); });
-  base.addEventListener('touchcancel', function(){ release(); });
+  el.addEventListener('touchend', function(){ release(); });
+  el.addEventListener('touchcancel', function(){ release(); });
   /* a finger that lifts anywhere else still ends the hold —
      otherwise the figure would walk on alone */
   window.addEventListener('pointerup', function(){ release(); });
