@@ -58,7 +58,7 @@
   /* ---------- entry ---------- */
   #view-entry{position:relative; display:none; flex-direction:column; background:radial-gradient(120% 90% at 50% 0%, #2e2118 0%, #1c1510 55%, #120e0b 100%);}
   #view-entry.active{display:flex;}
-  .courtyard{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:96px 20px 30px; text-align:center; position:relative; overflow:hidden;}
+  .courtyard{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:96px 20px 30px; text-align:center; position:relative; overflow-y:auto; overflow-x:hidden;}
   .lanterns{position:absolute; top:0; left:0; right:0; display:flex; justify-content:space-between; padding:64px 6vw 0; pointer-events:none;}
   .lantern{width:34px; height:44px; border-radius:45%; background:radial-gradient(circle at 50% 38%, #ffb35c, #d3542a 70%); box-shadow:0 0 34px 8px rgba(255,140,50,.35); position:relative; animation:sway 5s ease-in-out infinite;}
   .lantern::before{content:""; position:absolute; top:-14px; left:50%; width:1px; height:14px; background:#6b543a;}
@@ -75,6 +75,16 @@
   .entry-desc{color:var(--ink-dim); font-size:14.5px; line-height:1.9; max-width:520px; margin:10px auto 0;}
   .rules{display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin:20px 0 4px;}
   .rules span{border:1px solid var(--line); background:rgba(42,33,26,.7); color:var(--ink-dim); border-radius:999px; padding:6px 13px; font-size:12.5px;}
+  /* choose your little Taoist acolyte (2026-11-15): the two designed
+     道童 portraits — the figure you walk the grounds and sit in the
+     hall as. Kept compact, so the entry screen still fits a phone */
+  .acolyte-pick{margin:18px 0 0;}
+  .acolyte-pick p{color:var(--gold-soft); font-size:13px; letter-spacing:.18em; margin:0 0 9px; font-family:"Noto Serif TC",serif;}
+  .acolyte-row{display:flex; gap:18px; justify-content:center;}
+  .acolyte-btn{background:none; border:0; padding:0; cursor:pointer; color:var(--ink-dim); font-size:12.5px; letter-spacing:.08em; display:flex; flex-direction:column; align-items:center; gap:6px;}
+  .acolyte-btn img{width:60px; height:60px; border-radius:50%; object-fit:cover; border:2px solid rgba(255,255,255,.18); box-shadow:0 8px 22px rgba(0,0,0,.5); display:block;}
+  .acolyte-btn.selected img{border-color:var(--gold); box-shadow:0 0 0 3px rgba(201,162,75,.35), 0 8px 22px rgba(0,0,0,.5);}
+  .acolyte-btn.selected{color:var(--gold-soft);}
   .enter-btn{margin-top:26px; background:var(--red); color:#fff; border:1px solid #d1604f; border-radius:999px; padding:16px 52px; font-size:19px; font-weight:700; letter-spacing:.3em; text-indent:.3em; font-family:"Noto Serif TC",serif; box-shadow:0 10px 30px rgba(165,42,30,.4);}
   .enter-btn:active{transform:scale(.98);}
   .entry-foot{padding:0 20px 26px; text-align:center; color:var(--ink-faint); font-size:12px; line-height:1.8;}
@@ -153,6 +163,12 @@
   .g-act.enter .ic{font-size:16px;}
   .g-act.ready{border-color:var(--gold); box-shadow:0 0 0 2px rgba(201,162,75,.35), 0 0 22px rgba(201,162,75,.35);}
   .garden-note{text-align:center; color:rgba(238,243,223,.72); font-size:11px; margin-top:6px; text-shadow:0 1px 6px #000;}
+  /* the little acolyte who greets you in the grounds (2026-11-15):
+     a small circular portrait of the designed 道童 (sweeping pose)
+     with one calm line of guidance — boy or girl, as picked */
+  .guide-chip{display:flex; align-items:center; gap:10px; max-width:520px; margin:0 auto 8px; background:rgba(20,27,19,.88); backdrop-filter:blur(8px); border:1px solid #4a5a42; border-radius:999px 14px 14px 999px; padding:5px 14px 5px 5px; text-align:left;}
+  .guide-chip img{width:48px; height:48px; border-radius:50%; object-fit:cover; border:2px solid var(--gold); flex:none;}
+  .guide-chip p{margin:0; color:#eef3df; font-size:12.5px; line-height:1.6;}
   .hud-btn{white-space:nowrap;}
 
   /* ---------- small screens: top UI never overlaps ----------
@@ -272,6 +288,19 @@
     <div class="entry-logo"><img src="assets/logo-badge.webp" alt="拜拜 Baibai.hk 線上廟宇 — 心誠則靈" /></div>
     <p class="entry-sub" data-i18n="tagline">入嚟拜神，休息一陣</p>
     <p class="entry-desc" data-i18n="entryDesc">唔使註冊，唔使下載。嚟拜神，先喺庭院沿石徑慢慢行，去湖邊同松樹下靜一靜，然之後先入殿上炷香、鞠個躬。呢度冇聊天，冇喧嘩，只有雀聲、水聲、鐘聲。</p>
+    <div class="acolyte-pick">
+      <p data-i18n="pickAcolyte">揀個小道童陪你入廟</p>
+      <div class="acolyte-row">
+        <button class="acolyte-btn selected" id="acolyte-boy" data-female="0" aria-pressed="true">
+          <img src="assets/daotong-boy-prayer.jpg" alt="小道童（男）" />
+          <span data-i18n="acolyteBoy">道童 · 男</span>
+        </button>
+        <button class="acolyte-btn" id="acolyte-girl" data-female="1" aria-pressed="false">
+          <img src="assets/daotong-girl-prayer.jpg" alt="小道童（女）" />
+          <span data-i18n="acolyteGirl">道童 · 女</span>
+        </button>
+      </div>
+    </div>
     <div class="rules">
       <span data-i18n="rule1">免費入廟</span><span data-i18n="rule2">唔使註冊</span><span data-i18n="rule3">殿內請保持安靜</span><span data-i18n="rule4">冇聊天功能</span>
     </div>
@@ -296,6 +325,10 @@
       </div>
     </div>
     <div class="garden-bottom">
+      <div class="guide-chip">
+        <img id="guide-img" src="assets/daotong-boy-sweeping.jpg" alt="小道童" />
+        <p data-i18n="guideTip">慢慢行，唔使急。湖邊同老樹下最靜，行到廟門就可以入殿。</p>
+      </div>
       <p class="hint-line" id="garden-hint" data-i18n="gardenHint">拖動畫面環視庭院 · 撳地下石徑或草地，就可以慢慢行過去</p>
       <div class="garden-actions" id="garden-actions"></div>
       <p class="garden-note" data-i18n="gardenNote">石徑會引你去湖邊、老樹同廟門；行到廟門，就可以入殿參拜。</p>
@@ -437,6 +470,8 @@ var I18N = {
     entryDesc:'唔使註冊，唔使下載。嚟拜神，先喺庭院沿石徑慢慢行，去湖邊同松樹下靜一靜，然之後先入殿上炷香、鞠個躬。呢度冇聊天，冇喧嘩，只有雀聲、水聲、鐘聲。',
     rule1:'免費入廟', rule2:'唔使註冊', rule3:'殿內請保持安靜', rule4:'冇聊天功能',
     enterBtn:'入 廟',
+    pickAcolyte:'揀個小道童陪你入廟', acolyteBoy:'道童 · 男', acolyteGirl:'道童 · 女',
+    guideTip:'慢慢行，唔使急。湖邊同老樹下最靜，行到廟門就可以入殿。',
     entryFoot:'本頁為 Demo 示範版，3D 場景與儀式均為體驗示範；殿內善信為氣氛人物，並非真人連線。真正多人同時在線版本需要後端支援，Demo 未包含。',
     chantCredit:'誦經：台灣福嚴佛學院僧眾《心經》唱誦（Matheson Trust Sacred Audio Collection）',
     selectTitle:'請揀一間殿', selectDesc:'撳入去，就可以入殿參拜。',
@@ -495,6 +530,8 @@ var I18N = {
     entryDesc:'不用注册，不用下载。来拜神，先在庭院沿石径慢慢走，去湖边和松树下静一静，然后才入殿上炷香、鞠个躬。这里没有聊天，没有喧哗，只有鸟声、水声、钟声。',
     rule1:'免费入庙', rule2:'不用注册', rule3:'殿内请保持安静', rule4:'没有聊天功能',
     enterBtn:'入 庙',
+    pickAcolyte:'选个小道童陪你入庙', acolyteBoy:'道童 · 男', acolyteGirl:'道童 · 女',
+    guideTip:'慢慢走，不用急。湖边和老树下最安静，走到庙门就可以入殿。',
     entryFoot:'本页为 Demo 示范版，3D 场景与仪式均为体验示范；殿内善信为气氛人物，并非真人连线。真正多人同时在线版本需要后端支持，Demo 未包含。',
     chantCredit:'诵经：台湾福严佛学院僧众《心经》唱诵（Matheson Trust Sacred Audio Collection）',
     selectTitle:'请选择一间殿', selectDesc:'点进去，就可以入殿参拜。',
@@ -553,6 +590,8 @@ var I18N = {
     entryDesc:"No sign-up, no downloads. Come in to worship: first stroll along the stone path through the temple grounds — pause by the lotus pond and under the pines — then step inside to light incense and bow. There's no chat here, no noise — only birdsong, water and bells.",
     rule1:'Free entry', rule2:'No sign-up', rule3:'Please keep quiet inside', rule4:'No chat',
     enterBtn:'Enter',
+    pickAcolyte:'Choose a little acolyte to walk with you', acolyteBoy:'Boy acolyte', acolyteGirl:'Girl acolyte',
+    guideTip:'Walk slowly, no rush. The lake and the old tree are the quietest spots; at the gate you can enter the hall.',
     entryFoot:'This page is a demo. The 3D halls and rituals are for experience only; the worshippers inside are ambient figures, not real people connected live. A true multi-user version needs a backend, which this demo does not include.',
     chantCredit:'Chanting: the Heart Sutra sung by the monastics of Fuyan Buddhist Institute, Taiwan (Matheson Trust Sacred Audio Collection)',
     selectTitle:'Choose a Hall', selectDesc:'Tap to step inside and worship.',
@@ -1085,6 +1124,9 @@ var renderer = null, scene = null, camera = null, rafId = null;
 var smokePts = null, candleLights = [], statueGroup = null, incenseGroup = null, lotusGroup = null;
 var seatHitMeshes = [], seatRings = [], seatGlowDiscs = [], seatedIdx = null;
 var hallBreathers = [], visitorFigure = null, visitorWalk = null, visitorWalkPhase = 0;
+/* which acolyte the visitor picked on the entry screen (2026-11-15):
+   false = boy, true = girl — every visitor is a little Taoist （道童） */
+var visitorFemale = false;
 var camAngle = 0, camTarget = 0, camPitch = 0, camPitchT = 0, bowAnim = 0, bowDur = 1.6, bowPower = .55, clockT = 0;
 var pendingBow = false;
 var smokeSystems = [], smokeBoost = 0, burnerGroup = null, incenseBusy = false;
@@ -1717,7 +1759,7 @@ function latheMesh(pts, color, seg){
    cross-legged on a cushion. userData carries the pose controls:
    walk(phase, amount), stand(), sit(), rise(), and `bow`, the
    group that pitches forward when bowing. */
-function makeHead(skin, hairC, r, female, variant){
+function makeHead(skin, hairC, r, female, variant, topknot){
   var headG = new THREE.Group();
   var neck = new THREE.Mesh(new THREE.CylinderGeometry(r * .32, r * .38, r * .5, 10), mat(skin, .6));
   neck.position.y = r * .04; headG.add(neck);
@@ -1752,6 +1794,23 @@ function makeHead(skin, hairC, r, female, variant){
       box(r * .32, r * .05, r * .05, 0xc9a24b, r * .12, cy + r * .61, -r * .45, headG);
     }
   }
+  /* 道童 topknot (2026-11-15, from the designed acolyte art): a bun
+     high on the crown — a small one with a gold band for the boy,
+     a taller one with a jade pin for the girl, who keeps her long
+     hair down the back beneath it */
+  if (topknot){
+    if (female){
+      var bun = new THREE.Mesh(new THREE.SphereGeometry(r * .36, 12, 10), hairMat);
+      bun.position.set(0, cy + r * 1.02, -r * .04); bun.scale.set(1, .92, 1); headG.add(bun);
+      var pin = box(r * .85, r * .05, r * .05, 0x7fa88a, r * .08, cy + r * 1.06, -r * .04, headG);
+      pin.rotation.z = .1;
+    } else {
+      var bun = new THREE.Mesh(new THREE.SphereGeometry(r * .3, 12, 10), hairMat);
+      bun.position.set(0, cy + r * 1.0, 0); bun.scale.set(1, .85, 1); headG.add(bun);
+      var band = new THREE.Mesh(new THREE.TorusGeometry(r * .28, r * .04, 8, 18), mat(0xc9a24b, .6));
+      band.rotation.x = Math.PI / 2; band.position.set(0, cy + r * .88, 0); headG.add(band);
+    }
+  }
   /* the face — open oval eyes with a catchlight, eyebrows (full
      and nearly straight on the men, finer and arched on the
      women), a small rounded nose, a warm smile and a blush of
@@ -1770,7 +1829,7 @@ function makeHead(skin, hairC, r, female, variant){
     brow.position.set(s * r * .35, cy + r * .33, r * .84);
     brow.rotation.y = -s * .32; brow.rotation.z = female ? s * .16 : -s * .04; headG.add(brow);
     var cheek = new THREE.Mesh(new THREE.CircleGeometry(r * (female ? .17 : .15), 12),
-      new THREE.MeshBasicMaterial({ color: 0xdd8a68, transparent: true, opacity: female ? .5 : .32 }));
+      new THREE.MeshBasicMaterial({ color: 0xdd8a68, transparent: true, opacity: female ? .5 : .42 }));
     cheek.position.set(s * r * .56, cy - r * .26, r * .78); cheek.rotation.y = s * .55; headG.add(cheek);
   });
   var nose = new THREE.Mesh(new THREE.SphereGeometry(r * .07, 10, 8), mat(skin, .65));
@@ -1803,7 +1862,7 @@ function makePalms(skin, r){
   });
   return g;
 }
-function makePilgrim(robeColor, trimColor){
+function makePilgrim(robeColor, trimColor, female){
   var skin = 0xf0c297, hairC = 0x38302a;
   var g = new THREE.Group();
   var inner = new THREE.Group(); g.add(inner);
@@ -1819,15 +1878,15 @@ function makePilgrim(robeColor, trimColor){
      torso from the waist while the legs stay planted */
   var bow = new THREE.Group(); bow.position.y = .45; inner.add(bow);
   /* the wide robe skirt that spreads over crossed legs when seated */
-  var skirt = latheMesh([[0,.01],[.4,.01],[.45,.06],[.37,.18],[.25,.28]], robeColor, 22);
+  var skirt = latheMesh([[0,.01],[.43,.01],[.48,.06],[.4,.18],[.26,.28]], robeColor, 22);
   skirt.position.y = -.17; skirt.visible = false; bow.add(skirt);
   var upper = new THREE.Group(); upper.position.y = -.02; bow.add(upper);
   /* the robe — hem, waist, chest, sloping shoulders (see the
      people note above): a draped silhouette, never a cone */
-  var torso = latheMesh([[0,-.14],[.29,-.14],[.305,-.07],[.26,.14],[.228,.32],[.242,.48],[.21,.61],[.145,.72],[.075,.78]], robeColor, 26);
+  var torso = latheMesh([[0,-.14],[.315,-.14],[.33,-.07],[.28,.14],[.245,.32],[.255,.48],[.22,.61],[.15,.72],[.075,.78]], robeColor, 26);
   upper.add(torso);
   /* cloth sash at the waist, knotted at the back */
-  var sash = new THREE.Mesh(new THREE.TorusGeometry(.238, .027, 8, 26), mat(trimColor));
+  var sash = new THREE.Mesh(new THREE.TorusGeometry(.25, .027, 8, 26), mat(trimColor));
   sash.rotation.x = Math.PI / 2; sash.position.y = .3; upper.add(sash);
   box(.07, .09, .03, trimColor, 0, .29, -.235, upper);
   /* cross collar （交領） lying on the chest, and the placket
@@ -1843,7 +1902,9 @@ function makePilgrim(robeColor, trimColor){
   /* the joined palms that appear at the chest when seated */
   var palms = makePalms(skin, .068);
   palms.position.set(0, .47, .235); palms.rotation.x = -.12; palms.visible = false; upper.add(palms);
-  var headG = makeHead(skin, hairC, .215, false, 0); headG.position.y = .68; upper.add(headG);
+  /* the 道童 head (2026-11-15): bigger and rounder like the designed
+     clay acolyte, with a topknot on the crown */
+  var headG = makeHead(skin, hairC, .235, !!female, 0, true); headG.position.y = .68; upper.add(headG);
   function poseStand(){
     skirt.visible = false; legL.visible = legR.visible = true;
     bow.position.y = .45;
@@ -2350,10 +2411,11 @@ function enterHall(d){
   var camDist = camera.aspect < 0.9 ? 9.6 : 7.6;
   camAngle = 0; camTarget = 0; bowAnim = 0;
   buildCommon(d.id); if (d.id === 'wts') buildStatueWTS(); else buildStatueGY();
-  /* you are in the hall too: a small devotee in an ochre lay robe
-     stands at the back of the nave, and sits on whichever cushion
-     you choose — the loop below keeps it posed and placed */
-  visitorFigure = makePilgrim(0xb07f2e, 0x4a3421);
+  /* you are in the hall too: a little Taoist acolyte （道童） in a
+     dark-blue robe with a pale-gold sash and a topknot — the designed
+     acolyte look (2026-11-15) — stands at the back of the nave, and
+     sits on whichever cushion you choose */
+  visitorFigure = makePilgrim(0x46587e, 0xd6bd8a, visitorFemale);
   visitorFigure.position.set(0, 0, STAND_Z);
   visitorFigure.rotation.y = Math.PI;
   visitorFigure.userData.stand();
@@ -3417,12 +3479,14 @@ function buildGarden(){
     gButterflies.push({ obj: bf, cx: fp[0], cz: fp[1], ph: fi * 2.2 });
   });
 
-  /* you, in the grounds: a small devotee in an ochre lay robe with
-     a neat short crop of hair. The camera walks a few paces behind (see the
-     garden loop), so you watch yourself stroll the stone path,
-     pass the pond and step through the gate — you are a person
-     entering a temple, not a floating eye */
-  gAvatar = makePilgrim(0xb07f2e, 0x4a3421);
+  /* you, in the grounds: a little Taoist acolyte （道童） in a dark-blue
+     robe with a pale-gold sash and a topknot — the designed acolyte
+     look (2026-11-15), boy or girl as picked on the entry screen.
+     The camera walks a few paces behind (see the garden loop), so you
+     watch yourself stroll the stone path, pass the pond and step
+     through the gate — you are a person entering a temple, not a
+     floating eye */
+  gAvatar = makePilgrim(0x46587e, 0xd6bd8a, visitorFemale);
   scene.add(gAvatar);
 }
 
@@ -3478,6 +3542,9 @@ function goToSelectFromGarden(){
 function enterGarden(keepSpot){
   disposeScene(); disposeGarden();
   showView('view-garden');
+  /* the garden guide portrait follows the acolyte picked on entry */
+  var gi = document.getElementById('guide-img');
+  if (gi) gi.src = visitorFemale ? 'assets/daotong-girl-sweeping.jpg' : 'assets/daotong-boy-sweeping.jpg';
   var keep = (keepSpot && gPos) ? { x: gPos.x, z: gPos.z, heading: gHeading, cam: gCamYaw } : null;
   var wrap = document.getElementById('garden-canvas-wrap');
   renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -3840,6 +3907,20 @@ function renderBeads(){
 
 /* ================= wire up ================= */
 document.getElementById('enter-btn').addEventListener('click', function(){ ensureAudio(); unlockChant(); if (soundOn) playBell(.2, 'gate'); enterGarden(); });
+document.getElementById('acolyte-boy').addEventListener('click', function(){ setAcolyte(false); });
+document.getElementById('acolyte-girl').addEventListener('click', function(){ setAcolyte(true); });
+/* pick your little Taoist acolyte (2026-11-15): boy or girl — the
+   figure is rebuilt from this flag whenever a scene is entered,
+   and the garden guide portrait follows the same choice */
+function setAcolyte(female){
+  visitorFemale = !!female;
+  document.getElementById('acolyte-boy').classList.toggle('selected', !visitorFemale);
+  document.getElementById('acolyte-girl').classList.toggle('selected', visitorFemale);
+  document.getElementById('acolyte-boy').setAttribute('aria-pressed', String(!visitorFemale));
+  document.getElementById('acolyte-girl').setAttribute('aria-pressed', String(visitorFemale));
+  var gi = document.getElementById('guide-img');
+  if (gi) gi.src = visitorFemale ? 'assets/daotong-girl-sweeping.jpg' : 'assets/daotong-boy-sweeping.jpg';
+}
 document.getElementById('back-entry').addEventListener('click', function(){ enterGarden(); });
 document.getElementById('leave-garden').addEventListener('click', function(){ disposeGarden(); showView('view-entry'); });
 document.getElementById('nature-toggle').addEventListener('click', function(){ ensureAudio(); setNature(!natureOn); });
