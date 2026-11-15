@@ -1563,10 +1563,31 @@ function buildCommon(kind){
   wallBox(10.3, 10.6, .4, -6.85, 5.3, 11.9);
   wallBox(10.3, 10.6, .4, 6.85, 5.3, 11.9);
   wallBox(3.4, 5.0, .4, 0, 8.1, 11.9);
-  var doorGlow = new THREE.Mesh(new THREE.PlaneGeometry(3.3, 5.6),
-    new THREE.MeshBasicMaterial({ color: 0xffca7a, transparent: true, opacity: .45 }));
-  doorGlow.position.set(0, 2.8, 12.12); doorGlow.rotation.y = Math.PI; scene.add(doorGlow);
   var doorLight = new THREE.PointLight(0xffbe78, .6, 10); doorLight.position.set(0, 3.4, 10.4); scene.add(doorLight);
+  /* the doorway is a REAL opening with perspective, not a flat
+     glowing slab (2026-11-15, v39): the old doorGlow panel sat
+     0.2 behind the wall and read as a flat red board. Through the
+     open leaves you now see the courtyard outside — sky and far
+     mountains on a big painted plane (the same dusk view as the
+     windows), a sunlit stretch of ground and a stone path running
+     out from the threshold, and real pines and a stone lantern
+     standing in front of the painted view, so the doorway has
+     true depth and parallax. The plane is 40 wide so the view
+     holds from every seat; the ground is unlit, so it reads as
+     bright daylight against the hall's warm interior */
+  var doorView = new THREE.Mesh(new THREE.PlaneGeometry(40, 16),
+    new THREE.MeshBasicMaterial({ map: gardenViewTexture() }));
+  doorView.position.set(0, 6, 28); doorView.rotation.y = Math.PI; scene.add(doorView);
+  var doorGround = new THREE.Mesh(new THREE.PlaneGeometry(24, 16),
+    new THREE.MeshBasicMaterial({ color: 0x8a9a68 }));
+  doorGround.rotation.x = -Math.PI / 2; doorGround.position.set(0, -.06, 20); scene.add(doorGround);
+  var doorPath = new THREE.Mesh(new THREE.PlaneGeometry(3.8, 16),
+    new THREE.MeshBasicMaterial({ color: 0xcbb98f }));
+  doorPath.rotation.x = -Math.PI / 2; doorPath.position.set(0, -.03, 20); scene.add(doorPath);
+  var doorDay = new THREE.PointLight(0xffe2b0, .6, 16); doorDay.position.set(0, 4, 14); scene.add(doorDay);
+  makePine(-2.2, 19, 1.3, scene);
+  makePine(2.4, 22, 1.5, scene);
+  makeStoneLantern(1.8, 14.5, scene);
   /* the doorway is a real open entrance, not a glowing slot: two
      lacquered door leaves stand swung open inward against the
      walls either side, with a stone threshold under them — so
@@ -1654,15 +1675,18 @@ function buildCommon(kind){
   var pillarMat = new THREE.MeshStandardMaterial({ map: beamTexture(), color: isGY ? 0xa8b096 : 0xc06a4c, roughness: .62 });
   [-9.8,-5.6,-1.4,2.8,7.0].forEach(function(z){
     [-10.2,10.2].forEach(function(x){
-      var pil = new THREE.Mesh(new THREE.CylinderGeometry(.32,.38,8.8,18), pillarMat);
+      /* slimmed 2026-11-15 (v39): a fat shaft close to the lens
+         filled the whole screen — a slimmer pillar still frames
+         the nave, but never blocks it */
+      var pil = new THREE.Mesh(new THREE.CylinderGeometry(.28,.34,8.8,18), pillarMat);
       pil.position.set(x,4.4,z); scene.add(pil);
       /* a turned collar low on the shaft and the gold capital */
-      var colLow = new THREE.Mesh(new THREE.TorusGeometry(.37,.045,10,24), pillarMat);
+      var colLow = new THREE.Mesh(new THREE.TorusGeometry(.33,.045,10,24), pillarMat);
       colLow.rotation.x = Math.PI/2; colLow.position.set(x,1.4,z); scene.add(colLow);
-      cyl(.46,.46,.3,0xc9a24b,x,8.85,z);
-      var base = new THREE.Mesh(new THREE.BoxGeometry(.95,.34,.95), beamMat);
+      cyl(.42,.42,.3,0xc9a24b,x,8.85,z);
+      var base = new THREE.Mesh(new THREE.BoxGeometry(.88,.34,.88), beamMat);
       base.position.set(x,.17,z); scene.add(base);
-      var baseTrim = new THREE.Mesh(new THREE.BoxGeometry(1.0,.07,1.0), new THREE.MeshStandardMaterial({ color:0xc9a24b, roughness:.4, metalness:.5 }));
+      var baseTrim = new THREE.Mesh(new THREE.BoxGeometry(.93,.07,.93), new THREE.MeshStandardMaterial({ color:0xc9a24b, roughness:.4, metalness:.5 }));
       baseTrim.position.set(x,.36,z); scene.add(baseTrim);
     });
     var cb = new THREE.Mesh(new THREE.BoxGeometry(21.0,.55,.62), beamMat);
@@ -2505,7 +2529,11 @@ function enterHall(d){
      shortly after. Under reduced motion they simply sit and
      breathe, and never walk. */
   hallAmbient = [];
-  var ambRobes = [ [0x5d4a38, 0xc9a24b, false], [0x6d7a8a, 0xd6bd8a, true], [0x44586b, 0xc9a24b, false] ];
+  /* every acolyte wears the SAME dark slate-blue robe with pale
+     gold trim as the visitor (v34 colour 0x46587e / 0xd6bd8a,
+     2026-11-15, v39) — the old mixed palette left one worshipper
+     in brown and the others in two different blues, which is wrong */
+  var ambRobes = [ [0x46587e, 0xd6bd8a, false], [0x46587e, 0xd6bd8a, true], [0x46587e, 0xd6bd8a, false] ];
   ambientSeatIdx.forEach(function(si, ai){
     var ar = ambRobes[ai % ambRobes.length];
     var af = makePilgrim(ar[0], ar[1], ar[2]);
@@ -2517,6 +2545,11 @@ function enterHall(d){
     hallBreathers.push({ inner: af.userData.inner, ph: si * 1.37 });
     hallAmbient.push({ fig: af, seat: si, target: si, phase: ai * 2.1, amt: 0,
       state: (!REDUCED_MOTION && ai === 2) ? 'outside' : 'seated',
+      /* each walker keeps its own lane down the aisle (2026-11-15,
+         v39): three people on the exact same line queue up behind
+         each other the moment one stops. Lanes spread the routes
+         out so nobody funnels into single file */
+      lane: (ai - 1) * 0.55, stuckT: 0, bestAd: null,
       timer: ai === 0 ? 26 + Math.random() * 30 : (ai === 1 ? 12 + Math.random() * 18 : 7 + Math.random() * 9) });
     if (!REDUCED_MOTION && ai === 2) af.visible = false;
   });
@@ -2586,8 +2619,12 @@ function enterHall(d){
     camPosT.set(ax - fx * dist, camY, az - fz * dist);
     camPosT.x = Math.max(-10.8, Math.min(10.8, camPosT.x));
     camPosT.z = Math.max(-11.85, Math.min(11.35, camPosT.z));
+    /* never let the lens sit on a pillar: a pillar that close
+       fills the whole screen (2026-11-15, v39) */
+    hallResolveCamera(camPosT);
     lookT.set(ax + fx * 7, lookY + camPitch * 5, az + fz * 7);
     camPos.lerp(camPosT, smoothA);
+    hallResolveCamera(camPos);
     camera.position.copy(camPos);
     camera.lookAt(lookT);
     candleLights.forEach(function(l,i){ l.intensity = .6 + Math.sin(clockT*7 + i*2.1)*.14 + Math.random()*.05; });
@@ -2731,8 +2768,9 @@ function enterHall(d){
     /* the hall's few living worshippers (2026-11-15): each one
        sits a while, then rises, strolls out through the doorway,
        and comes back in at its own pace — staggered, unhurried,
-       never in step. If you are standing in the aisle in their
-       way, they wait politely instead of walking through you. */
+       never in step. If someone is standing in the aisle in
+       their way, they step aside and walk around them — nobody
+       stops and waits in a bunch (2026-11-15, v39). */
     if (!REDUCED_MOTION) for (var ai = 0; ai < hallAmbient.length; ai++){
       var amb = hallAmbient[ai], afig = amb.fig, au = afig.userData;
       if (amb.state === 'seated'){
@@ -2745,8 +2783,8 @@ function enterHall(d){
         au.bow.rotation.x = Math.sin(clockT * .8 + amb.seat * 1.37) * .02;
         amb.timer -= dt;
         if (amb.timer <= 0){
-          amb.state = 'walking'; amb.leg = 0;
-          amb.path = [{ x: 0, z: SEATS[amb.seat].z }, { x: 0, z: 10.4 }, { x: 0, z: 11.9 }];
+          amb.state = 'walking'; amb.leg = 0; amb.stuckT = 0; amb.bestAd = null;
+          amb.path = [{ x: amb.lane, z: SEATS[amb.seat].z }, { x: amb.lane, z: 10.4 }, { x: 0, z: 11.9 }];
           amb.out = true; au.rise();
           presenceN = hallAmbient.filter(function(o){ return o.state !== 'outside'; }).length; renderPresence();
         }
@@ -2759,8 +2797,8 @@ function enterHall(d){
             return !hallAmbient.some(function(o){ return o !== amb && (o.seat === si || o.target === si) && o.state !== 'outside'; });
           });
           amb.target = afree.length ? afree[Math.floor(Math.random() * afree.length)] : amb.seat;
-          amb.state = 'walking'; amb.leg = 0;
-          amb.path = [{ x: 0, z: 10.4 }, { x: 0, z: SEATS[amb.target].z }, { x: SEATS[amb.target].x, z: SEATS[amb.target].z }];
+          amb.state = 'walking'; amb.leg = 0; amb.stuckT = 0; amb.bestAd = null;
+          amb.path = [{ x: amb.lane, z: 10.4 }, { x: amb.lane, z: SEATS[amb.target].z }, { x: SEATS[amb.target].x, z: SEATS[amb.target].z }];
           amb.out = false;
           afig.visible = true; afig.position.set(0, 0, 11.9); afig.rotation.y = Math.PI; au.rise();
           presenceN = hallAmbient.filter(function(o){ return o.state !== 'outside'; }).length; renderPresence();
@@ -2769,9 +2807,6 @@ function enterHall(d){
         var awp = amb.path[amb.leg];
         var adx = awp.x - afig.position.x, adz = awp.z - afig.position.z;
         var ad = Math.hypot(adx, adz);
-        /* someone in the way (you, in the aisle): wait, standing
-           still, instead of walking through them */
-        var ablocked = visitorFigure && Math.hypot(visitorFigure.position.x - afig.position.x, visitorFigure.position.z - afig.position.z) < 1.0;
         if (ad <= .08){
           if (amb.leg < amb.path.length - 1){ amb.leg++; }
           else if (amb.out){
@@ -2781,8 +2816,22 @@ function enterHall(d){
             amb.state = 'seated'; amb.seat = amb.target; amb.timer = 25 + Math.random() * 45;
             afig.position.set(SEATS[amb.seat].x, .16, SEATS[amb.seat].z); au.sit();
           }
-        } else if (!ablocked){
-          var awant = Math.atan2(adx, adz);
+          amb.stuckT = 0; amb.bestAd = null;
+        } else {
+          /* people in the way — step aside and walk around them
+             instead of stopping in a bunch (2026-11-15, v39):
+             the steering bends sideways around anyone ahead, so
+             a stopped figure is passed, not queued behind.
+             Walkers in their own lanes already spread the routes
+             out; the bend handles anyone who still ends up ahead */
+          var ablockers = [];
+          if (visitorFigure) ablockers.push({ x: visitorFigure.position.x, z: visitorFigure.position.z });
+          for (var abi = 0; abi < hallAmbient.length; abi++){
+            var aob = hallAmbient[abi];
+            if (aob !== amb && aob.state !== 'outside') ablockers.push({ x: aob.fig.position.x, z: aob.fig.position.z });
+          }
+          var awant = personAvoidWant(afig.position.x, afig.position.z, afig.rotation.y, awp.x, awp.z, ablockers);
+          if (awant == null) awant = Math.atan2(adx, adz);
           var ady2 = awant - afig.rotation.y;
           while (ady2 > Math.PI) ady2 -= Math.PI * 2;
           while (ady2 < -Math.PI) ady2 += Math.PI * 2;
@@ -2796,11 +2845,61 @@ function enterHall(d){
             au.walk(amb.phase, amb.amt);
           } else { amb.amt = Math.max(0, amb.amt - .3 * dt60); if (amb.amt > .02) au.walk(amb.phase, amb.amt); }
           au.bow.rotation.x = 0;
-        } else {
-          amb.amt = Math.max(0, amb.amt - .3 * dt60);
-          if (amb.amt > .02) au.walk(amb.phase, amb.amt); else au.stand();
-          au.bow.rotation.x = 0;
+          /* someone camped on the waypoint itself: do not circle
+             them forever. After 12s of no progress toward the
+             waypoint, move on — next leg, or a fresh free seat */
+          if (amb.bestAd == null || ad < amb.bestAd - 0.3){ amb.bestAd = ad; amb.stuckT = 0; }
+          else amb.stuckT = (amb.stuckT || 0) + dt;
+          if (amb.stuckT > 12){
+            amb.stuckT = 0; amb.bestAd = null;
+            if (amb.leg < amb.path.length - 1){ amb.leg++; }
+            else if (amb.out){
+              if (afig.position.z > 9.5){
+                afig.visible = false; amb.state = 'outside'; amb.timer = 20 + Math.random() * 40; amb.seat = amb.target;
+                presenceN = hallAmbient.filter(function(o){ return o.state !== 'outside'; }).length; renderPresence();
+              } else {
+                amb.path = [{ x: amb.lane, z: 10.4 }, { x: 0, z: 11.9 }]; amb.leg = 0;
+              }
+            } else {
+              var afree2 = ambientSeatIdx.filter(function(si){
+                return !hallAmbient.some(function(o){ return o !== amb && (o.seat === si || o.target === si) && o.state !== 'outside'; });
+              });
+              if (afree2.length){
+                amb.target = afree2[Math.floor(Math.random() * afree2.length)];
+                amb.path = [{ x: amb.lane, z: afig.position.z }, { x: amb.lane, z: SEATS[amb.target].z }, { x: SEATS[amb.target].x, z: SEATS[amb.target].z }];
+                amb.leg = 0;
+              }
+            }
+          }
         }
+      }
+    }
+    /* ---- person separation (2026-11-15, v39): after everyone has
+       moved, keep a minimum gap between people so two figures can
+       never end up standing inside each other. Walkers yield —
+       the visitor is never shoved by a worshipper; the worshipper
+       is the one who steps aside. Two walkers share the push.
+       Seated figures are fixed to their cushions, so a walker
+       coming too close is the one who gives way. */
+    if (!REDUCED_MOTION){
+      var hSep = [];
+      if (visitorFigure) hSep.push({ fig: visitorFigure, mv: false });
+      for (var hsi = 0; hsi < hallAmbient.length; hsi++){
+        var hsa = hallAmbient[hsi];
+        if (hsa.state === 'outside') continue;
+        hSep.push({ fig: hsa.fig, mv: hsa.state === 'walking' });
+      }
+      for (var hs1 = 0; hs1 < hSep.length; hs1++) for (var hs2 = hs1 + 1; hs2 < hSep.length; hs2++){
+        var hA = hSep[hs1], hB = hSep[hs2];
+        var hdx = hB.fig.position.x - hA.fig.position.x, hdz = hB.fig.position.z - hA.fig.position.z;
+        var hd = Math.hypot(hdx, hdz);
+        if (hd >= .55 || hd < 1e-4) continue;
+        var hpush = .55 - hd, hux = hdx / hd, huz = hdz / hd;
+        if (hA.mv && hB.mv){
+          hA.fig.position.x -= hux * hpush * .5; hA.fig.position.z -= huz * hpush * .5;
+          hB.fig.position.x += hux * hpush * .5; hB.fig.position.z += huz * hpush * .5;
+        } else if (hA.mv){ hA.fig.position.x -= hux * hpush; hA.fig.position.z -= huz * hpush; }
+        else if (hB.mv){ hB.fig.position.x += hux * hpush; hB.fig.position.z += huz * hpush; }
       }
     }
     if (statueGroup) statueGroup.position.y = .75 + Math.sin(clockT*.5)*.012;
@@ -2987,6 +3086,82 @@ function gWrapPi(a){
   while (a > Math.PI) a -= Math.PI * 2;
   while (a < -Math.PI) a += Math.PI * 2;
   return a;
+}
+
+/* ---- gentle person-to-person avoidance (2026-11-15, v39) ----
+   When people meet, nobody freezes in a bunch: a walker steers
+   around the person in its way and keeps walking. Given the
+   walker's position, its heading (a THREE rotation.y) and its
+   waypoint, plus the people near it, return the steering heading
+   the walker should turn toward — mostly the waypoint, bent
+   sideways around anyone standing ahead on the route. The bend
+   grows as the person gets closer and fades by 1.7 units, so it
+   reads as a polite little sidestep, never a swerve. Someone
+   dead ahead is passed on the walker's own left, so two walkers
+   meeting head-on step to opposite sides and slip past each
+   other instead of both stopping. Returns null when nobody is
+   in the way (walk straight at the waypoint). */
+function personAvoidWant(wx, wz, yaw, tx, tz, people){
+  var dx = tx - wx, dz = tz - wz, dl = Math.hypot(dx, dz);
+  if (dl < 1e-6) return null;
+  var hx = dx / dl, hz = dz / dl;
+  var fx = Math.sin(yaw), fz = Math.cos(yaw);
+  var NOTICE = 1.7, MINSEP = 0.62;
+  var bx = 0, bz = 0, bent = false;
+  for (var i = 0; i < people.length; i++){
+    var pr = people[i];
+    var px = pr.x - wx, pz = pr.z - wz, pd = Math.hypot(px, pz);
+    if (pd >= NOTICE || pd < 1e-4) continue;
+    var ahead = (px * hx + pz * hz) / pd;
+    if (ahead < 0.15) continue;
+    var w = Math.min(1, (NOTICE - pd) / (NOTICE - MINSEP));
+    /* which side: the person's signed angle from the walker's
+       heading. On the right (cross > 0) -> step left; on the
+       left or dead ahead (cross <= 0) -> step to the walker's
+       own left. Own left in world xz is (fz, -fx); own right is
+       (-fz, fx). The dead-ahead default is what sends two
+       head-on walkers to opposite sides of each other. */
+    var cross = fx * pz - fz * px;
+    var sx, sz;
+    if (cross < -0.05){ sx = -fz; sz = fx; }
+    else { sx = fz; sz = -fx; }
+    bx += sx * w; bz += sz * w; bent = true;
+  }
+  if (!bent) return null;
+  var mx = hx + bx * 1.15, mz = hz + bz * 1.15;
+  var ml = Math.hypot(mx, mz);
+  if (ml < 1e-6) return Math.atan2(hx, hz);
+  return Math.atan2(mx / ml, mz / ml);
+}
+
+/* the hall colonnade, as (x, z) pairs — keep in step with the
+   pillars built in buildCommon below (v36 spread). */
+var HALL_PILLARS = (function(){
+  var list = [];
+  [-9.8,-5.6,-1.4,2.8,7.0].forEach(function(z){ list.push([-10.2, z], [10.2, z]); });
+  return list;
+})();
+/* keep the hall camera out of the pillars (2026-11-15, v39): a
+   pillar a hand's breadth from the lens fills the whole screen,
+   top to bottom — pillars must frame the view, never block it.
+   Push the camera target (and the lerped camera itself) out to
+   2.5 from every pillar axis, then clamp it back inside the
+   room. The push is applied to the smoothed camera too, so the
+   lens can never sit inside a pillar even mid-lerp. */
+function hallResolveCamera(p){
+  for (var k = 0; k < 3; k++){
+    for (var i = 0; i < HALL_PILLARS.length; i++){
+      var px = HALL_PILLARS[i][0], pz = HALL_PILLARS[i][1];
+      var dx = p.x - px, dz = p.z - pz, d = Math.hypot(dx, dz);
+      if (d < 2.5){
+        if (d > 1e-4){ p.x = px + dx / d * 2.5; p.z = pz + dz / d * 2.5; }
+        else { p.x = px - Math.sign(px) * 2.5; p.z = pz; }
+        p.x = Math.max(-10.8, Math.min(10.8, p.x));
+        p.z = Math.max(-11.85, Math.min(11.35, p.z));
+      }
+    }
+  }
+  return p;
 }
 function gGoTo(x, z, yaw){
   gFinalTarget = gClampPos({ x:x, z:z });
@@ -3726,14 +3901,16 @@ function buildGarden(){
   /* fellow visitors strolling the grounds (2026-11-15): two
      unhurried figures on a slow loop — gate, east lawn, lake
      shore — pausing now and then to look around, so the temple
-     outside is lived in too. They wait if you step into their
-     path, and they keep clear of the pond rim, the bench, the
+     outside is lived in too. If you step into their path they
+     step aside and walk around you (2026-11-15, v39), and they
+     keep clear of the pond rim, the bench, the
      stone lanterns and the tree trunks along the way. Under
      reduced motion the grounds stay still. */
   gWalkers = [];
   if (!REDUCED_MOTION){
     var gLoop = [[-1.3,-11.0],[3.5,-6.0],[5.0,0.0],[2.5,5.5],[-2.9,2.6]];
-    var gRobes = [ [0x5d4a38, 0xc9a24b, false], [0x6d7a8a, 0xd6bd8a, true] ];
+    /* same rule as the hall: one robe colour, dark slate-blue (v39) */
+    var gRobes = [ [0x46587e, 0xd6bd8a, false], [0x46587e, 0xd6bd8a, true] ];
     [[0,0],[3,9]].forEach(function(st, wi){
       var gr = gRobes[wi % gRobes.length];
       var gf = makePilgrim(gr[0], gr[1], gr[2]);
@@ -3742,7 +3919,7 @@ function buildGarden(){
       gf.rotation.y = Math.PI;
       gf.userData.stand();
       scene.add(gf);
-      gWalkers.push({ fig: gf, loop: gLoop, leg: st[0], pause: st[1], phase: wi * 2.1, amt: 0 });
+      gWalkers.push({ fig: gf, loop: gLoop, leg: st[0], pause: st[1], phase: wi * 2.1, amt: 0, stuckT: 0, bestAd: null });
     });
   }
 }
@@ -3984,7 +4161,8 @@ function enterGarden(keepSpot){
       gAvatar.rotation.y = gHeading;
     }
     /* the grounds' strollers: a slow loop, unhurried, with pauses
-       to look around; they wait if you step into their path */
+       to look around; if you step into their path they step
+       aside and walk around you, never freezing (v39) */
     if (!REDUCED_MOTION) gWalkers.forEach(function(wk){
       var wfig = wk.fig, wu = wfig.userData;
       if (wk.pause > 0){
@@ -3997,18 +4175,31 @@ function enterGarden(keepSpot){
       var wwp = wk.loop[wk.leg];
       var wdx = wwp[0] - wfig.position.x, wdz = wwp[1] - wfig.position.z;
       var wd = Math.hypot(wdx, wdz);
-      var wblocked = gPos && Math.hypot(gPos.x - wfig.position.x, gPos.z - wfig.position.z) < 1.2;
       if (wd <= .12){
         wk.leg = (wk.leg + 1) % wk.loop.length;
         if (Math.random() < .25) wk.pause = 6 + Math.random() * 8;
+        wk.stuckT = 0; wk.bestAd = null;
         return;
       }
-      if (wblocked){
-        wk.amt = Math.max(0, wk.amt - .18 * gDt60);
-        if (wk.amt > .02) wu.walk(wk.phase, wk.amt); else wu.stand();
+      /* someone in the way — step aside and walk around them
+         instead of stopping (2026-11-15, v39): a paused stroller
+         or you standing on the path is passed, not waited on */
+      var wblockers = [];
+      if (gPos) wblockers.push({ x: gPos.x, z: gPos.z });
+      for (var wbi = 0; wbi < gWalkers.length; wbi++){
+        if (gWalkers[wbi] !== wk) wblockers.push({ x: gWalkers[wbi].fig.position.x, z: gWalkers[wbi].fig.position.z });
+      }
+      var wwant = personAvoidWant(wfig.position.x, wfig.position.z, wfig.rotation.y, wwp[0], wwp[1], wblockers);
+      if (wwant == null) wwant = Math.atan2(wdx, wdz);
+      /* no progress toward the waypoint for a long while (someone
+         camped on it): move on to the next leg instead of circling */
+      if (wk.bestAd == null || wd < wk.bestAd - 0.3){ wk.bestAd = wd; wk.stuckT = 0; }
+      else wk.stuckT = (wk.stuckT || 0) + gDt;
+      if (wk.stuckT > 10){
+        wk.stuckT = 0; wk.bestAd = null;
+        wk.leg = (wk.leg + 1) % wk.loop.length;
         return;
       }
-      var wwant = Math.atan2(wdx, wdz);
       var wdy = gWrapPi(wwant - wfig.rotation.y);
       wfig.rotation.y += Math.max(-.12 * gDt60, Math.min(.12 * gDt60, wdy * .35 * gDt60));
       var walign = Math.max(0, Math.cos(wdy));
@@ -4024,6 +4215,32 @@ function enterGarden(keepSpot){
       }
       wu.bow.rotation.x = 0;
     });
+    /* person separation (2026-11-15, v39): the visitor is never
+       shoved — a stroller caught too close steps aside instead.
+       Two strollers share the push. */
+    if (!REDUCED_MOTION){
+      for (var gsi = 0; gsi < gWalkers.length; gsi++){
+        var sgf = gWalkers[gsi].fig;
+        for (var gsj = gsi + 1; gsj < gWalkers.length; gsj++){
+          var shf = gWalkers[gsj].fig;
+          var sgdx = shf.position.x - sgf.position.x, sgdz = shf.position.z - sgf.position.z;
+          var sgd = Math.hypot(sgdx, sgdz);
+          if (sgd < .55 && sgd > 1e-4){
+            var sgp = (.55 - sgd) / 2;
+            sgf.position.x -= sgdx / sgd * sgp; sgf.position.z -= sgdz / sgd * sgp;
+            shf.position.x += sgdx / sgd * sgp; shf.position.z += sgdz / sgd * sgp;
+          }
+        }
+        if (gPos){
+          var sudx = sgf.position.x - gPos.x, sudz = sgf.position.z - gPos.z;
+          var sud = Math.hypot(sudx, sudz);
+          if (sud < .55 && sud > 1e-4){
+            sgf.position.x = gPos.x + sudx / sud * .55;
+            sgf.position.z = gPos.z + sudz / sud * .55;
+          }
+        }
+      }
+    }
     gRipples.forEach(function(r){
       var ph = (gTime * .14 + r.off) % 1;
       r.ring.scale.setScalar(.4 + ph * 2.1);
