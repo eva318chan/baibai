@@ -3531,7 +3531,7 @@ function renderGardenActions(){
     gPendingEnter = next === -11.6;
     gGoTo(pathX(next), next, Math.PI); toast(t('toastStroll'));
   });
-  btn('🪷', t('gLake'), function(){ gPendingEnter = false; gGoTo(-1.4, 1.2, Math.atan2(-11.4 - -1.4, -1 - 1.2)); toast(t('toastLake')); });
+  btn('🌊', t('gLake'), function(){ gPendingEnter = false; gGoTo(-1.4, 1.2, Math.atan2(-11.4 - -1.4, -1 - 1.2)); toast(t('toastLake')); });
   btn('🌲', t('gTree'), function(){ gPendingEnter = false; gGoTo(4.7, 4.3, Math.atan2(7.6 - 4.7, 1.6 - 4.3)); toast(t('toastTree')); });
   gTempleBtn = btn('⛩️', t('gTemple'), function(){
     /* one tap, straight in — no stroll to the gate needed */
@@ -3824,7 +3824,7 @@ function renderActions(){
   } else {
     btn('📿', t('actBeads'), function(){ document.getElementById('beads-overlay').classList.add('open'); }, true,
       '<span class="bead-count">'+beadCount+' / 108</span>');
-    btn('🪷', t('actLotus'), function(){
+    btn('🌸', t('actLotus'), function(){
       lotusOffered++;
       if (lotusGroup && lotusOffered <= 4) makeLotus(-.55 + lotusOffered*.36, .56, -6.9, .75, lotusGroup);
       playBell(0.09); toast(t('toastLotus'));
