@@ -162,12 +162,11 @@
   .g-act.enter{flex:1.3 1 0; font-size:13px; letter-spacing:.06em; border-color:#e07a63; box-shadow:0 4px 14px rgba(165,42,30,.4);}
   .g-act.enter .ic{font-size:16px;}
   .g-act.ready{border-color:var(--gold); box-shadow:0 0 0 2px rgba(201,162,75,.35), 0 0 22px rgba(201,162,75,.35);}
-  .garden-note{text-align:center; color:rgba(238,243,223,.72); font-size:11px; margin-top:6px; text-shadow:0 1px 6px #000;}
   /* the little acolyte who greets you in the grounds (2026-11-15):
      a small circular portrait of the designed 道童 (sweeping pose)
      with one calm line of guidance — boy or girl, as picked */
-  .guide-chip{display:flex; align-items:center; gap:10px; max-width:520px; margin:0 auto 8px; background:rgba(20,27,19,.88); backdrop-filter:blur(8px); border:1px solid #4a5a42; border-radius:999px 14px 14px 999px; padding:5px 14px 5px 5px; text-align:left;}
-  .guide-chip img{width:48px; height:48px; border-radius:50%; object-fit:cover; border:2px solid var(--gold); flex:none;}
+  .guide-chip{display:flex; align-items:center; gap:10px; max-width:520px; margin:0 auto 6px; background:rgba(20,27,19,.88); backdrop-filter:blur(8px); border:1px solid #4a5a42; border-radius:999px 14px 14px 999px; padding:4px 14px 4px 4px; text-align:left;}
+  .guide-chip img{width:40px; height:40px; border-radius:50%; object-fit:cover; border:2px solid var(--gold); flex:none;}
   .guide-chip p{margin:0; color:#eef3df; font-size:12.5px; line-height:1.6;}
   /* ---------- directional pad (v35, 2026-11-15): four small
      ▲▼◀▶ buttons for steering the figure mid-walk. It is NOT a
@@ -357,7 +356,6 @@
       </div>
       <p class="hint-line" id="garden-hint" data-i18n="gardenHint">拖動畫面環視庭院 · 撳地下石徑或草地，就可以慢慢行過去</p>
       <div class="garden-actions" id="garden-actions"></div>
-      <p class="garden-note" data-i18n="gardenNote">石徑會引你去湖邊、老樹同廟門；行到廟門，就可以入殿參拜。</p>
     </div>
   </div>
   <div class="dpad" id="dpad-garden" aria-label="方向箭嘴">
@@ -2844,9 +2842,9 @@ var G_OBSTACLES = [
   [-16.5, 4.6, .55], [14.5, -1.5, .5], [-8.0, 7.5, .45], [4.1, .8, .45],
   [11.5, 11.8, .5], [-14.8, 9.8, .45], [15.5, -7.5, .5], [7.6, 1.6, .72],
   [-1.4, .4, .85], [5.6, 3.6, .85], [11.9, -4, 1.5],
-  [-0.5, -2.4, .45], [8.2, 5.4, .45]
+  [8.2, 5.4, .45]
 ];
-[[5.2, 1], [-.6, -1], [-5.8, 1], [-10.6, -1], [11.4, -1], [16.8, 1]].forEach(function(lp){
+[[5.2, 1], [-.6, -1], [-5.8, 1], [11.4, -1], [16.8, 1]].forEach(function(lp){
   G_OBSTACLES.push([pathX(lp[0]) + lp[1] * 3.1, lp[0], .45]);
 });
 /* the outer ring of trees planted when the grounds were enlarged
@@ -3538,19 +3536,18 @@ function buildGarden(){
 
   /* stone lanterns guide the eye to the gate — from the verges,
      never from the walkway. They stand a good three paces off the
-     stone path (they used to sit 1.75 off it, right in the walking
-     line), and the two loose lanterns have been moved into corners
-     well clear of where anyone walks or stands: the lakeside one
-     stood exactly on the pond-side stopping spot (-4.6, 1.2), so
-     the visitor walked straight into it every time, and the other
-     crowded the old-tree stop. Lanterns are pure decoration — they
-     are in no hit list and there is no collision in the garden —
-     so with them out of the walking lines nothing is ever bumped
-     into or blocked again */
-  [[5.2, 1], [-.6, -1], [-5.8, 1], [-10.6, -1], [11.4, -1], [16.8, 1]].forEach(function(lp){
+     stone path. 2026-11-15 (v37): two removed — the loose one at
+     (-0.5, -2.4) stood dead on the path centreline (0.01 off it),
+     so the visitor walked straight into it on the way to the gate,
+     and the path-side one at z=-10.6 crowded the gate pair (only
+     1.35 from the left gate lantern). The gate pair stays, flanking
+     the steps, and the path keeps five markers, three paces off it,
+     so the way in reads open and nothing is ever bumped into or
+     blocked again */
+  [[5.2, 1], [-.6, -1], [-5.8, 1], [11.4, -1], [16.8, 1]].forEach(function(lp){
     makeStoneLantern(pathX(lp[0]) + lp[1] * 3.1, lp[0]);
   });
-  makeStoneLantern(-0.5, -2.4); makeStoneLantern(8.2, 5.4);
+  makeStoneLantern(8.2, 5.4);
   /* stone benches: one facing the pond, one under the old pine */
   box(1.7, .16, .5, 0x8f9089, -1.4, .42, .4); box(.3, .36, .44, 0x7c7d76, -2.0, .18, .4); box(.3, .36, .44, 0x7c7d76, -0.8, .18, .4);
   box(1.7, .16, .5, 0x8f9089, 5.6, .42, 3.6); box(.3, .36, .44, 0x7c7d76, 5.0, .18, 3.6); box(.3, .36, .44, 0x7c7d76, 6.2, .18, 3.6);
@@ -3906,13 +3903,19 @@ function enterGarden(keepSpot){
        It does NOT swing round when the figure turns, so when the
        figure walks back toward the viewer's side it is seen
        face-on, approaching; when it walks away, from behind;
-       and ground on every side of it stays in frame, tappable. */
+       and ground on every side of it stays in frame, tappable.
+       The aim point sits low (2026-11-15, v37): aiming at chest
+       height put the figure's feet behind the bottom HUD (guide
+       chip, hint, buttons), so the figure was cut off at the
+       knees in every shot. Aiming lower lifts the whole figure
+       clear of the HUD — head to feet, never hidden behind it —
+       while the gate still sits in the upper half of the frame. */
     var dc = gWrapPi(gCamYawT - gCamYaw);
     gCamYaw += dc * (1 - Math.pow(1 - .12, gDt60));
     var cfx = Math.sin(gCamYaw), cfz = Math.cos(gCamYaw);
     camPos.set(gPos.x - cfx * 3.3, 2.65 + bob, gPos.z - cfz * 3.3);
     camera.position.copy(camPos);
-    lookT.set(gPos.x + cfx * 6, 1.15 + Math.sin(clockT * .4) * .04, gPos.z + cfz * 6);
+    lookT.set(gPos.x + cfx * 6, -0.5 + Math.sin(clockT * .4) * .04, gPos.z + cfz * 6);
     camera.lookAt(lookT);
     if (gAvatar){
       /* the leg swing keeps time with the ground actually covered,
