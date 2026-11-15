@@ -854,9 +854,9 @@ function cnNum(n){ if(n===100) return '一百'; if(n<=10) return CN_NUM[n]; retu
    1.06 apart so neighbouring cushions all but touched) read as
    cramped and was the first thing visitors complained about.
    Now: 40 cushions in five straight rows, eight to a row, all
-   facing the altar down a longer, taller hall. Centres sit 1.55
-   apart left-to-right (a clear half-metre of air between
-   cushions) and rows sit 2.3 apart front-to-back, with the
+   facing the altar down a longer, taller hall. Centres sit 2.45
+   apart left-to-right (well over a metre of air between
+   cushions) and rows sit 2.85 apart front-to-back, with the
    centre aisle kept clear so the statue stays visible on entry.
    24 seats are taken by fellow worshippers (visible seated
    figures, robed and breathing gently — never faceless
@@ -867,10 +867,15 @@ function cnNum(n){ if(n===100) return '一百'; if(n<=10) return CN_NUM[n]; retu
    counter uses these counts. */
 var SEAT_TOTAL = 40;
 var SEATS = (function(){
-  /* seat spacing widened 2026-11-15 — the hall should feel spacious
-     and relaxed, never crammed (columns 1.55 → 1.95, rows 2.3 → 2.6) */
-  var rowZ = [-5.2, -2.6, 0, 2.6, 5.2];
-  var base = [-6.825,-4.875,-2.925,-0.975, 0.975, 2.925, 4.875, 6.825];
+  /* seat spacing widened again 2026-11-15 — the hall should feel
+     spacious and relaxed, never crammed. Columns get the full
+     +0.5 the visitor asked for (1.95 → 2.45); rows get +0.25
+     (2.6 → 2.85, front row held at -5.2) because a full +0.5
+     front-to-back does not fit — the front row is held by the
+     worship burner / altar platform and the back row by the
+     standing spot. The hall itself is widened to match (below). */
+  var rowZ = [-5.2, -2.35, 0.5, 3.35, 6.2];
+  var base = [-8.575,-6.125,-3.675,-1.225, 1.225, 3.675, 6.125, 8.575];
   var empty = { '0,3':1, '0,4':1, '1,1':1, '1,6':1, '2,4':1, '2,7':1, '3,2':1,
                 '3,5':1, '4,3':1, '4,6':1 };
   var list = [];
@@ -1429,7 +1434,7 @@ function buildCommon(kind){
      a long nave runs from the entrance back to a raised altar, so the
      eye travels the full length of the room before it rests */
   var floorMat = new THREE.MeshStandardMaterial({ map: floorTexture(), roughness: .82, metalness: .04 });
-  var floorMesh = new THREE.Mesh(new THREE.BoxGeometry(21,.3,26), floorMat);
+  var floorMesh = new THREE.Mesh(new THREE.BoxGeometry(25,.3,26), floorMat);
   floorMesh.position.set(0,-.15,-1); scene.add(floorMesh);
   var platMat = new THREE.MeshStandardMaterial({ map: beamTexture(), color: 0xb99f7e, roughness: .85 });
   var tier1 = new THREE.Mesh(new THREE.BoxGeometry(12.5,.35,6.8), platMat); tier1.position.set(0,.175,-9.0); scene.add(tier1);
@@ -1443,14 +1448,14 @@ function buildCommon(kind){
   var wallMat = new THREE.MeshStandardMaterial({ map: plasterTexture(isGY ? '#5a6050' : '#6e5136', true), roughness: .95 });
   var wallMatIn = wallMat;
   function wallBox(w,h,d,x,y,z){ var m = new THREE.Mesh(new THREE.BoxGeometry(w,h,d), wallMatIn); m.position.set(x,y,z); scene.add(m); return m; }
-  wallBox(20,10.6,.4, 0,5.3,-12.4);
-  var mural = new THREE.Mesh(new THREE.PlaneGeometry(18.4, 9.0),
+  wallBox(24,10.6,.4, 0,5.3,-12.4);
+  var mural = new THREE.Mesh(new THREE.PlaneGeometry(22.4, 9.0),
     new THREE.MeshStandardMaterial({ map: muralTexture(isGY), roughness: .92 }));
   mural.position.set(0, 4.7, -12.18); scene.add(mural);
   var beamMat = new THREE.MeshStandardMaterial({ map: beamTexture(), roughness: .8 });
   var winZ = [-8.2, -2.0, 4.2], winW = 4.2, winBot = 2.4, winTop = 6.4;
   [-1, 1].forEach(function(side){
-    var wx = side * 9.8;
+    var wx = side * 11.8;
     /* wall runs below and above the window band, piers between */
     wallBox(.4, winBot, 25, wx, winBot/2, -1);
     wallBox(.4, 10.6 - winTop, 25, wx, (10.6 + winTop)/2, -1);
@@ -1472,8 +1477,8 @@ function buildCommon(kind){
        depth: frame, garden, lanterns, sky */
     var view = new THREE.Mesh(new THREE.PlaneGeometry(27, 10.6),
       new THREE.MeshBasicMaterial({ map: gardenViewTexture() }));
-    view.position.set(side * 13.4, 4.4, -1); view.rotation.y = side > 0 ? -Math.PI/2 : Math.PI/2; scene.add(view);
-    var outGlow = new THREE.PointLight(0xffe2b0, .5, 14); outGlow.position.set(side * 11.2, 4.4, -1.2); scene.add(outGlow);
+    view.position.set(side * 15.4, 4.4, -1); view.rotation.y = side > 0 ? -Math.PI/2 : Math.PI/2; scene.add(view);
+    var outGlow = new THREE.PointLight(0xffe2b0, .5, 14); outGlow.position.set(side * 13.2, 4.4, -1.2); scene.add(outGlow);
     winZ.forEach(function(z, wi){
       /* lattice window frame: outer frame, mullions, a sill */
       var fx = wx - side * .05;
@@ -1494,11 +1499,11 @@ function buildCommon(kind){
       var sill = new THREE.Mesh(new THREE.BoxGeometry(.5,.09,winW + .4), beamMat);
       sill.position.set(wx - side * .18, winBot - .05, z); scene.add(sill);
       /* garden pieces standing outside this window */
-      makePine(side * 11.5, z + (wi % 2 ? -1.5 : 1.4), 1.3, scene);
+      makePine(side * 13.5, z + (wi % 2 ? -1.5 : 1.4), 1.3, scene);
       var lant = new THREE.Mesh(new THREE.SphereGeometry(.17,12,10),
         new THREE.MeshBasicMaterial({ color: 0xf2a65e }));
-      lant.scale.y = .82; lant.position.set(side * 11.0, 4.0, z + (wi % 2 ? .9 : -.8)); scene.add(lant);
-      var lant2 = lant.clone(); lant2.position.set(side * 11.8, 3.4, z + (wi % 2 ? -.4 : 1.1)); lant2.scale.setScalar(.8); scene.add(lant2);
+      lant.scale.y = .82; lant.position.set(side * 13.0, 4.0, z + (wi % 2 ? .9 : -.8)); scene.add(lant);
+      var lant2 = lant.clone(); lant2.position.set(side * 13.8, 3.4, z + (wi % 2 ? -.4 : 1.1)); lant2.scale.setScalar(.8); scene.add(lant2);
       /* a soft shaft of daylight falling in from the window */
       var shaft = new THREE.Mesh(new THREE.PlaneGeometry(winW * .92, 4.6),
         new THREE.MeshBasicMaterial({ color: 0xffe9bb, transparent: true, opacity: .055, side: THREE.DoubleSide, depthWrite: false }));
@@ -1508,8 +1513,8 @@ function buildCommon(kind){
   /* entrance wall behind the visitor: a wide doorway with warm
      light beyond it and a lintel sign, so looking back completes
      the room instead of meeting a void */
-  wallBox(8.3, 10.6, .4, -5.85, 5.3, 11.9);
-  wallBox(8.3, 10.6, .4, 5.85, 5.3, 11.9);
+  wallBox(10.3, 10.6, .4, -6.85, 5.3, 11.9);
+  wallBox(10.3, 10.6, .4, 6.85, 5.3, 11.9);
   wallBox(3.4, 5.0, .4, 0, 8.1, 11.9);
   var doorGlow = new THREE.Mesh(new THREE.PlaneGeometry(3.3, 5.6),
     new THREE.MeshBasicMaterial({ color: 0xffca7a, transparent: true, opacity: .34 }));
@@ -1521,9 +1526,9 @@ function buildCommon(kind){
   });
   /* ceiling — dark, with exposed rafters marching toward the altar
      and two pendant lamps hanging over the nave, as in real halls */
-  box(20,.25,25.5, 0x20140d, 0,10.7,-1);
+  box(24,.25,25.5, 0x20140d, 0,10.7,-1);
   for (var rz = -11.6; rz <= 10.6; rz += 1.85){
-    var raft = new THREE.Mesh(new THREE.BoxGeometry(19.6,.17,.3), beamMat);
+    var raft = new THREE.Mesh(new THREE.BoxGeometry(23.6,.17,.3), beamMat);
     raft.position.set(0, 10.52, rz); scene.add(raft);
   }
   var ridge = new THREE.Mesh(new THREE.BoxGeometry(.4,.3,24.6), beamMat);
@@ -1576,10 +1581,13 @@ function buildCommon(kind){
   coupletR.position.set(4.1, 4.6, -12.14); scene.add(coupletR);
   /* colonnade — five pairs of pillars march down both sides of the
      nave, each pair carrying a cross beam: five frames that shrink
-     toward the altar and pull the eye along with them */
+     toward the altar and pull the eye along with them. Spread
+     2026-11-15 to match the widened hall: pairs moved out to
+     x=+-10.2 and further apart front-to-back (3.6 -> 4.2), so the
+     pillars read as clearly separated, never crowded. */
   var pillarMat = new THREE.MeshStandardMaterial({ map: beamTexture(), color: isGY ? 0xa8b096 : 0xc06a4c, roughness: .62 });
-  [-8.6,-5.0,-1.4,2.2,5.8].forEach(function(z){
-    [-7.3,7.3].forEach(function(x){
+  [-9.8,-5.6,-1.4,2.8,7.0].forEach(function(z){
+    [-10.2,10.2].forEach(function(x){
       var pil = new THREE.Mesh(new THREE.CylinderGeometry(.32,.38,8.8,18), pillarMat);
       pil.position.set(x,4.4,z); scene.add(pil);
       /* a turned collar low on the shaft and the gold capital */
@@ -1591,16 +1599,16 @@ function buildCommon(kind){
       var baseTrim = new THREE.Mesh(new THREE.BoxGeometry(1.0,.07,1.0), new THREE.MeshStandardMaterial({ color:0xc9a24b, roughness:.4, metalness:.5 }));
       baseTrim.position.set(x,.36,z); scene.add(baseTrim);
     });
-    var cb = new THREE.Mesh(new THREE.BoxGeometry(15.5,.55,.62), beamMat);
+    var cb = new THREE.Mesh(new THREE.BoxGeometry(21.0,.55,.62), beamMat);
     cb.position.set(0,9.25,z); scene.add(cb);
   });
   /* longitudinal beams tying the colonnade together, and one taller
      beam before the altar wall as the final frame */
-  [[-7.3],[7.3]].forEach(function(px){
+  [[-10.2],[10.2]].forEach(function(px){
     var lb = new THREE.Mesh(new THREE.BoxGeometry(.55,.55,21.5), beamMat);
     lb.position.set(px[0],9.25,-1.2); scene.add(lb);
   });
-  var topBeam = new THREE.Mesh(new THREE.BoxGeometry(17.5,.6,.7), beamMat);
+  var topBeam = new THREE.Mesh(new THREE.BoxGeometry(21.0,.6,.7), beamMat);
   topBeam.position.set(0,9.9,-11.6); scene.add(topBeam);
   /* altar table — textured top, a carved apron with a gold lattice
      strip, and turned legs, dressed with offerings: candle stands,
@@ -1685,8 +1693,10 @@ function buildCommon(kind){
   });
   burnerGroup = buildBurner(0.85); burnerGroup.position.set(0, .35, -6.6); scene.add(burnerGroup);
   incenseGroup = new THREE.Group(); incenseGroup.position.set(0, .56, 0); burnerGroup.add(incenseGroup);
-  /* centre aisle carpet, kept clear between the seat rows */
-  box(1.7,.03,15.5, isGY?0x4c5540:0x6e2a20, 0,.015,0.4);
+  /* centre aisle carpet, narrowed 2026-11-15 so it stays inside
+     the aisle and never runs under a cushion — the old 1.7 width
+     reached 0.435 under the inner columns and read as cramped */
+  box(1.1,.03,15.5, isGY?0x4c5540:0x6e2a20, 0,.015,0.4);
   /* seating — 40 cushions in five widely spaced rows facing the
      altar (see SEATS). 24 taken seats carry a visible seated
      worshipper — robed, faced, gently breathing — so the hall
@@ -1729,7 +1739,7 @@ function buildCommon(kind){
   });
   /* hanging lanterns — two pairs down the nave, their glow marking
      the depth of the room as they recede toward the altar */
-  [[-5.6,-6.2],[5.6,-6.2],[-5.6,0.6],[5.6,0.6],[-5.6,6.4],[5.6,6.4]].forEach(function(p){
+  [[-6.8,-6.2],[6.8,-6.2],[-6.8,0.6],[6.8,0.6],[-6.8,6.4],[6.8,6.4]].forEach(function(p){
     var l = new THREE.Mesh(new THREE.SphereGeometry(.3,14,12), new THREE.MeshBasicMaterial({ color: isGY?0xd8e2b0:0xe08a4a }));
     l.scale.y = .82; l.position.set(p[0],6.1,p[1]); scene.add(l);
     var pl2 = new THREE.PointLight(isGY?0xcfe0a0:0xff9c3f,.55,8); pl2.position.set(p[0],5.9,p[1]); scene.add(pl2);
@@ -2522,7 +2532,7 @@ function enterHall(d){
       ax = 0; az = STAND_Z; dist = 4.3; camY = 2.2; lookY = 2.0;
     }
     camPosT.set(ax - fx * dist, camY, az - fz * dist);
-    camPosT.x = Math.max(-9.3, Math.min(9.3, camPosT.x));
+    camPosT.x = Math.max(-10.8, Math.min(10.8, camPosT.x));
     camPosT.z = Math.max(-11.85, Math.min(11.35, camPosT.z));
     lookT.set(ax + fx * 7, lookY + camPitch * 5, az + fz * 7);
     camPos.lerp(camPosT, smoothA);
@@ -2569,7 +2579,7 @@ function enterHall(d){
         pendingBow = false;
         var hv = padVec(Math.PI - camAngle, hPadDir);
         var hp = visitorFigure.position;
-        visitorWalk = { x1: Math.max(-8.4, Math.min(8.4, hp.x + hv.x * 6)),
+        visitorWalk = { x1: Math.max(-9.5, Math.min(9.5, hp.x + hv.x * 6)),
                         z1: Math.max(-5.0, Math.min(10.6, hp.z + hv.z * 6)),
                         seat: null, after: null, amt: visitorWalk ? visitorWalk.amt : 0 };
       }
