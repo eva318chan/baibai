@@ -10,3 +10,7 @@
 ## Source
 
 Built as a Muse web artifact (`bai-bai-xian-shang-xu-ni-miao-yu-demo`), copied verbatim from `~/workspace/ts-spaces/bai-bai-xian-shang-xu-ni-miao-yu-demo/` at v32, then maintained directly in this repo (v33 onward).
+
+## Fortune sticks — full set of 100 (2026-11-15)
+
+The fortune-drawing feature (求籤) now holds the complete set of 100 Wong Tai Sin sticks (#1–#100). The original 16 verified sticks (#1–#15 and #100) were joined by the remaining 84 (#16–#99), added in seven batches of 12, each verified verbatim against the official Sik Sik Yuen TaoNet pages (https://taonet.siksikyuen.org.hk/StickEnquiry/{number}/zh-TW) — title, poem (籤文), interpretation (解曰) and details (詳情) copied exactly, grades cross-checked against kaucim.ai (https://www.kaucim.ai/sign). Grade distribution matches the official source: Excellent (上上) 3, Very Good (上吉) 10, Good (中吉) 29, Fair (中平) 40, Poor (下下) 18. Each stick is stored trilingually (Traditional Chinese / Simplified Chinese / English); the new 84 also carry the full 詳情 detail pairs in the data. Two grades in the original 16 were corrected to the official TaoNet grades during the final batch: #7 (仁貴歸家) and #14 (東坡歸隱), both from Good (中吉) to Fair (中平). The in-app note now reads "一百支已齊" (the full 100 are in). No stick was fabricated or left out.
