@@ -114,6 +114,11 @@
   .ts-year-row{display:flex; align-items:center; gap:10px; justify-content:center; margin:0 0 6px; color:var(--ink-dim); font-size:13px;}
   .ts-year-row select{background:rgba(42,33,26,.7); color:var(--ink); border:1px solid var(--line); border-radius:8px; padding:7px 10px; font-size:14px; font-family:inherit;}
   .ts-note{text-align:center; color:var(--ink-faint); font-size:12px; line-height:1.7; margin:0 0 14px;}
+  .legal-foot{text-align:center;}
+  .legal-link{background:none; border:none; padding:2px 4px; color:var(--gold-soft); font:inherit; font-size:12px; text-decoration:underline; cursor:pointer;}
+  .legal-body{text-align:left; font-size:13px; line-height:1.75; color:var(--ink);}
+  .legal-body p{margin:0 0 10px;}
+  .legal-body h4{margin:14px 0 6px; font-size:14px; color:var(--gold-soft);}
   .ts-result{background:rgba(42,33,26,.55); border:1px solid var(--gold); border-radius:14px; padding:16px 16px 14px; margin-top:6px; text-align:center;}
   .ts-result .ts-year-line{color:var(--gold-soft); font-size:12.5px; letter-spacing:.08em; margin:0 0 8px;}
   .ts-result .ts-head{font-family:"Noto Serif TC",serif; font-size:24px; font-weight:700; letter-spacing:.1em; margin:0 0 4px;}
@@ -433,9 +438,10 @@
     </div>
     <button class="enter-btn" id="enter-btn" data-i18n="enterBtn">入 廟</button>
     <button class="enter-btn ghost" id="taisui-btn" data-i18n="taisuiBtn">查 太 歲</button>
+    <button class="enter-btn ghost" id="direct-hall-btn" data-i18n="directHallBtn">直 接 入 殿</button>
   </div>
   <p class="entry-foot" data-i18n="entryFoot">本頁為 Demo 示範版，3D 場景與儀式均為體驗示範；殿內善信為氣氛人物，並非真人連線。真正多人同時在線版本需要後端支援，Demo 未包含。</p>
-  <p class="entry-foot credit-line" data-i18n="chantCredit">誦經：台灣福嚴佛學院僧眾《心經》唱誦（Matheson Trust Sacred Audio Collection）</p>
+  <p class="entry-foot legal-foot"><button class="legal-link" id="privacy-link" data-i18n="privacyLink">私隱政策</button><span> · </span><button class="legal-link" id="terms-link" data-i18n="termsLink">使用條款</button></p>
 </section>
 
 <!-- ============ GARDEN / OUTER GROUNDS ============ -->
@@ -475,7 +481,7 @@
       <p data-i18n="selectDesc">撳入去，就可以入殿參拜。</p>
     </div>
     <div class="deity-grid" id="deity-grid"></div>
-    <p class="select-note" data-i18n="selectNote">入殿之後可以上香、合掌、鞠躬、求籤、撥念珠同敲鐘，靜心參拜。</p>
+    <p class="select-note" data-i18n="selectNote">入殿之後可以上香、合掌、鞠躬、求籤同敲鐘，靜心參拜。</p>
     <div style="text-align:center; margin-top:10px;"><button class="pill-btn" id="back-entry" data-i18n="backGarden">← 返回庭院</button></div>
   </div>
 </section>
@@ -628,10 +634,32 @@
       <div class="fortune-reading" id="fortune-reading" style="display:none;"></div>
       <div style="text-align:center; margin:12px 0 2px;"><button class="btn" data-close="fortune-overlay" data-i18n="backToGarden">返回庭園</button></div>
       <p class="fortune-note" data-i18n="fortuneSource">來源：嗇色園官方籤文（黃大仙祠一百靈籤），籤文、解曰及詳情逐支核對。一百支已齊。籤文屬民俗文化參考，並非命運判決；重要決定請以現實判斷為準。</p>
+      <div style="text-align:center; margin:12px 0 2px;"><button class="btn ghost" id="save-slip-btn" data-i18n="saveSlip">保存籤文卡</button></div>
       <div class="close-row" style="gap:10px;">
         <button class="btn ghost" id="shake-again" data-i18n="shakeAgain">再求一支</button>
         <button class="btn" data-close="fortune-overlay" data-i18n="receive">收下籤文</button>
       </div>
+      <p class="fortune-note" data-i18n="oneMatterOneStick">傳統講求一事一籤——同一件事，唔好重複求籤，靜心等結果。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PRIVACY + TERMS (2026-11-18) ============ -->
+<div class="overlay" id="privacy-overlay" role="dialog" aria-modal="true">
+  <div class="sheet">
+    <h3 data-i18n="privacyTitle">私 隱 政 策</h3>
+    <div class="legal-body" id="privacy-body"></div>
+    <div class="close-row" style="gap:10px;">
+      <button class="btn ghost" data-close="privacy-overlay" data-i18n="closeSheet">合十離開</button>
+    </div>
+  </div>
+</div>
+<div class="overlay" id="terms-overlay" role="dialog" aria-modal="true">
+  <div class="sheet">
+    <h3 data-i18n="termsTitle">使 用 條 款</h3>
+    <div class="legal-body" id="terms-body"></div>
+    <div class="close-row" style="gap:10px;">
+      <button class="btn ghost" data-close="terms-overlay" data-i18n="closeSheet">合十離開</button>
     </div>
   </div>
 </div>
@@ -650,6 +678,10 @@
     <div class="ts-year-row">
       <label for="ts-birth-year" data-i18n="tsPickYear">出生年份（可選）</label>
       <select id="ts-birth-year"></select>
+      <label for="ts-birth-month" data-i18n="tsPickMonth">月</label>
+      <select id="ts-birth-month"></select>
+      <label for="ts-birth-day" data-i18n="tsPickDay">日</label>
+      <select id="ts-birth-day"></select>
     </div>
     <p class="ts-note" data-i18n="tsYearNote">生肖按農曆年（立春）計；1 月或 2 月初出生嘅朋友，生肖可能係上一年嘅，請自行核對。</p>
     <div class="ts-result" id="ts-result" style="display:none;"></div>
@@ -713,13 +745,13 @@ var I18N = {
     siteTitle:'拜拜', tagline:'入嚟拜神，休息一陣',
     entryDesc:'唔使註冊，唔使下載。嚟拜神，先喺庭院沿石徑慢慢行，去湖邊同松樹下靜一靜，然之後先入殿上炷香、鞠個躬。呢度冇聊天，冇喧嘩，只有雀聲、水聲、鐘聲。',
     rule1:'免費入廟', rule2:'唔使註冊', rule3:'殿內請保持安靜', rule4:'冇聊天功能',
-    enterBtn:'入 廟',
+    enterBtn:'入 廟', directHallBtn:'直 接 入 殿', privacyLink:'私隱政策', termsLink:'使用條款', privacyTitle:'私 隱 政 策', termsTitle:'使 用 條 款',
     pickAcolyte:'你係邊個小道童？', acolyteBoy:'道童 · 男', acolyteGirl:'道童 · 女',
     guideTip:'慢慢行，唔使急。湖邊同老樹下最靜，行到廟門就可以入殿。',
     entryFoot:'本頁為 Demo 示範版，3D 場景與儀式均為體驗示範；殿內善信為氣氛人物，並非真人連線。真正多人同時在線版本需要後端支援，Demo 未包含。',
     chantCredit:'誦經：台灣福嚴佛學院僧眾《心經》唱誦（Matheson Trust Sacred Audio Collection）',
     selectTitle:'請揀一間殿', selectDesc:'撳入去，就可以入殿參拜。',
-    selectNote:'入殿之後可以上香、合掌、鞠躬、求籤、撥念珠同敲鐘，靜心參拜。',
+    selectNote:'入殿之後可以上香、合掌、鞠躬、求籤同敲鐘，靜心參拜。',
     backGate:'← 返回廟門', backSelect:'返回揀殿',
     leaveHall:'離開大殿', donate:'添香油',
     hallHint:'拖動畫面環視大殿 · 撳一個發光嘅空蒲團，就可以坐低參拜',
@@ -739,12 +771,12 @@ var I18N = {
     fortuneTitle:'求 籤', fortuneSub:'心誠則靈。請喺心入面默念所問之事，再撳「搖籤」。', slipHeader:'黃大仙靈籤',
     fortuneResultTitle:'你求到嘅籤', fortuneResultSub:'籤文錄自黃大仙靈籤通行本，請靜心細讀。',
     fortuneSource:'來源：嗇色園官方籤文（黃大仙祠一百靈籤），籤文、解曰及詳情逐支核對。一百支已齊。籤文屬民俗文化參考，並非命運判決；重要決定請以現實判斷為準。',
-    cancel:'取消', shakeBtn:'搖 籤', shakeAgain:'再求一支', receive:'收下籤文', backToGarden:'返回庭園', closeSheet:'合十離開',
+    cancel:'取消', shakeBtn:'搖 籤', shakeAgain:'再求一支', receive:'收下籤文', backToGarden:'返回庭園', closeSheet:'合十離開', saveSlip:'保存籤文卡', oneMatterOneStick:'傳統講求一事一籤——同一件事，唔好重複求籤，靜心等結果。', toastSlipSaved:'籤文卡已保存，可以分享畀親友。',
     readMore:'解讀', readLess:'收起解讀', readOne:'一句話', readSeven:'七方面', readDetail:'傳統詳解 · 作個提醒', readClose:'籤文是提醒，不是定局。靜下心來，好好面對，逢凶可以化吉，化險可以為夷。', readSrc:'白話解讀：kaucim.ai 現代解讀；傳統詳解：嗇色園官方籤文。',
     beadsTitle:'撥 念 珠', beadsSub:'一珠一念，心無雜念。撳下面按鈕逐粒撥，數滿 108 粒為一遍。',
     beadStart:'靜心，開始第一粒。', beadReset:'重新數', beadNext:'撥一粒',
     beadDone:'一百零八粒已數完，心境澄明。阿彌陀佛。',
-    donateTitle:'添 香 油', donateSub:'隨緣樂助，多少不拘。香油錢用作維持廟宇香火與日常修繕。',
+    donateTitle:'添 香 油', donateSub:'隨緣樂助，多少不拘。款項用於支持 Baibai.hk 伺服器運作與新殿堂開發（虛擬供養）。',
     donateDemoNote:'Demo 示範：呢度唔會真係扣錢，撳「添香油」只會送上多謝。',
     donateConfirm:'添香油', amtFree:'隨緣',
     toastIncense:'已上香，煙供裊裊，心意已達。',
@@ -766,8 +798,10 @@ var I18N = {
     pageTitle:'拜拜 — 線上虛擬廟宇 Demo',
     taisuiBtn:'查 太 歲', taisuiTitle:'查 太 歲',
     taisuiSub:'揀你嘅生肖，睇吓今年犯唔犯太歲。結果只係提醒，唔係定局。',
-    tsPickSign:'揀你嘅生肖', tsPickYear:'出生年份（可選）',
-    tsYearNote:'生肖按農曆年（立春）計；1 月或 2 月初出生嘅朋友，生肖可能係上一年嘅，請自行核對。',
+    tsPickSign:'揀你嘅生肖', tsPickYear:'出生年份（可選）', tsPickMonth:'月', tsPickDay:'日',
+    tsYearNote:'生肖按農曆年（立春）計，揀埋月份同日子，系統會自動按嗰年立春計返啱你嘅生肖。',
+    privacyBody:'Baibai.hk 唔需要註冊，亦唔會收集你嘅姓名、電郵、電話或地址。\n\n你嘅選擇（語言、聲音、道童）同其他設定，只會儲喺你自己部裝置上面，唔會傳送畀我哋。求籤同查太歲全部喺你部裝置上面計，你嘅出生日期唔會上傳。\n\n本站使用 Vercel Analytics，只會記錄匿名、合計嘅到訪數字（冇個人資料、冇跨站追蹤），網站上面唔會顯示任何數字。\n\n如果你聯絡我哋，我哋只會用你嘅訊息嚟回覆你。本站按香港《個人資料（私隱）條例》處理個人資料。',
+    termsBody:'Baibai.hk 係一個線上虛擬廟宇——一個文化體驗、令人靜心嘅地方。佢唔係實體廟宇，唔係慈善機構，唔係網店，唔係加密貨幣交易所，亦唔係 AI 工具。\n\n黃大仙靈籤（來源：嗇色園官方籤文）同查太歲，屬於民俗文化參考，用嚟靜心反思，唔係命運判決；重要決定請以現實判斷為準。\n\n呢個版本係 Demo 示範版，唔會收取任何真實款項。將來「添香油」係自願支持 Baibai.hk 伺服器運作與新殿堂開發（虛擬供養／平台打賞），唔係捐款畀實體廟宇。\n\n殿內請保持安靜——呢度冇聊天功能。籤文來自嗇色園官方；3D 場景同人物係原創。我哋可能更新呢份條款，以呢一頁顯示嘅版本為準。',
     tsYearLine:'{year} {ganzhi}{animal}年 · 值年太歲 {lord}',
     tsType_zhi:'值太歲', tsType_zhi_xing:'值太歲＋刑太歲', tsType_chong:'沖太歲', tsType_chong_xing:'沖太歲（兼刑）', tsType_hai:'害太歲', tsType_po:'破太歲', tsType_xing_po:'刑太歲＋破太歲', tsType_none:'不犯太歲',
     tsExp_zhi:'本命年，太歲落喺自己身上；好壞都容易放大，大事之前多想一步。',
@@ -794,13 +828,13 @@ var I18N = {
     siteTitle:'拜拜', tagline:'进来拜神，休息一阵',
     entryDesc:'不用注册，不用下载。来拜神，先在庭院沿石径慢慢走，去湖边和松树下静一静，然后才入殿上炷香、鞠个躬。这里没有聊天，没有喧哗，只有鸟声、水声、钟声。',
     rule1:'免费入庙', rule2:'不用注册', rule3:'殿内请保持安静', rule4:'没有聊天功能',
-    enterBtn:'入 庙',
+    enterBtn:'入 庙', directHallBtn:'直 接 入 殿', privacyLink:'隐私政策', termsLink:'使用条款', privacyTitle:'隐 私 政 策', termsTitle:'使 用 条 款',
     pickAcolyte:'你是哪个小道童？', acolyteBoy:'道童 · 男', acolyteGirl:'道童 · 女',
     guideTip:'慢慢走，不用急。湖边和老树下最安静，走到庙门就可以入殿。',
     entryFoot:'本页为 Demo 示范版，3D 场景与仪式均为体验示范；殿内善信为气氛人物，并非真人连线。真正多人同时在线版本需要后端支持，Demo 未包含。',
     chantCredit:'诵经：台湾福严佛学院僧众《心经》唱诵（Matheson Trust Sacred Audio Collection）',
     selectTitle:'请选择一间殿', selectDesc:'点进去，就可以入殿参拜。',
-    selectNote:'入殿之后可以上香、合掌、鞠躬、求签、拨念珠和敲钟，静心参拜。',
+    selectNote:'入殿之后可以上香、合掌、鞠躬、求签和敲钟，静心参拜。',
     backGate:'← 返回庙门', backSelect:'返回选殿',
     leaveHall:'离开大殿', donate:'添香油',
     hallHint:'拖动画面环视大殿 · 点一个发光的空蒲团，就可以坐下参拜',
@@ -820,12 +854,12 @@ var I18N = {
     fortuneTitle:'求 签', fortuneSub:'心诚则灵。请在心里默念所问之事，再点「摇签」。', slipHeader:'黄大仙灵签',
     fortuneResultTitle:'你求到的签', fortuneResultSub:'签文录自黄大仙灵签通行本，请静心细读。',
     fortuneSource:'来源：啬色园官方签文（黄大仙祠一百灵签），签文、解曰及详情逐支核对。一百支已齐。签文属民俗文化参考，并非命运判决；重要决定请以现实判断为准。',
-    cancel:'取消', shakeBtn:'摇 签', shakeAgain:'再求一支', receive:'收下签文', backToGarden:'返回庭园', closeSheet:'合十离开',
+    cancel:'取消', shakeBtn:'摇 签', shakeAgain:'再求一支', receive:'收下签文', backToGarden:'返回庭园', closeSheet:'合十离开', saveSlip:'保存签文卡', oneMatterOneStick:'传统讲求一事一签——同一件事，不要重复求签，静心等结果。', toastSlipSaved:'签文卡已保存，可以分享给亲友。',
     readMore:'解读', readLess:'收起解读', readOne:'一句话', readSeven:'七方面', readDetail:'传统详解 · 作个提醒', readClose:'签文是提醒，不是定局。静下心来，好好面对，逢凶可以化吉，化险可以为夷。', readSrc:'白话解读：kaucim.ai 现代解读；传统详解：啬色园官方签文。',
     beadsTitle:'拨 念 珠', beadsSub:'一珠一念，心无杂念。点下面按钮逐粒拨，数满 108 粒为一遍。',
     beadStart:'静心，开始第一粒。', beadReset:'重新数', beadNext:'拨一粒',
     beadDone:'一百零八粒已数完，心境澄明。阿弥陀佛。',
-    donateTitle:'添 香 油', donateSub:'随缘乐助，多少不拘。香油钱用作维持庙宇香火与日常修缮。',
+    donateTitle:'添 香 油', donateSub:'随缘乐助，多少不拘。款项用于支持 Baibai.hk 服务器运作与新殿堂开发（虚拟供养）。',
     donateDemoNote:'Demo 示范：这里不会真的扣钱，点「添香油」只会送上多谢。',
     donateConfirm:'添香油', amtFree:'随缘',
     toastIncense:'已上香，烟供袅袅，心意已达。',
@@ -847,8 +881,10 @@ var I18N = {
     pageTitle:'拜拜 — 线上虚拟庙宇 Demo',
     taisuiBtn:'查 太 岁', taisuiTitle:'查 太 岁',
     taisuiSub:'选你的生肖，看看今年犯不犯太岁。结果只是提醒，不是定局。',
-    tsPickSign:'选你的生肖', tsPickYear:'出生年份（可选）',
-    tsYearNote:'生肖按农历年（立春）计；1 月或 2 月初出生的朋友，生肖可能是上一年的，请自行核对。',
+    tsPickSign:'选你的生肖', tsPickYear:'出生年份（可选）', tsPickMonth:'月', tsPickDay:'日',
+    tsYearNote:'生肖按农历年（立春）计，选好月份和日子，系统会自动按那年立春算出你的生肖。',
+    privacyBody:'Baibai.hk 不需要注册，也不会收集你的姓名、电邮、电话或地址。\n\n你的选择（语言、声音、道童）和其他设定，只会储存在你自己的装置上，不会传送给我们。求签和查太岁全部在你的装置上计算，你的出生日期不会上传。\n\n本站使用 Vercel Analytics，只记录匿名、合计的到访数字（没有个人资料、没有跨站追踪），网站上不会显示任何数字。\n\n如果你联络我们，我们只会用你的讯息来回复你。本站按香港《个人资料（隐私）条例》处理个人资料。',
+    termsBody:'Baibai.hk 是一个线上虚拟庙宇——一个文化体验、让人静心的地方。它不是实体庙宇，不是慈善机构，不是网店，不是加密货币交易所，也不是 AI 工具。\n\n黄大仙灵签（来源：啬色园官方签文）和查太岁，属于民俗文化参考，用来静心反思，不是命运判决；重要决定请以现实判断为准。\n\n这个版本是 Demo 示范版，不会收取任何真实款项。将来「添香油」是自愿支持 Baibai.hk 服务器运作与新殿堂开发（虚拟供养／平台打赏），不是捐款给实体庙宇。\n\n殿内请保持安静——这里没有聊天功能。签文来自啬色园官方；3D 场景和人物是原创。我们可能更新这份条款，以这一页显示的版本为准。',
     tsYearLine:'{year} {ganzhi}{animal}年 · 值年太岁 {lord}',
     tsType_zhi:'值太岁', tsType_zhi_xing:'值太岁＋刑太岁', tsType_chong:'冲太岁', tsType_chong_xing:'冲太岁（兼刑）', tsType_hai:'害太岁', tsType_po:'破太岁', tsType_xing_po:'刑太岁＋破太岁', tsType_none:'不犯太岁',
     tsExp_zhi:'本命年，太岁落在自己身上；好坏都容易放大，大事之前多想一步。',
@@ -875,13 +911,13 @@ var I18N = {
     siteTitle:'BaiBai', tagline:'Come in to worship — and rest a while',
     entryDesc:"No sign-up, no downloads. Come in to worship: first stroll along the stone path through the temple grounds — pause by the lotus pond and under the pines — then step inside to light incense and bow. There's no chat here, no noise — only birdsong, water and bells.",
     rule1:'Free entry', rule2:'No sign-up', rule3:'Please keep quiet inside', rule4:'No chat',
-    enterBtn:'Enter',
+    enterBtn:'Enter', directHallBtn:'Enter the Hall', privacyLink:'Privacy Policy', termsLink:'Terms of Use', privacyTitle:'Privacy Policy', termsTitle:'Terms of Use',
     pickAcolyte:'Which little acolyte are you?', acolyteBoy:'Boy acolyte', acolyteGirl:'Girl acolyte',
     guideTip:'Walk slowly, no rush. The lake and the old tree are the quietest spots; at the gate you can enter the hall.',
     entryFoot:'This page is a demo. The 3D halls and rituals are for experience only; the worshippers inside are ambient figures, not real people connected live. A true multi-user version needs a backend, which this demo does not include.',
     chantCredit:'Chanting: the Heart Sutra sung by the monastics of Fuyan Buddhist Institute, Taiwan (Matheson Trust Sacred Audio Collection)',
     selectTitle:'Choose a Hall', selectDesc:'Tap to step inside and worship.',
-    selectNote:'Inside the hall you can light incense, press your palms together, bow, draw a fortune stick, count prayer beads and ring the bell.',
+    selectNote:'Inside the hall you can light incense, press your palms together, bow, draw a fortune stick and ring the bell.',
     backGate:'← Back to the Gate', backSelect:'Back to Halls',
     leaveHall:'Leave Hall', donate:'Incense Oil',
     hallHint:'Drag to look around the hall · Tap a glowing empty cushion to sit down and worship',
@@ -901,12 +937,12 @@ var I18N = {
     fortuneTitle:'Draw a Fortune Stick', fortuneSub:'Sincerity brings the spirit near. Hold your question quietly in your heart, then tap "Shake".', slipHeader:'Wong Tai Sin Lots',
     fortuneResultTitle:'Your Fortune Stick', fortuneResultSub:'From the standard Wong Tai Sin fortune-stick book. Read it slowly, with a calm mind.',
     fortuneSource:"Source: the official Sik Sik Yuen stick texts (the 100 sticks of Wong Tai Sin Temple); each poem, interpretation and detail has been checked against them. All 100 sticks are included. Fortune sticks are a folk-culture reference, not a verdict on your fate — for important decisions, trust your own judgement.",
-    cancel:'Cancel', shakeBtn:'Shake', shakeAgain:'Draw Again', receive:'Keep This Stick', backToGarden:'Return to garden', closeSheet:'Done',
+    cancel:'Cancel', shakeBtn:'Shake', shakeAgain:'Draw Again', receive:'Keep This Stick', backToGarden:'Return to garden', closeSheet:'Done', saveSlip:'Save Slip Card', oneMatterOneStick:'Tradition says one matter, one stick — do not draw again for the same question; sit with the answer.', toastSlipSaved:'Slip card saved — share it with family and friends.',
     readMore:'Read More', readLess:'Hide Reading', readOne:'In one sentence', readSeven:'Seven areas of life', readDetail:'Traditional detail — as a reminder', readClose:'A stick is a reminder, not a verdict. Quiet your mind and face what comes: misfortune can turn to good fortune, and danger to safety.', readSrc:'Plain-language reading: kaucim.ai modern reading; traditional detail: the official Sik Sik Yuen stick texts.',
     beadsTitle:'Prayer Beads', beadsSub:'One bead, one thought, a mind free of clutter. Tap the button to count bead by bead — 108 beads make one full round.',
     beadStart:'Still your mind. Begin with the first bead.', beadReset:'Start Over', beadNext:'Next Bead',
     beadDone:'All 108 beads counted. The mind is clear. Amitabha.',
-    donateTitle:'Offer Incense Oil', donateSub:'Give as you wish, large or small — offerings keep the incense burning and the temple in good repair.',
+    donateTitle:'Offer Incense Oil', donateSub:'Give as you wish, large or small — your support keeps Baibai.hk running and helps build new halls (a virtual offering to the platform).',
     donateDemoNote:'Demo only: no money is charged here. Tapping "Offer" simply sends our thanks.',
     donateConfirm:'Offer', amtFree:'Any Amount',
     toastIncense:'Incense lit. May your wish rise with the smoke.',
@@ -928,8 +964,10 @@ var I18N = {
     pageTitle:'BaiBai — Online Virtual Temple Demo',
     taisuiBtn:'Check Tai Sui', taisuiTitle:'Check Tai Sui',
     taisuiSub:'Pick your sign to see whether it offends Tai Sui this year. The result is a reminder, not a verdict.',
-    tsPickSign:'Pick your sign', tsPickYear:'Birth year (optional)',
-    tsYearNote:'Signs follow the lunar year (from Lichun, the start of spring). If you were born in January or early February, your sign may be the previous year\u2019s — please check.',
+    tsPickSign:'Pick your sign', tsPickYear:'Birth year (optional)', tsPickMonth:'Month', tsPickDay:'Day',
+    tsYearNote:'Signs follow the lunar year (from Lichun, the start of spring). Pick your birth month and day and the sign is worked out from that year\u2019s Lichun automatically.',
+    privacyBody:'Baibai.hk needs no registration and collects no name, email, phone number or address.\n\nYour choices (language, sound, acolyte) and other settings are stored only on your own device and never sent to us. Fortune sticks and Tai Sui are calculated entirely on your device; your birth date is never uploaded.\n\nWe use Vercel Analytics, which records anonymous, aggregate visits only (no personal data, no cross-site tracking). No numbers are shown on the site.\n\nIf you contact us, we use your message only to reply. We handle personal data in line with Hong Kong\u2019s Personal Data (Privacy) Ordinance.',
+    termsBody:'Baibai.hk is an online virtual temple — a cultural experience, a place to be still. It is not a physical temple, not a charity, not a shop, not a cryptocurrency exchange, and not an AI tool.\n\nThe Wong Tai Sin fortune sticks (source: the official Sik Sik Yuen texts) and Tai Sui are folk-culture references, for quiet reflection — not verdicts on your fate. For important decisions, trust your own judgement.\n\nThis version is a Demo: no real payment is taken. A future \u201cOffer Incense Oil\u201d is a voluntary contribution to keep Baibai.hk running and build new halls (a virtual offering to the platform), not a donation to a physical temple.\n\nPlease keep quiet inside the halls — there is no chat here. The stick texts come from Sik Sik Yuen; the 3D scenes and characters are original. We may update these terms; the version shown on this page applies.',
     tsYearLine:'{year} · {element} {animalEn} year ({ganzhiEn}) · Tai Sui: {lordEn}',
     tsType_zhi:'Birth-Sign Year', tsType_zhi_xing:'Birth-Sign Year + Self-Punishment', tsType_chong:'Opposition', tsType_chong_xing:'Opposition (with Punishment)', tsType_hai:'Harm', tsType_po:'Break', tsType_xing_po:'Punishment + Break', tsType_none:'No Clash with Tai Sui',
     tsExp_zhi:'Your birth-sign year — Tai Sui rests on your own sign, so both good and bad feel stronger. Think one step further before big decisions.',
@@ -949,6 +987,12 @@ var I18N = {
   }
 };
 function t(key){ return (I18N[LANG] && I18N[LANG][key]) || I18N.tc[key] || key; }
+function renderLegal(){
+  [['privacy-body','privacyBody'],['terms-body','termsBody']].forEach(function(pair){
+    var el = document.getElementById(pair[0]); if (!el) return;
+    el.innerHTML = t(pair[1]).split('\n\n').map(function(p){ return '<p>' + esc(p) + '</p>'; }).join('');
+  });
+}
 function applyLang(){
   document.documentElement.lang = LANG === 'tc' ? 'zh-Hant' : (LANG === 'sc' ? 'zh-Hans' : 'en');
   document.title = t('pageTitle');
@@ -1009,6 +1053,7 @@ function applyLang(){
      language switch leaves the track untouched; syncChant() just
      keeps its play state honest */
   chantTrack(); syncChant();
+  renderLegal();
 }
 
 /* ================= data ================= */
@@ -1959,6 +2004,14 @@ function setSound(on){
    wind, water and birdsong are all synthesized, and nothing
    else can speak.) */
 var chantOn = true, chantFadeTimer = null;
+/* The Heart Sutra chant is Buddhist, so it belongs to the Buddha hall,
+   not to Wong Tai Sin (2026-11-18, Option A — user chose pure Taoist
+   for the Wong Tai Sin hall): the Wong Tai Sin hall is nature sounds
+   only, and the chant (with the prayer beads) returns when the Buddha
+   hall opens. Until then the chant never plays and its button stays
+   hidden. The prayer beads were already gated the same way — the
+   beads button only appears in non-WTS halls. */
+function chantAllowed(){ return currentHall && currentHall !== 'wts'; }
 /* 0.5, not a whisper: at the old 0.07 the sung recording (mean
    level ≈ −18 dB) landed near −42 dB at the speaker and visitors
    heard nothing at all while the button read 「誦經中」 — the
@@ -2018,7 +2071,7 @@ function syncChant(){
   var el = chantEl(); if (!el) return;
   chantTrack();
   var inHall = document.getElementById('view-hall').classList.contains('active');
-  if (chantOn && soundOn && inHall){
+  if (chantOn && soundOn && inHall && chantAllowed()){
     if (el.paused){
       el.volume = 0;
       var p = el.play();
@@ -2055,7 +2108,7 @@ function unlockChant(){
   var p = el.play();
   if (p && p.then) p.then(function(){
     var inHall = document.getElementById('view-hall').classList.contains('active');
-    if (chantOn && soundOn && inHall){ chantPending = false; chantFadeTo(CHANT_VOL); }
+    if (chantOn && soundOn && inHall && chantAllowed()){ chantPending = false; chantFadeTo(CHANT_VOL); }
     else { el.pause(); el.volume = 0; }
   }, function(){});
 }
@@ -3395,6 +3448,10 @@ function disposeScene(){
 }
 function enterHall(d){
   currentHall = d.id; presenceN = WORSHIPPER_COUNT; seatedIdx = null;
+  /* the chant button only exists where the chant does (Option A):
+     hidden in the Wong Tai Sin hall, shown again in the Buddha hall */
+  var ctBtn = document.getElementById('chant-toggle');
+  if (ctBtn) ctBtn.style.display = chantAllowed() ? '' : 'none';
   document.getElementById('hall-title').textContent = d.name[LANG] + t('hallSuffix');
   document.getElementById('hall-subtitle').textContent = d.hallSub[LANG];
   renderPresence(); renderActions(); updateHint();
@@ -3859,6 +3916,13 @@ var gHeading = Math.PI, gCamYaw = Math.PI, gCamYawT = Math.PI;
 var gGroundHits = [], gGateHits = [], gRipples = [], gSway = [], gRibbons = [], gMist = null;
 var gTime = 0, gAtGate = false, gGateToastShown = false, gPendingEnter = false;
 var gBirdFlock = null, gBirdState = null, gNextBirdAt = 10, gSquirrel = null, gSquirrelState = null, gNextSquirrelAt = 16;
+/* breathing-glow path hint (2026-11-18): a soft pulsing ring on the
+   stone path, a few paces ahead of where you arrive, so first-time
+   and older visitors can SEE where to tap. The hall cushions already
+   breathe (seatGlowDiscs); the garden path had no visual cue at all.
+   It shows until you tap the ground to walk once — then it never
+   nags you again. */
+var gPathHint = null, gPathHintDone = false;
 var gButterflies = [], gTempleBtn = null, gClouds = [], gSunGlow = null;
 /* pond life: koi cruising at the surface, dragonflies over the
    lotus, and the lily pads themselves (kept so they can bob) */
@@ -4576,6 +4640,15 @@ function buildGarden(){
     scene.add(m); gGroundHits.push(m); return m;
   }
   for (var z = 24; z >= -11.4; z -= 1.28) slab(pathX(z) + (Math.random() - .5) * .14, z, .82 + Math.random() * .16);
+  /* the breathing path hint: a flat gold ring lying on the path a few
+     paces ahead of the arrival point (z 14, the visitor arrives at
+     z 22.5 facing the gate), pulsing in the garden loop below. */
+  gPathHint = new THREE.Mesh(new THREE.RingGeometry(.85, 1.15, 40),
+    new THREE.MeshBasicMaterial({ color: 0xd9a441, transparent: true, opacity: .5, side: THREE.DoubleSide, depthWrite: false }));
+  gPathHint.rotation.x = -Math.PI / 2;
+  gPathHint.position.set(pathX(14), .07, 14);
+  gPathHint.visible = !gPathHintDone;
+  scene.add(gPathHint);
   var lx = pathX(2.6);
   for (var i2 = 1; i2 <= 4; i2++) slab(lx - i2 * .98, 2.6 - i2 * .34, .68);
   var tx = pathX(4.6);
@@ -5045,6 +5118,7 @@ function enterGarden(keepSpot){
     if (rc.intersectObjects(gGateHits, true).length){ goToSelectFromGarden(); return; }
     var hits = rc.intersectObjects(gGroundHits);
     if (hits.length){
+      if (gPathHint){ gPathHint.visible = false; gPathHintDone = true; }
       var p = hits[0].point;
       /* a tap on the path right at the doorway walks in and through
          it — stepping through the gate is stepping into the halls */
@@ -5326,6 +5400,13 @@ function enterGarden(keepSpot){
        visible, so there is no show-while-walking logic any more;
        the figure's heading is read from the figure itself, which
        turns to face wherever it walks. */
+    /* the breathing path hint: a slow gold pulse, same rhythm as the
+       hall cushions, until the visitor taps the ground once. */
+    if (gPathHint && gPathHint.visible){
+      var gp = .5 + .5 * Math.sin(gTime * 2.2);
+      gPathHint.material.opacity = .28 + gp * .42;
+      var gs = 1 + gp * .12; gPathHint.scale.set(gs, gs, 1);
+    }
     renderer.render(scene, camera);
   }
   loop();
@@ -5593,6 +5674,21 @@ function openFortune(){
    the wording is calm and reassuring by design (see the central
    philosophy — comfort and hope, never fear). */
 var TS_SIGNS = ['鼠','牛','虎','兔','龍','蛇','馬','羊','猴','雞','狗','豬'];
+/* Lichun (立春) day in February for each birth year, Hong Kong time
+   (2026-11-18): one digit per year, 1924..2027 — '3', '4' or '5'.
+   Computed from the sun's ecliptic longitude reaching 315° (verified
+   against the almanac: 2021 Feb 3, 2024 Feb 4, 2025 Feb 3, 2026 Feb 4).
+   The zodiac year turns at Lichun, not at 1 January: a birth before
+   Lichun belongs to the previous year's sign. The cut is by DATE —
+   a birth on the Lichun day itself counts as the new year (the exact
+   hour only matters within that one day). */
+var TS_LICHUN = '54455445544554455445544454445444544454445444544454445444544444444444444444444444444444444444434443444344';
+function tsSignForBirth(y, m, d){
+  if (!y || !m || !d) return null;
+  var lichunDay = +TS_LICHUN[y - 1924];
+  var zodiacYear = (m === 1 || (m === 2 && d < lichunDay)) ? y - 1 : y;
+  return TS_SIGNS[(zodiacYear - 1924) % 12];
+}
 var TS_SIGNS_SC = ['鼠','牛','虎','兔','龙','蛇','马','羊','猴','鸡','狗','猪'];
 var TS_SIGN_EN = ['Rat','Ox','Tiger','Rabbit','Dragon','Snake','Horse','Goat','Monkey','Rooster','Dog','Pig'];
 var TS_YEARS = {
@@ -5622,6 +5718,8 @@ function renderTsSigns(){
     b.addEventListener('click', function(){
       tsSign = ch;
       var sel = document.getElementById('ts-birth-year'); if (sel) sel.value = '';
+      var ms = document.getElementById('ts-birth-month'); if (ms) ms.value = '';
+      var ds = document.getElementById('ts-birth-day'); if (ds) ds.value = '';
       renderTsSigns(); renderTsResult();
     });
     wrap.appendChild(b);
@@ -5779,6 +5877,70 @@ function renderSlip(lot){
   renderSlipVerse(lot);
   document.getElementById('f-note').textContent = lot.note[LANG];
 }
+/* 保存籤文卡 (2026-11-18): draw the slip as a tall shareable image
+   (1080 x 1440) — header, number + grade, title, poem, 解曰, and the
+   baibai.hk footer — then download it, so the visitor can keep it or
+   send it on WhatsApp / IG. No chat, no account, no server: the card
+   is drawn locally and the file goes straight to the device. */
+function wrapText(x, text, maxW){
+  var lines = [], line = '';
+  var parts = text.split('');
+  for (var i = 0; i < parts.length; i++){
+    var test = line + parts[i];
+    if (x.measureText(test).width > maxW && line){ lines.push(line); line = parts[i]; }
+    else line = test;
+  }
+  if (line) lines.push(line);
+  return lines;
+}
+function saveFortuneCard(){
+  var lot = currentLot; if (!lot) return;
+  var W = 1080, H = 1440, cv = document.createElement('canvas');
+  cv.width = W; cv.height = H; var x = cv.getContext('2d');
+  x.fillStyle = '#f6efdc'; x.fillRect(0, 0, W, H);
+  x.strokeStyle = '#a67c3a'; x.lineWidth = 6; x.strokeRect(34, 34, W - 68, H - 68);
+  x.strokeStyle = '#c9a24b'; x.lineWidth = 2; x.strokeRect(50, 50, W - 100, H - 100);
+  var serif = '"Noto Serif TC", "Songti TC", "STSong", serif';
+  x.textAlign = 'center'; x.fillStyle = '#8c2b1d';
+  x.font = '900 64px ' + serif;
+  x.fillText(LANG === 'en' ? 'Wong Tai Sin Fortune Stick' : (LANG === 'sc' ? '黄大仙灵签' : '黃大仙靈籤'), W / 2, 150);
+  x.fillStyle = '#a67c3a'; x.fillRect(W / 2 - 130, 178, 260, 3);
+  var noLine = LANG === 'en' ? 'Lot No. ' + lot.no + '  ·  ' + lot.level[LANG]
+    : '第 ' + cnNum(lot.no) + ' 籤  ·  ' + lot.level[LANG];
+  x.fillStyle = '#5a3a1a'; x.font = '700 46px ' + serif;
+  x.fillText(noLine, W / 2, 258);
+  x.fillStyle = '#8c2b1d'; x.font = '900 76px ' + serif;
+  x.fillText(lot.title[LANG], W / 2, 366);
+  var y = 470;
+  x.fillStyle = '#2e2118';
+  if (LANG === 'en'){
+    x.font = '400 40px ' + serif;
+    wrapText(x, lot.verse[LANG], W - 220).forEach(function(ln){ x.fillText(ln, W / 2, y); y += 58; });
+  } else {
+    x.font = '400 44px ' + serif;
+    lot.verse[LANG].split(/[，。\n]/).filter(function(s){ return s; }).forEach(function(part){
+      x.fillText(part, W / 2, y); y += 66;
+    });
+  }
+  y += 26;
+  x.fillStyle = '#a67c3a'; x.fillRect(W / 2 - 130, y, 260, 3); y += 62;
+  x.fillStyle = '#4a3421'; x.font = '400 36px ' + serif;
+  wrapText(x, lot.note[LANG], W - 220).forEach(function(ln){ x.fillText(ln, W / 2, y); y += 52; });
+  x.fillStyle = '#8c2b1d'; x.font = '700 38px ' + serif;
+  x.fillText('baibai.hk', W / 2, H - 150);
+  x.fillStyle = '#7a6a52'; x.font = '400 28px ' + serif;
+  x.fillText(LANG === 'en' ? 'A folk-culture reference, not a verdict on your fate.'
+    : (LANG === 'sc' ? '签文属民俗文化参考，并非命运判决。' : '籤文屬民俗文化參考，並非命運判決。'), W / 2, H - 100);
+  var a = document.createElement('a');
+  a.download = 'baibai-lot-' + lot.no + '.png';
+  cv.toBlob(function(blob){
+    if (!blob) return;
+    a.href = URL.createObjectURL(blob); a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000);
+    toast(t('toastSlipSaved'));
+  }, 'image/png');
+}
+document.getElementById('save-slip-btn').addEventListener('click', function(){ saveFortuneCard(); });
 function doShake(){
   var tube = document.getElementById('tube-icon');
   var btn = document.getElementById('shake-btn'); btn.disabled = true;
@@ -5808,10 +5970,21 @@ function renderBeads(){
 
 /* ================= wire up ================= */
 document.getElementById('enter-btn').addEventListener('click', function(){ ensureAudio(); unlockChant(); if (soundOn) playBell(.2, 'gate'); enterGarden(); });
+/* 直接入殿 (2026-11-18): a low-key shortcut for returning visitors —
+   straight into the Wong Tai Sin hall, no garden walk. The slow
+   courtyard stroll stays the default; this is just the fast lane. */
+document.getElementById('direct-hall-btn').addEventListener('click', function(){
+  ensureAudio(); unlockChant(); if (soundOn) playBell(.2, 'gate');
+  var wts = null;
+  for (var i = 0; i < DEITIES.length; i++){ if (DEITIES[i].id === 'wts'){ wts = DEITIES[i]; break; } }
+  if (wts){ currentDeity = wts; enterHall(wts); }
+});
 /* tai sui checker (v47) — entry button, year switcher and birth-year
    select, wired once at load. The year select maps a birth year to
    its sign: 1924 is a Rat year, so sign = (year − 1924) mod 12. */
 document.getElementById('taisui-btn').addEventListener('click', function(){ openTaiSui(); });
+document.getElementById('privacy-link').addEventListener('click', function(){ renderLegal(); document.getElementById('privacy-overlay').classList.add('open'); });
+document.getElementById('terms-link').addEventListener('click', function(){ renderLegal(); document.getElementById('terms-overlay').classList.add('open'); });
 (function(){
   var ys = document.querySelectorAll('#ts-years .ts-year');
   for (var i=0;i<ys.length;i++){
@@ -5822,10 +5995,21 @@ document.getElementById('taisui-btn').addEventListener('click', function(){ open
   var sel = document.getElementById('ts-birth-year');
   var ph = document.createElement('option'); ph.value = ''; ph.textContent = '—'; sel.appendChild(ph);
   for (var y=2026; y>=1924; y--){ var o = document.createElement('option'); o.value = y; o.textContent = y; sel.appendChild(o); }
-  sel.addEventListener('change', function(){
-    var v = +sel.value; if (!v) return;
-    tsSign = TS_SIGNS[(v - 1924) % 12]; renderTsSigns(); renderTsResult();
-  });
+  var mSel = document.getElementById('ts-birth-month');
+  var phM = document.createElement('option'); phM.value = ''; phM.textContent = '—'; mSel.appendChild(phM);
+  for (var mm=1; mm<=12; mm++){ var om = document.createElement('option'); om.value = mm; om.textContent = mm; mSel.appendChild(om); }
+  var dSel = document.getElementById('ts-birth-day');
+  var phD = document.createElement('option'); phD.value = ''; phD.textContent = '—'; dSel.appendChild(phD);
+  for (var dd=1; dd<=31; dd++){ var od = document.createElement('option'); od.value = dd; od.textContent = dd; dSel.appendChild(od); }
+  function tsBirthChanged(){
+    var y = +sel.value, m = +mSel.value, d = +dSel.value;
+    if (!y || !m || !d) return;
+    var s = tsSignForBirth(y, m, d);
+    if (s){ tsSign = s; renderTsSigns(); renderTsResult(); }
+  }
+  sel.addEventListener('change', tsBirthChanged);
+  mSel.addEventListener('change', tsBirthChanged);
+  dSel.addEventListener('change', tsBirthChanged);
 })();
 /* virtual stick (v40): garden steering — drag any way and the figure
    walks that way; letting go stops the stroll where it is, with no
