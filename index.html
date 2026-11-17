@@ -4829,14 +4829,20 @@ function buildGarden(){
      reads as a separate, distant hall (40 paces beyond the gate,
      green roof against the gate's red), and now you see it —
      green roof, gold walls — the moment you look through the gate.
+     Aligned 2026-11-18 (x 0 → pathX(-12.6), the gate's own axis):
+     from the courtyard the doorway STILL showed only green — x=0
+     sat right of the sightline from the courtyard centre, so the
+     hall missed the opening. On the gate's axis the green roof
+     and terrace read through the doorway from the path and the
+     courtyard centre alike.
      The hall's roof is deep-green
      glazed tile against the gate's vermilion red, and its walls a
      deeper gold-cream — the two buildings can never be mistaken
      for one another now, and the hall's roof edge no longer cuts
      across the gate roofline. */
-  box(14.5, .55, 9.0, 0xa8a294, 0, .28, -54); box(12.8, .55, 7.7, 0x9d9c8e, 0, .83, -54);
-  for (var st2 = 0; st2 < 3; st2++) box(2.9 - st2 * .35, .16, .7, 0xa3a294, 0, .08 + st2 * .16, -48.6 - st2 * .45);
-  var temple = new THREE.Group(); temple.position.set(0, 1.1, -54); temple.scale.setScalar(1.0); scene.add(temple); gGateHits.push(temple);
+  box(14.5, .55, 9.0, 0xa8a294, pathX(-12.6), .28, -54); box(12.8, .55, 7.7, 0x9d9c8e, pathX(-12.6), .83, -54);
+  for (var st2 = 0; st2 < 3; st2++) box(2.9 - st2 * .35, .16, .7, 0xa3a294, pathX(-12.6), .08 + st2 * .16, -48.6 - st2 * .45);
+  var temple = new THREE.Group(); temple.position.set(pathX(-12.6), 1.1, -54); temple.scale.setScalar(1.0); scene.add(temple); gGateHits.push(temple);
   box(13.5, 1.0, 7.2, 0xa8a294, 0, .5, 0, temple);
   box(10.5, 3.4, 5.4, 0xd9c096, 0, 2.7, 0, temple);
   [-4.3, -1.45, 1.45, 4.3].forEach(function(px){ cyl(.15, .17, 3.4, 0x8c2b1d, px, 2.7, 2.7, temple, 10); });
