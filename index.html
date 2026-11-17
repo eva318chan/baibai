@@ -1766,7 +1766,13 @@ var SEATS = (function(){
      worship burner / altar platform and the back row by the
      standing spot. The hall itself is widened to match (below). */
   var rowZ = [-5.2, -2.35, 0.5, 3.35, 6.2];
-  var base = [-8.575,-6.125,-3.675,-1.225, 1.225, 3.675, 6.125, 8.575];
+  /* inner columns moved out again 2026-11-17 (1.225 -> 1.7): the
+     aisle-side cushions sat almost on the centre carpet — only
+     0.11 of air — so the carpet and the seats read as one crowded
+     strip. Now the carpet runs clear down the middle with open
+     floor either side of it, and the two inner columns stand
+     well clear of it, left and right. */
+  var base = [-8.575,-6.125,-3.675,-1.7, 1.7, 3.675, 6.125, 8.575];
   var empty = { '0,3':1, '0,4':1, '1,1':1, '1,6':1, '2,4':1, '2,7':1, '3,2':1,
                 '3,5':1, '4,3':1, '4,6':1 };
   var list = [];
@@ -2533,14 +2539,16 @@ function buildCommon(kind){
   coupletL.position.set(-4.1, 4.6, -12.14); scene.add(coupletL);
   var coupletR = calligraphyPanel(sg[2], .68, 3.4, true, coupletBg);
   coupletR.position.set(4.1, 4.6, -12.14); scene.add(coupletR);
-  /* colonnade — five pairs of pillars march down both sides of the
-     nave, each pair carrying a cross beam: five frames that shrink
+  /* colonnade — three pairs of pillars march down both sides of the
+     nave, each pair carrying a cross beam: three frames that shrink
      toward the altar and pull the eye along with them. Spread
      2026-11-15 to match the widened hall: pairs moved out to
      x=+-10.2 and further apart front-to-back (3.6 -> 4.2), so the
-     pillars read as clearly separated, never crowded. */
+     pillars read as clearly separated, never crowded. Reduced
+     2026-11-17 (5 pairs -> 3): a temple does not need so many
+     pillars — three pairs frame the nave without crowding it. */
   var pillarMat = new THREE.MeshStandardMaterial({ map: beamTexture(), color: isGY ? 0xa8b096 : 0xc06a4c, roughness: .62 });
-  [-9.8,-5.6,-1.4,2.8,7.0].forEach(function(z){
+  [-9.8,-1.4,7.0].forEach(function(z){
     [-10.2,10.2].forEach(function(x){
       /* slimmed 2026-11-15 (v39): a fat shaft close to the lens
          filled the whole screen — a slimmer pillar still frames
@@ -2652,8 +2660,10 @@ function buildCommon(kind){
   incenseGroup = new THREE.Group(); incenseGroup.position.set(0, .56, 0); burnerGroup.add(incenseGroup);
   /* centre aisle carpet, narrowed 2026-11-15 so it stays inside
      the aisle and never runs under a cushion — the old 1.7 width
-     reached 0.435 under the inner columns and read as cramped */
-  box(1.1,.03,15.5, isGY?0x4c5540:0x6e2a20, 0,.015,0.4);
+     reached 0.435 under the inner columns and read as cramped.
+     Narrowed again 2026-11-17 (1.1 -> 0.8) with the inner columns
+     moved out, so open floor shows either side of the carpet. */
+  box(0.8,.03,15.5, isGY?0x4c5540:0x6e2a20, 0,.015,0.4);
   /* seating — 40 cushions in five widely spaced rows facing the
      altar (see SEATS). Only 3 taken seats carry a fellow
      worshipper — and those three are alive (built in enterHall):
@@ -2911,9 +2921,12 @@ function makePilgrim(robeColor, trimColor, female){
   placket.rotation.z = .1;
   var armL = makeArm(robeColor, skin, .26, .21, .068, upper, -.185, .58);
   var armR = makeArm(robeColor, skin, .26, .21, .068, upper, .185, .58);
-  /* the joined palms that appear at the chest when seated */
-  var palms = makePalms(skin, .068);
-  palms.position.set(0, .47, .235); palms.rotation.x = -.12; palms.visible = false; upper.add(palms);
+  /* the joined palms that appear at the chest when seated —
+     held well clear of the robe (2026-11-17): the old z .235 sat
+     inside the chest, so the prayer read as a dark smudge — now
+     they stand proud of the cloth, big enough to read at a glance */
+  var palms = makePalms(skin, .09);
+  palms.position.set(0, .47, .30); palms.rotation.x = -.12; palms.visible = false; upper.add(palms);
   /* the 道童 head (2026-11-15): bigger and rounder like the designed
      clay acolyte, with a topknot on the crown */
   var headG = makeHead(skin, hairC, .235, !!female, 0, true); headG.position.y = .68; upper.add(headG);
@@ -3604,6 +3617,21 @@ function enterHall(d){
                   visitorFigure.position.z = ps.z + pdz / pd * .55;
                 }
               }
+              /* fellow worshippers are people too — do not walk
+                 through them (2026-11-17): without this the visitor
+                 could push into a worshipper and the pair would
+                 stick together, neither able to move apart */
+              for (var wi = 0; wi < hallAmbient.length; wi++){
+                var wf = hallAmbient[wi];
+                if (wf.state === 'outside') continue;
+                var wdx = visitorFigure.position.x - wf.fig.position.x,
+                    wdz = visitorFigure.position.z - wf.fig.position.z;
+                var wd = Math.sqrt(wdx * wdx + wdz * wdz);
+                if (wd < .55 && wd > .0001){
+                  visitorFigure.position.x = wf.fig.position.x + wdx / wd * .55;
+                  visitorFigure.position.z = wf.fig.position.z + wdz / wd * .55;
+                }
+              }
             }
             visitorWalk.amt = Math.min(1, visitorWalk.amt + .22 * dt60);
             visitorWalkPhase += wStep * 4.4;
@@ -3722,11 +3750,13 @@ function enterHall(d){
           } else { amb.amt = Math.max(0, amb.amt - .3 * dt60); if (amb.amt > .02) au.walk(amb.phase, amb.amt); }
           au.bow.rotation.x = 0;
           /* someone camped on the waypoint itself: do not circle
-             them forever. After 12s of no progress toward the
-             waypoint, move on — next leg, or a fresh free seat */
+             them forever. After 5s of no progress toward the
+             waypoint, move on — next leg, or a fresh free seat.
+             (2026-11-17: was 12s — a worshipper pressed against a
+             visitor read as stuck together for far too long.) */
           if (amb.bestAd == null || ad < amb.bestAd - 0.3){ amb.bestAd = ad; amb.stuckT = 0; }
           else amb.stuckT = (amb.stuckT || 0) + dt;
-          if (amb.stuckT > 12){
+          if (amb.stuckT > 5){
             amb.stuckT = 0; amb.bestAd = null;
             if (amb.leg < amb.path.length - 1){ amb.leg++; }
             else if (amb.out){
@@ -3769,7 +3799,11 @@ function enterHall(d){
         var hA = hSep[hs1], hB = hSep[hs2];
         var hdx = hB.fig.position.x - hA.fig.position.x, hdz = hB.fig.position.z - hA.fig.position.z;
         var hd = Math.hypot(hdx, hdz);
-        if (hd >= .55 || hd < 1e-4) continue;
+        if (hd >= .55) continue;
+        /* exactly on top of each other: no direction to push along,
+           so pick one (2026-11-17) instead of skipping the pair
+           and leaving them stuck together forever */
+        if (hd < 1e-4){ hdx = 1; hdz = 0; hd = 1e-4; }
         var hpush = .55 - hd, hux = hdx / hd, huz = hdz / hd;
         if (hA.mv && hB.mv){
           hA.fig.position.x -= hux * hpush * .5; hA.fig.position.z -= huz * hpush * .5;
@@ -4040,7 +4074,7 @@ function personAvoidWant(wx, wz, yaw, tx, tz, people){
    pillars built in buildCommon below (v36 spread). */
 var HALL_PILLARS = (function(){
   var list = [];
-  [-9.8,-5.6,-1.4,2.8,7.0].forEach(function(z){ list.push([-10.2, z], [10.2, z]); });
+  [-9.8,-1.4,7.0].forEach(function(z){ list.push([-10.2, z], [10.2, z]); });
   return list;
 })();
 /* keep the hall camera out of the pillars (2026-11-15, v39): a
@@ -4786,19 +4820,23 @@ function buildGarden(){
      part of the gate. Pushed further back still 2026-11-15
      (z -35 → -46), and again in v34 (z -46 → -54) with the whole
      hall scaled down to 0.85, so the FAR building reads clearly
-     smaller than the near gate. In v46.3 the hall is shifted left
-     (x 5.5 → 3.0) so its left half falls inside the gate doorway's
-     sightline — from the garden path you now see its green roof
-     and gold walls through the gate — while its centre stays well
-     right of the gate's axis, so the two buildings still read as
-     separate. The hall's roof is deep-green
+     smaller than the near gate. Moved 2026-11-17 (x 3.0 → 0,
+     scale 0.85 → 1.0): the old spot sat right of the gate
+     doorway's sightline, so from the path you looked through the
+     gate and saw only green ground — the hall must stand on the
+     sightline, big enough to fill the doorway, or the doorway
+     reads as a hole into nothing. Centred on the path it still
+     reads as a separate, distant hall (40 paces beyond the gate,
+     green roof against the gate's red), and now you see it —
+     green roof, gold walls — the moment you look through the gate.
+     The hall's roof is deep-green
      glazed tile against the gate's vermilion red, and its walls a
      deeper gold-cream — the two buildings can never be mistaken
      for one another now, and the hall's roof edge no longer cuts
      across the gate roofline. */
-  box(14.5, .55, 9.0, 0xa8a294, 3.0, .28, -54); box(12.8, .55, 7.7, 0x9d9c8e, 3.0, .83, -54);
-  for (var st2 = 0; st2 < 3; st2++) box(2.9 - st2 * .35, .16, .7, 0xa3a294, 3.0, .08 + st2 * .16, -48.6 - st2 * .45);
-  var temple = new THREE.Group(); temple.position.set(3.0, 1.1, -54); temple.scale.setScalar(0.85); scene.add(temple); gGateHits.push(temple);
+  box(14.5, .55, 9.0, 0xa8a294, 0, .28, -54); box(12.8, .55, 7.7, 0x9d9c8e, 0, .83, -54);
+  for (var st2 = 0; st2 < 3; st2++) box(2.9 - st2 * .35, .16, .7, 0xa3a294, 0, .08 + st2 * .16, -48.6 - st2 * .45);
+  var temple = new THREE.Group(); temple.position.set(0, 1.1, -54); temple.scale.setScalar(1.0); scene.add(temple); gGateHits.push(temple);
   box(13.5, 1.0, 7.2, 0xa8a294, 0, .5, 0, temple);
   box(10.5, 3.4, 5.4, 0xd9c096, 0, 2.7, 0, temple);
   [-4.3, -1.45, 1.45, 4.3].forEach(function(px){ cyl(.15, .17, 3.4, 0x8c2b1d, px, 2.7, 2.7, temple, 10); });
