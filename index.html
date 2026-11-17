@@ -321,20 +321,17 @@
   .shake-stage{text-align:center; padding:10px 0 2px;}
   .tube{width:118px; height:158px; display:inline-block;}
   .tube svg{display:block; width:100%; height:auto;}
-  /* 簽筒 (v46, v46.2): the tube now matches the real Sik Sik Yuen 籤筒
-     in the user's photo — bamboo body with grain, a plain red band,
-     a big red 福 on the belly and a black
-     band at the foot, and a dense bundle of thin sticks (not five
-     sparse ones, not tips-only): seventeen sticks packed tight,
-     their tips peeking only 6–14 units above the rim like a full
-     tube, so the bundle reads as sticks INSIDE the tube (the dark
-     mouth and its front rim lip occlude the sticks' lower parts —
+  /* 簽筒 (v46.4): the tube matches the real Sik Sik Yuen 籤筒 —
+     bamboo body with grain, a plain red band, a big red 福 on the
+     belly and a black band at the foot, and a dense bundle of FORTY
+     thin sticks (3.6 wide), each shaded light-to-dark so it reads
+     round, not a paper strip. The sticks sit INSIDE the tube (the
+     dark mouth and its front rim lip occlude their lower parts —
      never pasted on the outside). The shake jostles them against
      each other — the bundle is split in three, each part rattling
      on its own slightly different beat with a clear, visible
-     shift (v46.2: the old ±1px jitter was invisible on a phone),
-     so the sticks visibly shift and knock together inside the
-     tube, never swinging out past the rim. */
+     shift, so the sticks visibly shift and knock together inside
+     the tube, never swinging out past the rim. */
   .tube.shaking{animation:tubeShake .16s linear infinite;}
   .tube.shaking .sticks-a{animation:sticksRattleA .16s linear infinite; transform-box:view-box; transform-origin:60px 100px;}
   .tube.shaking .sticks-b{animation:sticksRattleB .14s linear infinite; transform-box:view-box; transform-origin:60px 100px;}
@@ -527,57 +524,73 @@
     <div id="fortune-stage-shake">
       <h3 data-i18n="fortuneTitle">求 籤</h3>
       <p class="sub" data-i18n="fortuneSub">心誠則靈。請喺心入面默念所問之事，再撳「搖籤」。</p>
-      <!-- 簽筒 (v46.3): redrawn again to match the real Sik Sik Yuen 籤筒 in the TaoNet 說文解籤 banner photo — flat wide bamboo slats (not thin rods), thirty-three sticks in two layers so the bundle is dense with no gaps, tips peeking 11–23 units above the rim (the real sticks stick out far), seven sticks with solid bright-red tops (top third, hand-painted), four sticks with black handwritten numbers just above the mouth (67, 52, 88, 39 as in the photo), and a wide mouth with a pale pink rim. The dark mouth interior is drawn BEFORE the sticks so they read as emerging from inside the hole, and the tube body hides their lower parts. Shake (three-group rattle) and bamboo sound unchanged. -->
+      <!-- 簽筒 (v46.4): forty thin bamboo sticks (3.6 wide, not flat wide slats) in three rattle groups, each shaded by a horizontal light-to-dark gradient so a stick reads round, not a paper strip; seven with solid bright-red tops; four with black handwritten numbers just above the mouth (67, 52, 88, 39 as in the TaoNet photo) — the numbered sticks sit in group c and are drawn last, so no later stick can cover a number, and they stand 11+ units apart so two-digit numbers never collide. Edge sticks stay near-vertical so none pokes out past the tube body. The dark mouth interior is drawn BEFORE the sticks so they read as emerging from inside the hole, and the tube body hides their lower parts. Shake (three-group rattle) and bamboo sound unchanged. -->
       <div class="shake-stage"><div class="tube" id="tube-icon" role="img" aria-label="簽筒"><svg viewBox="0 0 120 160" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <linearGradient id="bambooBody" x1="0" y1="0" x2="1" y2="0">
             <stop offset="0" stop-color="#c99a4e"/><stop offset=".45" stop-color="#dcb26a"/>
             <stop offset=".75" stop-color="#c99a4e"/><stop offset="1" stop-color="#a87c33"/>
           </linearGradient>
+          <linearGradient id="stickLight" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#f7ecd0"/><stop offset=".4" stop-color="#ecd9a8"/><stop offset="1" stop-color="#c9a86a"/>
+          </linearGradient>
+          <linearGradient id="stickMid" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#f0e0b8"/><stop offset=".4" stop-color="#dcc088"/><stop offset="1" stop-color="#b89a5e"/>
+          </linearGradient>
+          <linearGradient id="stickDark" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#e8d5a8"/><stop offset=".4" stop-color="#cbb27e"/><stop offset="1" stop-color="#a8894f"/>
+          </linearGradient>
           <clipPath id="tubeClip"><path d="M34,62 L86,62 L82,148 Q81,152 77,152 L43,152 Q39,152 38,148 Z"/></clipPath>
         </defs>
         <ellipse cx="60" cy="154" rx="30" ry="5" fill="rgba(0,0,0,.18)"/>
         <ellipse cx="60" cy="62" rx="27" ry="8" fill="#e8aab0"/>
-        <ellipse cx="60" cy="61" rx="22" ry="6" fill="#1f1408"/>
+        <ellipse cx="60" cy="61" rx="24" ry="7" fill="#1f1408"/>
         <g class="tube-sticks">
           <g class="sticks-a">
-            <g transform="rotate(3 41.2 100)"><rect x="38.9" y="53" width="4.6" height="95" rx="0.8" fill="#dcc088"/></g>
-            <g transform="rotate(2 43.9 100)"><rect x="41.6" y="53" width="4.6" height="95" rx="0.8" fill="#cbb27e"/></g>
-            <g transform="rotate(4 46.5 100)"><rect x="44.2" y="54" width="4.6" height="94" rx="0.8" fill="#d6bd8a"/></g>
-            <g transform="rotate(-3 49.3 100)"><rect x="47.0" y="49" width="4.6" height="99" rx="0.8" fill="#c9a86a"/></g>
-            <g transform="rotate(2 52.0 100)"><rect x="49.7" y="54" width="4.6" height="94" rx="0.8" fill="#dcc088"/></g>
-            <g transform="rotate(-4 54.7 100)"><rect x="52.4" y="48" width="4.6" height="100" rx="0.8" fill="#cbb27e"/></g>
-            <g transform="rotate(-5 40.1 100)"><rect x="37.5" y="48" width="5.2" height="100" rx="0.8" fill="#f0e0b8"/></g>
-            <g transform="rotate(-4 42.8 100)"><rect x="40.2" y="42" width="5.2" height="106" rx="0.8" fill="#e8d5a8"/></g>
-            <g transform="rotate(-5 45.5 100)"><rect x="42.9" y="50" width="5.2" height="98" rx="0.8" fill="#e2cd9e"/></g>
-            <g transform="rotate(-2 50.9 100)"><rect x="48.3" y="47" width="5.2" height="101" rx="0.8" fill="#f0e0b8"/></g>
-            <g transform="rotate(0 53.6 100)"><rect x="51.0" y="43" width="5.2" height="105" rx="0.8" fill="#e8d5a8"/><rect x="51.0" y="43" width="5.2" height="7.0" rx="0.8" fill="#b3271e"/></g>
-            <g transform="rotate(-3 48.2 100)"><rect x="45.6" y="40" width="5.2" height="108" rx="0.8" fill="#f5e8c8"/><rect x="45.6" y="40" width="5.2" height="7.3" rx="0.8" fill="#b3271e"/><text x="48.2" y="50.5" text-anchor="middle" font-size="5.4" font-weight="bold" fill="#1c1a1a" font-family="Arial, Helvetica, sans-serif">67</text></g>
+            <g transform="rotate(0 41.3 100)"><rect x="39.5" y="50" width="3.6" height="100" rx="0.7" fill="url(#stickMid)"/></g>
+            <g transform="rotate(-2 43.8 100)"><rect x="42.0" y="44" width="3.6" height="106" rx="0.7" fill="url(#stickLight)"/><rect x="42.0" y="44" width="3.6" height="7.0" rx="0.7" fill="#b3271e"/></g>
+            <g transform="rotate(2 46.3 100)"><rect x="44.5" y="53" width="3.6" height="97" rx="0.7" fill="url(#stickDark)"/></g>
+            <g transform="rotate(-2 48.8 100)"><rect x="47.0" y="47" width="3.6" height="103" rx="0.7" fill="url(#stickMid)"/></g>
+            <g transform="rotate(3 51.3 100)"><rect x="49.5" y="41" width="3.6" height="109" rx="0.7" fill="url(#stickLight)"/><rect x="49.5" y="41" width="3.6" height="7.0" rx="0.7" fill="#b3271e"/></g>
+            <g transform="rotate(-3 53.8 100)"><rect x="52.0" y="54" width="3.6" height="96" rx="0.7" fill="url(#stickDark)"/></g>
+            <g transform="rotate(1 56.3 100)"><rect x="54.5" y="48" width="3.6" height="102" rx="0.7" fill="url(#stickMid)"/></g>
+            <g transform="rotate(-2 58.8 100)"><rect x="57.0" y="53" width="3.6" height="97" rx="0.7" fill="url(#stickLight)"/></g>
+            <g transform="rotate(3 61.3 100)"><rect x="59.5" y="52" width="3.6" height="98" rx="0.7" fill="url(#stickDark)"/></g>
+            <g transform="rotate(-2 63.8 100)"><rect x="62.0" y="46" width="3.6" height="104" rx="0.7" fill="url(#stickMid)"/><rect x="62.0" y="46" width="3.6" height="7.0" rx="0.7" fill="#b3271e"/></g>
+            <g transform="rotate(2 66.3 100)"><rect x="64.5" y="40" width="3.6" height="110" rx="0.7" fill="url(#stickLight)"/></g>
+            <g transform="rotate(-3 68.8 100)"><rect x="67.0" y="55" width="3.6" height="95" rx="0.7" fill="url(#stickDark)"/></g>
           </g>
           <g class="sticks-b">
-            <g transform="rotate(-1 57.4 100)"><rect x="55.1" y="53" width="4.6" height="95" rx="0.8" fill="#dcc088"/></g>
-            <g transform="rotate(-4 60.1 100)"><rect x="57.8" y="48" width="4.6" height="100" rx="0.8" fill="#cbb27e"/></g>
-            <g transform="rotate(5 62.8 100)"><rect x="60.5" y="54" width="4.6" height="94" rx="0.8" fill="#d6bd8a"/></g>
-            <g transform="rotate(4 65.5 100)"><rect x="63.2" y="46" width="4.6" height="102" rx="0.8" fill="#c9a86a"/></g>
-            <g transform="rotate(2 68.1 100)"><rect x="65.8" y="52" width="4.6" height="96" rx="0.8" fill="#dcc088"/></g>
-            <g transform="rotate(1 56.3 100)"><rect x="53.7" y="49" width="5.2" height="99" rx="0.8" fill="#f0e0b8"/></g>
-            <g transform="rotate(2 61.7 100)"><rect x="59.1" y="46" width="5.2" height="102" rx="0.8" fill="#e2cd9e"/></g>
-            <g transform="rotate(1 67.1 100)"><rect x="64.5" y="48" width="5.2" height="100" rx="0.8" fill="#f0e0b8"/></g>
-            <g transform="rotate(-1 59.0 100)"><rect x="56.4" y="41" width="5.2" height="107" rx="0.8" fill="#e8d5a8"/><rect x="56.4" y="41" width="5.2" height="7.0" rx="0.8" fill="#b3271e"/><text x="59.0" y="50.5" text-anchor="middle" font-size="5.4" font-weight="bold" fill="#1c1a1a" font-family="Arial, Helvetica, sans-serif">52</text></g>
-            <g transform="rotate(0 64.4 100)"><rect x="61.8" y="39" width="5.2" height="109" rx="0.8" fill="#f5e8c8"/><rect x="61.8" y="39" width="5.2" height="7.7" rx="0.8" fill="#b3271e"/><text x="64.4" y="50.5" text-anchor="middle" font-size="5.4" font-weight="bold" fill="#1c1a1a" font-family="Arial, Helvetica, sans-serif">88</text></g>
+            <g transform="rotate(2 56.8 100)"><rect x="55.0" y="51" width="3.6" height="99" rx="0.7" fill="url(#stickDark)"/></g>
+            <g transform="rotate(3 61.8 100)"><rect x="60.0" y="54" width="3.6" height="96" rx="0.7" fill="url(#stickMid)"/></g>
+            <g transform="rotate(-3 64.3 100)"><rect x="62.5" y="42" width="3.6" height="108" rx="0.7" fill="url(#stickLight)"/><rect x="62.5" y="42" width="3.6" height="7.0" rx="0.7" fill="#b3271e"/></g>
+            <g transform="rotate(1 66.8 100)"><rect x="65.0" y="50" width="3.6" height="100" rx="0.7" fill="url(#stickDark)"/></g>
+            <g transform="rotate(-2 69.3 100)"><rect x="67.5" y="47" width="3.6" height="103" rx="0.7" fill="url(#stickMid)"/></g>
+            <g transform="rotate(2 71.8 100)"><rect x="70.0" y="53" width="3.6" height="97" rx="0.7" fill="url(#stickLight)"/></g>
+            <g transform="rotate(-2 74.3 100)"><rect x="72.5" y="49" width="3.6" height="101" rx="0.7" fill="url(#stickDark)"/></g>
+            <g transform="rotate(2 76.8 100)"><rect x="75.0" y="44" width="3.6" height="106" rx="0.7" fill="url(#stickMid)"/><rect x="75.0" y="44" width="3.6" height="7.0" rx="0.7" fill="#b3271e"/></g>
+            <g transform="rotate(-3 79.3 100)"><rect x="77.5" y="52" width="3.6" height="98" rx="0.7" fill="url(#stickLight)"/></g>
+            <g transform="rotate(0 81.8 100)"><rect x="80.0" y="48" width="3.6" height="102" rx="0.7" fill="url(#stickDark)"/></g>
+            <g transform="rotate(0 83.8 100)"><rect x="82.0" y="55" width="3.6" height="95" rx="0.7" fill="url(#stickMid)"/></g>
+            <g transform="rotate(0 85.3 100)"><rect x="83.5" y="50" width="3.6" height="100" rx="0.7" fill="url(#stickLight)"/></g>
           </g>
           <g class="sticks-c">
-            <g transform="rotate(4 70.9 100)"><rect x="68.6" y="48" width="4.6" height="100" rx="0.8" fill="#dcc088"/></g>
-            <g transform="rotate(3 73.5 100)"><rect x="71.2" y="46" width="4.6" height="102" rx="0.8" fill="#cbb27e"/></g>
-            <g transform="rotate(-5 76.3 100)"><rect x="74.0" y="47" width="4.6" height="101" rx="0.8" fill="#d6bd8a"/></g>
-            <g transform="rotate(-2 79.0 100)"><rect x="76.7" y="46" width="4.6" height="102" rx="0.8" fill="#c9a86a"/></g>
-            <g transform="rotate(4 81.6 100)"><rect x="79.3" y="49" width="4.6" height="99" rx="0.8" fill="#dcc088"/></g>
-            <g transform="rotate(3 69.8 100)"><rect x="67.2" y="44" width="5.2" height="104" rx="0.8" fill="#f0e0b8"/><rect x="67.2" y="44" width="5.2" height="7.0" rx="0.8" fill="#b3271e"/></g>
-            <g transform="rotate(-2 72.5 100)"><rect x="69.9" y="51" width="5.2" height="97" rx="0.8" fill="#e8d5a8"/></g>
-            <g transform="rotate(3 77.9 100)"><rect x="75.3" y="49" width="5.2" height="99" rx="0.8" fill="#f5e8c8"/></g>
-            <g transform="rotate(5 80.6 100)"><rect x="78.0" y="45" width="5.2" height="103" rx="0.8" fill="#f0e0b8"/><rect x="78.0" y="45" width="5.2" height="7.0" rx="0.8" fill="#b3271e"/></g>
-            <g transform="rotate(5 83.3 100)"><rect x="80.7" y="50" width="5.2" height="98" rx="0.8" fill="#e8d5a8"/></g>
-            <g transform="rotate(4 75.2 100)"><rect x="72.6" y="42" width="5.2" height="106" rx="0.8" fill="#e2cd9e"/><rect x="72.6" y="42" width="5.2" height="7.0" rx="0.8" fill="#b3271e"/><text x="75.2" y="50.5" text-anchor="middle" font-size="5.4" font-weight="bold" fill="#1c1a1a" font-family="Arial, Helvetica, sans-serif">39</text></g>
+            <g transform="rotate(2 47.8 100)"><rect x="46.0" y="45" width="3.6" height="105" rx="0.7" fill="url(#stickLight)"/></g>
+            <g transform="rotate(-2 54.3 100)"><rect x="52.5" y="56" width="3.6" height="94" rx="0.7" fill="url(#stickDark)"/></g>
+            <g transform="rotate(-1 62.3 100)"><rect x="60.5" y="38" width="3.6" height="112" rx="0.7" fill="url(#stickLight)"/></g>
+            <g transform="rotate(3 67.8 100)"><rect x="66.0" y="52" width="3.6" height="98" rx="0.7" fill="url(#stickMid)"/></g>
+            <g transform="rotate(-3 70.3 100)"><rect x="68.5" y="46" width="3.6" height="104" rx="0.7" fill="url(#stickLight)"/></g>
+            <g transform="rotate(2 72.8 100)"><rect x="71.0" y="39" width="3.6" height="111" rx="0.7" fill="url(#stickLight)"/><rect x="71.0" y="39" width="3.6" height="7.0" rx="0.7" fill="#b3271e"/></g>
+            <g transform="rotate(-3 75.3 100)"><rect x="73.5" y="54" width="3.6" height="96" rx="0.7" fill="url(#stickDark)"/></g>
+            <g transform="rotate(1 77.8 100)"><rect x="76.0" y="48" width="3.6" height="102" rx="0.7" fill="url(#stickMid)"/></g>
+            <g transform="rotate(-2 80.3 100)"><rect x="78.5" y="44" width="3.6" height="106" rx="0.7" fill="url(#stickLight)"/></g>
+            <g transform="rotate(0 84.8 100)"><rect x="83.0" y="51" width="3.6" height="99" rx="0.7" fill="url(#stickMid)"/><rect x="83.0" y="51" width="3.6" height="7.0" rx="0.7" fill="#b3271e"/></g>
+            <g transform="rotate(3 76.3 100)"><rect x="74.5" y="42" width="3.6" height="108" rx="0.7" fill="url(#stickMid)"/></g>
+            <g transform="rotate(1 53.8 100)"><rect x="52.0" y="50" width="3.6" height="100" rx="0.7" fill="url(#stickDark)"/></g>
+            <g transform="rotate(1 46.3 100)"><rect x="44.5" y="44" width="3.6" height="106" rx="0.7" fill="url(#stickDark)"/><text x="46.3" y="50.5" text-anchor="middle" font-size="5.0" font-weight="bold" fill="#1c1a1a" font-family="Arial, Helvetica, sans-serif">67</text></g>
+            <g transform="rotate(-1 58.8 100)"><rect x="57.0" y="45" width="3.6" height="105" rx="0.7" fill="url(#stickLight)"/><text x="58.8" y="50.5" text-anchor="middle" font-size="5.0" font-weight="bold" fill="#1c1a1a" font-family="Arial, Helvetica, sans-serif">52</text></g>
+            <g transform="rotate(2 71.8 100)"><rect x="70.0" y="44" width="3.6" height="106" rx="0.7" fill="url(#stickLight)"/><text x="71.8" y="50.5" text-anchor="middle" font-size="5.0" font-weight="bold" fill="#1c1a1a" font-family="Arial, Helvetica, sans-serif">88</text></g>
+            <g transform="rotate(0 82.8 100)"><rect x="81.0" y="45" width="3.6" height="105" rx="0.7" fill="url(#stickDark)"/><text x="82.8" y="50.5" text-anchor="middle" font-size="5.0" font-weight="bold" fill="#1c1a1a" font-family="Arial, Helvetica, sans-serif">39</text></g>
           </g>
         </g>
         <path d="M34,62 L86,62 L82,148 Q81,152 77,152 L43,152 Q39,152 38,148 Z" fill="url(#bambooBody)"/>
@@ -594,7 +607,7 @@
         <path d="M37.6,128 L82.4,128" stroke="#a67c3a" stroke-width="2"/>
         <path d="M37.7,137 L82.3,137" stroke="#c9a24b" stroke-width="1"/>
         <path d="M37.5,138 L82.5,138 L82,148 Q81,152 77,152 L43,152 Q39,152 38,148 Z" fill="#241a12"/>
-        <path d="M34,62 Q60,72 86,62" stroke="#e8aab0" stroke-width="2.5" fill="none" opacity=".9"/>
+        <path d="M34,62 Q60,69 86,62" stroke="#e8aab0" stroke-width="2" fill="none" opacity=".9"/>
       </svg></div></div>
       <div class="close-row" style="gap:10px;">
         <button class="btn ghost" data-close="fortune-overlay" data-i18n="cancel">取消</button>
@@ -1398,7 +1411,8 @@ var LOTS = [
            sc:'上清下浊成天地，清浊相凝便作人。\n尔欲签求明白事，且将三等细明分。',
            en:'The clear above, the muddy below — heaven and earth are made;\nclear and muddy joined together make man.\nYou wish to draw a lot to understand a matter —\nfirst divide the three grades carefully and clearly.'},
     note:{tc:'氣清而上浮為天。氣濁則下凝為地。半清半濁。則在中間為人。三等分開。求得此籤者。凡事以清潔不污為上。若有污濁。則為下矣。倘有時清潔。有時污濁。則不上不下。便是中間之人。三等分明。隨人自作。有善心。行善事。斯為清潔。而居上等。凡事皆吉。污濁則凶。',sc:'气清而上浮为天。气浊则下凝为地。半清半浊。则在中间为人。三等分开。求得此签者。凡事以清洁不污为上。若有污浊。则为下矣。倘有时清洁。有时污浊。则不上不下。便是中间之人。三等分明。随人自作。有善心。行善事。斯为清洁。而居上等。凡事皆吉。污浊则凶。',en:'The clear air rises and floats to become heaven; the muddy air sinks and hardens to become earth; half clear and half muddy, in the middle, becomes man. The three grades are divided. Whoever draws this lot should in all things take the clean and untainted as best; if there is anything muddy, it is the lowest grade. If sometimes clean and sometimes muddy, then neither high nor low — the middle person. The three grades are clear, according to each person\'s own deeds: with a good heart and good deeds, this is clean and the highest grade, and all things are good; muddy is ill.'},
-    detail:{tc:'蠶與畜 利平平\n病可醫 財不盈\n婚莫定 孕無驚\n謀望事 謹慎行\n行人歸 時難定\n問家宅 積善興\n問風水 全憑陰騭發\n問遺失 得不得未定\n問自身 行善必平安\n問天時 即管盡人事\n問出行 善吉惡不宜',sc:'蚕与畜 利平平\n病可医 财不盈\n婚莫定 孕无惊\n谋望事 谨慎行\n行人归 时难定\n问家宅 积善兴\n问风水 全凭阴骘发\n问遗失 得不得未定\n问自身 行善必平安\n问天时 即管尽人事\n问出行 善吉恶不宜',en:'Silkworms and livestock — gains are middling\nIllness — can be treated; wealth — not full\nMarriage — do not settle it yet; pregnancy — without alarm\nPlans — act carefully\nThe traveller — returns, but the time is hard to fix\nHome — doing good brings prosperity\nFeng shui — it all comes from hidden virtue\nLost things — found or not is undecided\nYourself — doing good brings peace\nThe weather — just do your human best\nTravel — good is lucky, ill is not fitting'} },
+    detail:{tc:'蠶與畜 利平平\n病可醫 財不盈\n婚莫定 孕無驚\n謀望事 謹慎行\n行人歸 時難定\n問家宅 積善興\n問風水 全憑陰騭發\n問遺失 得不得未定\n問自身 行善必平安\n問天時 即管盡人事\n問出行 善吉惡不宜',sc:'蚕与畜 利平平\n病可医 财不盈\n婚莫定 孕无惊\n谋望事 谨慎行\n行人归 时难定\n问家宅 积善兴\n问风水 全凭阴骘发\n问遗失 得不得未定\n问自身 行善必平安\n问天时 即管尽人事\n问出行 善吉恶不宜',en:'Silkworms and livestock — gains are middling\nIllness — can be treated; wealth — not full\nMarriage — do not settle it yet; pregnancy — without alarm\nPlans — act carefully\nThe traveller — returns, but the time is hard to fix\nHome — doing good brings prosperity\nFeng shui — it all comes from hidden virtue\nLost things — found or not is undecided\nYourself — doing good brings peace\nThe weather — just do your human best\nTravel — good is lucky, ill is not fitting'},
+    modern:{tc:{one:'清升天、濁落地，人喺中間——行善就行上等，行差就行下等，你自己話事。',aspects:{'事業':'做事行得正、唔好走歪路，清清白白自然有人賞識。','財運':'財唔會滿，但夠用；唔好貪快錢，穩穩陣陣就唔會蝕。','姻緣':'感情唔好急住定落嚟，睇清楚對方值唔值得先。','健康':'病醫得好；最緊要係心安——心清，個人自然好。','學業':'讀書做人都係咁，踏實行每一步，唔好諗住一步登天。','家庭':'屋企興唔興，睇你積幾多善——多做好事，屋企自然旺。','整件事':'三等分明，隨人自作。你行善就上等，呢支籤話你知，路係你行出嚟，唔係定死。'}},sc:{one:'清升天、浊落地，人夹在中间——行善就行上等，行差就行下等，你自己说了算。',aspects:{'事业':'做事行得正、不要走歪路，清清白白自然有人赏识。','财运':'财不会满，但够用；不要贪快钱，稳稳当当就不会蚀。','姻缘':'感情不要急着定下来，看清楚对方值不值得先。','健康':'病医得好；最要紧是心安——心清，人自然好。','学业':'读书做人都是一样，踏实走每一步，不要想着一步登天。','家庭':'家里兴不兴，看你积多少善——多做好事，家里自然旺。','整件事':'三等分明，随人自作。你行善就上等，这支签告诉你，路是你走出来的，不是定死的。'}},en:{one:'The clear rises to heaven, the muddy sinks to earth, and man stands in between — do good and you walk the highest grade; the grade is yours to choose.',aspects:{'Career':'Walk straight and never take crooked shortcuts — clean and honest work is always noticed.','Wealth':'Wealth will not be full, but it will be enough; never chase quick money, and steady steps will not lose.','Love':'Never rush to settle matters of the heart — look clearly at whether the other person is worth it first.','Health':'Illness can be treated; what matters most is a peaceful heart — a clear heart makes a well person.','Study':'Study and life are the same — take each step solidly, never dream of reaching the top in one leap.','Family':'Whether home prospers depends on how much good you gather — do more good deeds, and home will naturally thrive.','The whole matter':'Three grades, clear and distinct, each according to your own deeds. Do good and you walk the highest grade — this stick tells you the road is yours to walk, not fixed in advance.'}}} },
   { no:53, level:{tc:'中吉',sc:'中吉',en:'Good'}, title:{tc:'孟嘗君',sc:'孟尝君',en:'Lord Mengchang'},
     verse:{tc:'珠履三千客孟嘗，誰人識得有膺揚。\n其中彈鋏歸來者，便是英雄志莫當。',
            sc:'珠履三千客孟尝，谁人识得有膺扬。\n其中弹铗归来者，便是英雄志莫当。',
@@ -4844,7 +4858,22 @@ function buildGarden(){
   for (var st2 = 0; st2 < 3; st2++) box(2.9 - st2 * .35, .16, .7, 0xa3a294, pathX(-12.6), .08 + st2 * .16, -48.6 - st2 * .45);
   var temple = new THREE.Group(); temple.position.set(pathX(-12.6), 1.1, -54); temple.scale.setScalar(1.0); scene.add(temple); gGateHits.push(temple);
   box(13.5, 1.0, 7.2, 0xa8a294, 0, .5, 0, temple);
-  box(10.5, 3.4, 5.4, 0xd9c096, 0, 2.7, 0, temple);
+  /* the front is OPEN (2026-11-18): a real doorway, not a solid wall —
+     through it you see the inner hall, warm and lit, never grass or
+     a blank wall. The walls are side segments, a back wall and a
+     lintel, leaving a 3-wide, 2.2-tall opening framed by the inner
+     pillars; inside, a red altar with a gold tablet glows under a
+     warm light, so the doorway reads as an entrance to the inner
+     hall from the courtyard and through the gate. */
+  box(3.75, 3.4, 5.4, 0xd9c096, -3.375, 2.7, 0, temple);
+  box(3.75, 3.4, 5.4, 0xd9c096, 3.375, 2.7, 0, temple);
+  box(10.5, 3.4, .3, 0xd9c096, 0, 2.7, -2.55, temple);
+  box(3.0, 1.2, 5.4, 0xd9c096, 0, 3.8, 0, temple);
+  /* the inner hall, glimpsed through the doorway: a red altar, a
+     gold tablet, warm light spilling out onto the steps */
+  box(2.2, 1.0, .7, 0x8c2b1d, 0, 1.5, -1.9, temple);
+  box(.7, .9, .25, 0xc9a24b, 0, 2.3, -2.0, temple);
+  var hallGlow = new THREE.PointLight(0xffbe78, 1.2, 9); hallGlow.position.set(0, 2.6, -.5); temple.add(hallGlow);
   [-4.3, -1.45, 1.45, 4.3].forEach(function(px){ cyl(.15, .17, 3.4, 0x8c2b1d, px, 2.7, 2.7, temple, 10); });
   /* the hall roof, same rework as the gate roof (2026-11-15, v44):
      taller, narrower, flat-shaded faces, gold hip ribs, a darker
@@ -5848,8 +5877,12 @@ document.getElementById('nature-toggle').addEventListener('click', function(){ e
 document.getElementById('back-select').addEventListener('click', function(){ showView('view-select'); });
 /* leaving the hall goes straight back to the courtyard (2026-11-15):
    the hall-selection page belonged to the days of several halls —
-   the public launch has only Wong Tai Sin */
-document.getElementById('leave-hall').addEventListener('click', function(){ disposeScene(); currentHall = null; enterGarden(); syncChant(); });
+   the public launch has only Wong Tai Sin. Leaving the hall
+   (2026-11-18) brings you out at the gate doorway — on the path
+   just inside the gate, facing the hall through it — not back at
+   the garden's far starting point: you step out of the temple
+   where you came in, you don't teleport to the beginning. */
+document.getElementById('leave-hall').addEventListener('click', function(){ disposeScene(); currentHall = null; gPos = { x: pathX(-12.6), z: -11 }; gHeading = Math.PI; gCamYaw = Math.PI; gCamYawT = Math.PI; enterGarden(true); syncChant(); });
 document.querySelectorAll('.lang-opt').forEach(function(b){
   b.addEventListener('click', function(){
     var nl = b.getAttribute('data-lang');
