@@ -3890,7 +3890,7 @@ function enterHall(d){
              Walkers in their own lanes already spread the routes
              out; the bend handles anyone who still ends up ahead */
           var ablockers = [];
-          if (visitorFigure) ablockers.push({ x: visitorFigure.position.x, z: visitorFigure.position.z });
+          if (visitorFigure) ablockers.push({ x: visitorFigure.position.x, z: visitorFigure.position.z, v: true });
           for (var abi = 0; abi < hallAmbient.length; abi++){
             var aob = hallAmbient[abi];
             if (aob !== amb && aob.state !== 'outside') ablockers.push({ x: aob.fig.position.x, z: aob.fig.position.z });
@@ -3960,12 +3960,19 @@ function enterHall(d){
         var hA = hSep[hs1], hB = hSep[hs2];
         var hdx = hB.fig.position.x - hA.fig.position.x, hdz = hB.fig.position.z - hA.fig.position.z;
         var hd = Math.hypot(hdx, hdz);
-        if (hd >= .55) continue;
+        /* the visitor (index 0, when present) gets a full respectful
+           step of room — 1.15, not the walkers' 0.55 — so a
+           worshipper strolling past a seated visitor never brushes
+           their robe (2026-11-18, 江仔片：啱坐低有人經過，貼到埋
+           身). Walkers among themselves keep 0.55, or their lanes
+           (0.55 apart) would shove each other constantly. */
+        var hMin = (visitorFigure && (hs1 === 0 || hs2 === 0)) ? 1.15 : .55;
+        if (hd >= hMin) continue;
         /* exactly on top of each other: no direction to push along,
            so pick one (2026-11-17) instead of skipping the pair
            and leaving them stuck together forever */
         if (hd < 1e-4){ hdx = 1; hdz = 0; hd = 1e-4; }
-        var hpush = .55 - hd, hux = hdx / hd, huz = hdz / hd;
+        var hpush = hMin - hd, hux = hdx / hd, huz = hdz / hd;
         if (hA.mv && hB.mv){
           hA.fig.position.x -= hux * hpush * .5; hA.fig.position.z -= huz * hpush * .5;
           hB.fig.position.x += hux * hpush * .5; hB.fig.position.z += huz * hpush * .5;
@@ -4002,7 +4009,7 @@ var gActive = false, gPos = null, gTargetPos = null;
    gate, 0 faces back toward the viewer) belongs to the figure and
    answers only to where it is walking; the orbit belongs to the
    visitor's drag and follows the figure without ever turning it */
-var gHeading = Math.PI, gCamYaw = Math.PI, gCamYawT = Math.PI;
+var gHeading = Math.PI, gCamYaw = Math.PI, gCamYawT = Math.PI, gCamPitch = 0, gCamPitchT = 0;
 var gGroundHits = [], gGateHits = [], gRipples = [], gSway = [], gRibbons = [], gMist = null;
 var gTime = 0, gAtGate = false, gGateToastShown = false, gPendingEnter = false;
 var gBirdFlock = null, gBirdState = null, gNextBirdAt = 10, gSquirrel = null, gSquirrelState = null, gNextSquirrelAt = 16;
@@ -4215,10 +4222,16 @@ function personAvoidWant(wx, wz, yaw, tx, tz, people){
   for (var i = 0; i < people.length; i++){
     var pr = people[i];
     var px = pr.x - wx, pz = pr.z - wz, pd = Math.hypot(px, pz);
-    if (pd >= NOTICE || pd < 1e-4) continue;
+    /* the visitor (tagged v) gets a wider berth than another
+       walker: notice them from 2.4 away and keep 1.15 clear, so
+       a worshipper bends round a seated visitor early and never
+       brushes past them (2026-11-18, 江仔片). Untagged people
+       keep the old 1.7 / 0.62. */
+    var ntc = pr.v ? 2.4 : NOTICE, msep = pr.v ? 1.15 : MINSEP;
+    if (pd >= ntc || pd < 1e-4) continue;
     var ahead = (px * hx + pz * hz) / pd;
     if (ahead < 0.15) continue;
-    var w = Math.min(1, (NOTICE - pd) / (NOTICE - MINSEP));
+    var w = Math.min(1, (ntc - pd) / (ntc - msep));
     /* which side: the person's signed angle from the walker's
        heading. On the right (cross > 0) -> step left; on the
        left or dead ahead (cross <= 0) -> step to the walker's
@@ -5196,15 +5209,21 @@ function enterGarden(keepSpot){
   gActive = true;
   if (natureOn && soundOn) startNature();
   /* drag to look; a short tap on path or grass strolls you there */
-  var dragging = false, lastX = 0, downX = 0, downY = 0, downT = 0;
+  var dragging = false, lastX = 0, lastY = 0, downX = 0, downY = 0, downT = 0;
   var el = renderer.domElement;
-  el.addEventListener('pointerdown', function(e){ dragging = true; lastX = e.clientX; downX = e.clientX; downY = e.clientY; downT = Date.now(); });
+  el.addEventListener('pointerdown', function(e){ dragging = true; lastX = e.clientX; lastY = e.clientY; downX = e.clientX; downY = e.clientY; downT = Date.now(); });
   window.addEventListener('pointerup', function(){ dragging = false; });
   /* drag orbits the camera around the figure — a full, unclamped
      circle, so the view can come round to any side: in front of
      the figure, beside it, behind it. The figure itself is never
-     turned by the drag; it only turns toward where it walks. */
-  el.addEventListener('pointermove', function(e){ if (!dragging) return; gCamYawT += (e.clientX - lastX) * .0045; lastX = e.clientX; });
+     turned by the drag; it only turns toward where it walks.
+     Vertical drag tilts the gaze (2026-11-18, 江仔：殿內可以 360
+     度望，庭院唔得) — the hall had this tilt all along and the
+     garden never did, so outside you could spin round but never
+     look up at the sky and treetops or down at your feet. Now a
+     drag up lifts the gaze to the roofs and sky, a drag down drops
+     it to the path — same freedom as the hall. */
+  el.addEventListener('pointermove', function(e){ if (!dragging) return; gCamYawT += (e.clientX - lastX) * .0045; gCamPitchT = Math.max(-.9, Math.min(1.0, gCamPitchT + (lastY - e.clientY) * .003)); lastX = e.clientX; lastY = e.clientY; });
   /* same WeChat guard as the hall canvas: the raw touch move is
      swallowed here so dragging to look around the grounds can
      never become a page shift or a browser back gesture */
@@ -5362,6 +5381,7 @@ function enterGarden(keepSpot){
        while the gate still sits in the upper half of the frame. */
     var dc = gWrapPi(gCamYawT - gCamYaw);
     gCamYaw += dc * (1 - Math.pow(1 - .12, gDt60));
+    gCamPitch += (gCamPitchT - gCamPitch) * (1 - Math.pow(1 - .12, gDt60));
     var cfx = Math.sin(gCamYaw), cfz = Math.cos(gCamYaw);
     camPos.set(gPos.x - cfx * 4.6, 2.65 + bob, gPos.z - cfz * 4.6);
     /* the lens never sits inside a ridge (2026-11-15, v43): at the
@@ -5369,7 +5389,7 @@ function enterGarden(keepSpot){
        into the mountainside — push it back out to the foot */
     gOutOfMountains(camPos);
     camera.position.copy(camPos);
-    lookT.set(gPos.x + cfx * 6, -0.5 + Math.sin(clockT * .4) * .04, gPos.z + cfz * 6);
+    lookT.set(gPos.x + cfx * 6, -0.5 + Math.tan(gCamPitch) * 6 + Math.sin(clockT * .4) * .04, gPos.z + cfz * 6);
     camera.lookAt(lookT);
     if (gAvatar){
       /* the leg swing keeps time with the ground actually covered,
