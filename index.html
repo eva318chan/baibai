@@ -2442,21 +2442,27 @@ function buildCommon(kind){
   var winZ = [-8.2, -2.0, 4.2], winW = 4.2, winBot = 2.4, winTop = 6.4;
   [-1, 1].forEach(function(side){
     var wx = side * 11.8;
-    /* wall runs below and above the window band, piers between */
-    wallBox(.4, winBot, 25, wx, winBot/2, -1);
-    wallBox(.4, 10.6 - winTop, 25, wx, (10.6 + winTop)/2, -1);
+    /* wall runs below and above the window band, piers between.
+       Extended 2026-11-18 (江仔：牆角漏咗一條光線) — the side
+       walls used to stop at z=11.5 while the entrance wall sits
+       at z=11.9, leaving a 0.4 slit at the corner that let the
+       bright daylight outside shine through as a thin vertical
+       line. Side walls now run to z=11.9 so they meet the
+       entrance wall with no gap; the last pier runs 6.3–11.9. */
+    wallBox(.4, winBot, 25.4, wx, winBot/2, -0.8);
+    wallBox(.4, 10.6 - winTop, 25.4, wx, (10.6 + winTop)/2, -0.8);
     var edges = [-13.5];
     winZ.forEach(function(z){ edges.push(z - winW/2, z + winW/2); });
-    edges.push(11.5);
+    edges.push(11.9);
     for (var e = 0; e < edges.length; e += 2){
       var z0 = edges[e], z1 = edges[e+1];
       wallBox(.4, winTop - winBot, z1 - z0, wx, (winTop + winBot)/2, (z0 + z1)/2);
     }
     /* a dado rail and skirting give the plain runs a worked finish */
-    var rail = new THREE.Mesh(new THREE.BoxGeometry(.14,.16,24.6), beamMat);
-    rail.position.set(wx - side * .24, 1.8, -1); scene.add(rail);
-    var skirt = new THREE.Mesh(new THREE.BoxGeometry(.12,.5,24.6), beamMat);
-    skirt.position.set(wx - side * .24, .25, -1); scene.add(skirt);
+    var rail = new THREE.Mesh(new THREE.BoxGeometry(.14,.16,25.2), beamMat);
+    rail.position.set(wx - side * .24, 1.8, -0.7); scene.add(rail);
+    var skirt = new THREE.Mesh(new THREE.BoxGeometry(.12,.5,25.2), beamMat);
+    skirt.position.set(wx - side * .24, .25, -0.7); scene.add(skirt);
     /* outside each wall: the garden itself — a painted dusk view on
        a far plane, with real pines and glowing lotus lanterns in
        front of it, so turning toward a window gives true parallax
@@ -2556,7 +2562,7 @@ function buildCommon(kind){
   });
   /* ceiling — dark, with exposed rafters marching toward the altar
      and two pendant lamps hanging over the nave, as in real halls */
-  box(24,.25,25.5, 0x20140d, 0,10.7,-1);
+  box(24,.25,25.9, 0x20140d, 0,10.7,-0.8);
   for (var rz = -11.6; rz <= 10.6; rz += 1.85){
     var raft = new THREE.Mesh(new THREE.BoxGeometry(23.6,.17,.3), beamMat);
     raft.position.set(0, 10.52, rz); scene.add(raft);
@@ -2616,9 +2622,17 @@ function buildCommon(kind){
      x=+-10.2 and further apart front-to-back (3.6 -> 4.2), so the
      pillars read as clearly separated, never crowded. Reduced
      2026-11-17 (5 pairs -> 3): a temple does not need so many
-     pillars — three pairs frame the nave without crowding it. */
+     pillars — three pairs frame the nave without crowding it.
+     Moved 2026-11-18 (江仔：第二條柱喺個窗嘅中間，應該喺第二個
+     窗口嘅右手邊，唔好擋住個窗) — pillars now sit in the solid
+     piers BETWEEN windows, each to the entrance side (right, seen
+     from the altar) of its window, never in front of one: -5.1 is
+     between window 1 (-8.2) and window 2 (-2.0), 1.1 is between
+     window 2 and window 3 (4.2), 9.1 is behind window 3 in the
+     last pier. Windows are -8.2 / -2.0 / 4.2, piers are centred
+     -5.1 / 1.1 / 9.1. Keep HALL_PILLARS in step with this list. */
   var pillarMat = new THREE.MeshStandardMaterial({ map: beamTexture(), color: isGY ? 0xa8b096 : 0xc06a4c, roughness: .62 });
-  [-9.8,-1.4,7.0].forEach(function(z){
+  [-5.1,1.1,9.1].forEach(function(z){
     [-10.2,10.2].forEach(function(x){
       /* slimmed 2026-11-15 (v39): a fat shaft close to the lens
          filled the whole screen — a slimmer pillar still frames
@@ -2736,8 +2750,11 @@ function buildCommon(kind){
      Extended 2026-11-18 (江仔：紅地氈應該伸長到去門口) — front
      edge stays by the worship burner (-7.35), back edge now meets
      the stone threshold at the doorway (11.45), so the carpet
-     guides the eye and the walk all the way in from the door. */
-  box(0.8,.03,18.8, isGY?0x4c5540:0x6e2a20, 0,.015,2.05);
+     guides the eye and the walk all the way in from the door.
+     Widened same day (江仔：地氈可以闊多一倍) 0.8 -> 1.6 — safe
+     now the inner cushions stand at ±1.7, so the carpet edge at
+     ±0.8 still leaves 0.9 of open floor either side of it. */
+  box(1.6,.03,18.8, isGY?0x4c5540:0x6e2a20, 0,.015,2.05);
   /* seating — 40 cushions in five widely spaced rows facing the
      altar (see SEATS). Only 3 taken seats carry a fellow
      worshipper — and those three are alive (built in enterHall):
@@ -4159,7 +4176,7 @@ function personAvoidWant(wx, wz, yaw, tx, tz, people){
    pillars built in buildCommon below (v36 spread). */
 var HALL_PILLARS = (function(){
   var list = [];
-  [-9.8,-1.4,7.0].forEach(function(z){ list.push([-10.2, z], [10.2, z]); });
+  [-5.1,1.1,9.1].forEach(function(z){ list.push([-10.2, z], [10.2, z]); });
   return list;
 })();
 /* keep the hall camera out of the pillars (2026-11-15, v39): a
