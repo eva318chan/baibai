@@ -2161,8 +2161,9 @@ var pendingBow = false;
    toward it, pendingPalms fires the prayer on arrival when 合掌
    was tapped mid-walk. Hands at rest, 2026-11-18 (江仔：未叫合十
    之前隻手應該垂直放喺兩側，唔應該合十) — the default pose is
-   hands hanging at the sides; 合掌 only ever holds two seconds
-   (prayHoldUntil releases it), and 鞠躬 is a kneeling bow （跪拜）,
+   hands hanging at the sides; 合掌 only ever holds three seconds
+   (prayHoldUntil releases it — extended from two seconds
+   2026-11-18, 江仔：以表誠心), and 鞠躬 is a kneeling bow （跪拜）,
    never palms pressed: bowKneel marks a bow whose arms reach for
    the floor, kneelT is its eased blend. */
 var prayTarget = 0, prayT = 0, pendingPalms = false, prayHoldUntil = 0;
@@ -3758,12 +3759,12 @@ function enterHall(d){
           if (destSeat != null){
             seatedIdx = destSeat; toast(t('toastSeated'));
             var bowQueued = pendingBow;
-            if (pendingBow){ pendingBow = false; bowKneel = true; bowDur = 1.6; bowPower = .55; bowAnim = 1.6; playBell(0.1); }
-            /* queued prayer: hands come together on arrival for two
-               seconds, then return to the sides. If a kneeling bow
-               was queued too, the bow's own dip stands — the prayer
-               must not overwrite it with the gentle one */
-            if (pendingPalms){ pendingPalms = false; prayTarget = 1; prayHoldUntil = clockT + 2.5; if (!bowQueued){ bowKneel = false; bowDur = 1.1; bowPower = .26; bowAnim = 1.1; playBell(0.06); toast(t('toastPalms')); } }
+            if (pendingBow){ pendingBow = false; bowKneel = true; bowDur = 2.6; bowPower = .55; bowAnim = 2.6; playBell(0.1); }
+            /* queued prayer: hands come together on arrival for
+               three seconds, then return to the sides. If a kneeling
+               bow was queued too, the bow's own dip stands — the
+               prayer must not overwrite it with the gentle one */
+            if (pendingPalms){ pendingPalms = false; prayTarget = 1; prayHoldUntil = clockT + 3.5; if (!bowQueued){ bowKneel = false; bowDur = 2.1; bowPower = .26; bowAnim = 2.1; playBell(0.06); toast(t('toastPalms')); } }
           }
           updateHint(); renderActions();
           if (afterFn) afterFn();
@@ -3844,9 +3845,10 @@ function enterHall(d){
         while (sDy < -Math.PI) sDy += Math.PI * 2;
         visitorFigure.rotation.y += sDy * (1 - Math.pow(1 - .12, dt60));
         vu.bow.rotation.x = bowDip * 1.15;
-        /* 合掌 only ever holds two seconds (2026-11-18, 江仔：合十
-           2 秒，跟住隻手返原位) — the hold releases itself, so the
-           hands are never left pressed together */
+        /* 合掌 only ever holds three seconds (2026-11-18, 江仔：合十
+           3 秒，跟住隻手返原位 — extended from 2 秒，以表誠心) —
+           the hold releases itself, so the hands are never left
+           pressed together */
         if (prayHoldUntil && clockT > prayHoldUntil){ prayTarget = 0; prayHoldUntil = 0; }
         /* ease the hands toward the prayer target, then pose them;
            the kneeling bow （跪拜） takes the arms instead — hands
@@ -5757,13 +5759,13 @@ function renderActions(){
   btn('🙏', t('actPalms'), function(){
     /* 合掌 is its own action now (2026-11-18, 江仔：合掌同鞠躬一個
        動作，隻手冇變過位置) — the hands come together at the chest
-       for two seconds only, with a gentle incline of the head, and
+       for three seconds only, with a gentle incline of the head, and
        then return to hanging at the sides, never the deep bow of
        鞠躬. Already seated — pray at once. Still standing — the
        figure finds the nearest empty cushion, walks over, sits, and
        only then brings the hands together (the walk-arrival code
        fires the queued prayer). */
-    if (seatedIdx != null && !visitorWalk){ prayTarget = 1; prayHoldUntil = clockT + 2.5; bowKneel = false; bowDur = 1.1; bowPower = .26; bowAnim = 1.1; playBell(0.06); toast(t('toastPalms')); return; }
+    if (seatedIdx != null && !visitorWalk){ prayTarget = 1; prayHoldUntil = clockT + 3.5; bowKneel = false; bowDur = 2.1; bowPower = .26; bowAnim = 2.1; playBell(0.06); toast(t('toastPalms')); return; }
     if (visitorWalk && visitorWalk.seat != null){ pendingPalms = true; return; }
     var from = visitorFigure ? visitorFigure.position : { x:0, z:STAND_Z };
     var best = null, bestD = 1e9;
@@ -5784,7 +5786,7 @@ function renderActions(){
        stay OUT of prayer and reach for the floor at the sides while
        the body bends forward; 合掌 is a separate action and is
        never part of a bow. */
-    if (seatedIdx != null && !visitorWalk){ prayTarget = 0; bowKneel = true; bowDur = 1.6; bowPower = .55; bowAnim = 1.6; playBell(0.1); toast(t('toastBow')); return; }
+    if (seatedIdx != null && !visitorWalk){ prayTarget = 0; bowKneel = true; bowDur = 2.6; bowPower = .55; bowAnim = 2.6; playBell(0.1); toast(t('toastBow')); return; }
     if (visitorWalk && visitorWalk.seat != null){ pendingBow = true; return; }
     var from = visitorFigure ? visitorFigure.position : { x:0, z:STAND_Z };
     var best = null, bestD = 1e9;
