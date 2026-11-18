@@ -3566,6 +3566,12 @@ function enterHall(d){
   camera = new THREE.PerspectiveCamera(58, wrap.clientWidth/Math.max(wrap.clientHeight,1), .1, 120);
   var camDist = camera.aspect < 0.9 ? 9.6 : 7.6;
   camAngle = 0; camTarget = 0; bowAnim = 0;
+  /* entering a hall always starts with hands hanging at the sides
+     (2026-11-18, 江仔：入嚟兩隻手係垂直) — no prayer or bow state
+     may survive from the last visit, or the figure would walk in
+     with its palms still pressed from before */
+  prayTarget = 0; prayT = 0; prayHoldUntil = 0; pendingPalms = false;
+  kneelTarget = 0; kneelT = 0; bowKneel = false; pendingBow = false;
   buildCommon(d.id); if (d.id === 'wts') buildStatueWTS(); else buildStatueGY();
   /* you are in the hall too: a little Taoist acolyte （道童） in a
      dark-blue robe with a pale-gold sash and a topknot — the designed
