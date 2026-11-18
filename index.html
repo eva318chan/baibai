@@ -2989,7 +2989,7 @@ function makeHead(skin, hairC, r, female, variant, topknot){
     brow.position.set(s * r * .35, cy + r * .33, r * .84);
     brow.rotation.y = -s * .32; brow.rotation.z = female ? s * .16 : -s * .04; headG.add(brow);
     var cheek = new THREE.Mesh(new THREE.CircleGeometry(r * (female ? .17 : .15), 12),
-      new THREE.MeshBasicMaterial({ color: 0xdd8a68, transparent: true, opacity: female ? .5 : .42 }));
+      new THREE.MeshBasicMaterial({ color: 0xe2a184, transparent: true, opacity: female ? .42 : .35 }));
     cheek.position.set(s * r * .56, cy - r * .26, r * .78); cheek.rotation.y = s * .55; headG.add(cheek);
   });
   var nose = new THREE.Mesh(new THREE.SphereGeometry(r * .07, 10, 8), mat(skin, .65));
@@ -3036,10 +3036,12 @@ function makePalms(skin, r){
   return g;
 }
 function makePilgrim(robeColor, trimColor, female){
-  /* paler fair skin (2026-11-15, v43): the old warm tan read as the
-     same tone as the wooden floor planks and the face blended into
-     them — this lighter, less saturated tone stands clear of the floor */
-  var skin = 0xf7dcc0, hairC = 0x38302a;
+  /* pale flesh skin (2026-11-18, 江仔：面孔同手嘅顏色要再淺啲，
+     接近真人肉色): the v43 warm tan (0xf7dcc0) read yellowish
+     under the hall's warm light, like wax rather than skin — this
+     lighter, pinker flesh tone (0xfbe6cf) reads as real skin, and
+     still stands clear of the wooden floor */
+  var skin = 0xfbe6cf, hairC = 0x38302a;
   var g = new THREE.Group();
   var inner = new THREE.Group(); g.add(inner);
   function makeLeg(side){
