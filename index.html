@@ -438,7 +438,9 @@
     </div>
     <button class="enter-btn" id="enter-btn" data-i18n="enterBtn">入 廟</button>
     <button class="enter-btn ghost" id="taisui-btn" data-i18n="taisuiBtn">查 太 歲</button>
-    <button class="enter-btn ghost" id="direct-hall-btn" data-i18n="directHallBtn">直 接 入 殿</button>
+    <!-- 直接入殿 removed 2026-11-18 (江仔：第一版唔需要，入到去庭院
+         已經有「入殿參拜」掣) — v1 entry is just 入廟 + 查太歲; the
+         fast lane lives in the garden HUD, not on the front door. -->
   </div>
   <p class="entry-foot" data-i18n="entryFoot">本頁為 Demo 示範版，3D 場景與儀式均為體驗示範；殿內善信為氣氛人物，並非真人連線。真正多人同時在線版本需要後端支援，Demo 未包含。</p>
   <p class="entry-foot legal-foot"><button class="legal-link" id="privacy-link" data-i18n="privacyLink">私隱政策</button><span> · </span><button class="legal-link" id="terms-link" data-i18n="termsLink">使用條款</button></p>
@@ -6084,15 +6086,9 @@ function renderBeads(){
 
 /* ================= wire up ================= */
 document.getElementById('enter-btn').addEventListener('click', function(){ ensureAudio(); unlockChant(); if (soundOn) playBell(.2, 'gate'); enterGarden(); });
-/* 直接入殿 (2026-11-18): a low-key shortcut for returning visitors —
-   straight into the Wong Tai Sin hall, no garden walk. The slow
-   courtyard stroll stays the default; this is just the fast lane. */
-document.getElementById('direct-hall-btn').addEventListener('click', function(){
-  ensureAudio(); unlockChant(); if (soundOn) playBell(.2, 'gate');
-  var wts = null;
-  for (var i = 0; i < DEITIES.length; i++){ if (DEITIES[i].id === 'wts'){ wts = DEITIES[i]; break; } }
-  if (wts){ currentDeity = wts; enterHall(wts); }
-});
+/* 直接入殿 removed 2026-11-18 (江仔：第一版唔需要) — the garden HUD's
+   入殿參拜 button already is the fast lane once you're inside, so the
+   front door stays two buttons: 入廟 + 查太歲. */
 /* tai sui checker (v47) — entry button, year switcher and birth-year
    select, wired once at load. The year select maps a birth year to
    its sign: 1924 is a Rat year, so sign = (year − 1924) mod 12. */
