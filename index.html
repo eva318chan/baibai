@@ -2732,8 +2732,12 @@ function buildCommon(kind){
      the aisle and never runs under a cushion — the old 1.7 width
      reached 0.435 under the inner columns and read as cramped.
      Narrowed again 2026-11-17 (1.1 -> 0.8) with the inner columns
-     moved out, so open floor shows either side of the carpet. */
-  box(0.8,.03,15.5, isGY?0x4c5540:0x6e2a20, 0,.015,0.4);
+     moved out, so open floor shows either side of the carpet.
+     Extended 2026-11-18 (江仔：紅地氈應該伸長到去門口) — front
+     edge stays by the worship burner (-7.35), back edge now meets
+     the stone threshold at the doorway (11.45), so the carpet
+     guides the eye and the walk all the way in from the door. */
+  box(0.8,.03,18.8, isGY?0x4c5540:0x6e2a20, 0,.015,2.05);
   /* seating — 40 cushions in five widely spaced rows facing the
      altar (see SEATS). Only 3 taken seats carry a fellow
      worshipper — and those three are alive (built in enterHall):
