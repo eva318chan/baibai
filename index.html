@@ -2156,11 +2156,17 @@ var ambientSeatIdx = [], hallAmbient = [];
 var visitorFemale = false;
 var camAngle = 0, camTarget = 0, camPitch = 0, camPitchT = 0, bowAnim = 0, bowDur = 1.6, bowPower = .55, clockT = 0;
 var pendingBow = false;
-/* prayer state, 2026-11-18 (江仔：合掌同鞠躬一個動作，隻手冇變過
-   位置) — prayTarget is what the visitor wants (1 = hands together),
-   prayT is the eased blend the loop drives toward it, pendingPalms
-   fires the prayer on arrival when 合掌 was tapped mid-walk */
-var prayTarget = 0, prayT = 0, pendingPalms = false;
+/* prayer and bow state — prayTarget is what the visitor wants
+   (1 = hands together), prayT is the eased blend the loop drives
+   toward it, pendingPalms fires the prayer on arrival when 合掌
+   was tapped mid-walk. Hands at rest, 2026-11-18 (江仔：未叫合十
+   之前隻手應該垂直放喺兩側，唔應該合十) — the default pose is
+   hands hanging at the sides; 合掌 only ever holds two seconds
+   (prayHoldUntil releases it), and 鞠躬 is a kneeling bow （跪拜）,
+   never palms pressed: bowKneel marks a bow whose arms reach for
+   the floor, kneelT is its eased blend. */
+var prayTarget = 0, prayT = 0, pendingPalms = false, prayHoldUntil = 0;
+var kneelTarget = 0, kneelT = 0, bowKneel = false;
 var smokeSystems = [], smokeBoost = 0, burnerGroup = null, incenseBusy = false;
 /* incense offering (2026-11-15): at most three sticks per visit to
    the hall — the count resets every time you leave and come back;
@@ -3080,16 +3086,17 @@ function makePilgrim(robeColor, trimColor, female){
     },
     /* setPray(amt) — the prayer pose as a blend, 2026-11-18 (江仔：
        合掌同鞠躬一個動作，隻手冇變過位置). amt 0 = arms at rest
-       (hands down / hidden in the lap, palms away); amt 1 = arms
-       folded in and up, palms pressed together at the chest. The
-       loop eases prayT toward prayTarget every frame and calls
+       (hands hanging vertically at the sides, palms away); amt 1 =
+       arms folded in and up, palms pressed together at the chest.
+       The loop eases prayT toward prayTarget every frame and calls
        this AFTER sit()/stand(), so the hands VISIBLY travel from
        rest to prayer when 合掌 is tapped — and stay there while
        praying — instead of the palms only ever appearing as a
        side-effect of sitting down. Walking overrides it (the walk
        drives the arms); on arrival prayer resumes if still wanted.
-       Fellow worshippers never call this: their sit() keeps the
-       palms showing as before. */
+       Fellow worshippers call setPray(0) after sit() so their hands
+       hang at the sides at rest too (2026-11-18, 江仔：未叫合十
+       之前隻手應該垂直放喺兩側). */
     setPray: function(amt){
       var l = function(a, b, t){ return a + (b - a) * t; };
       armL.sh.rotation.set(l(0, -.5, amt), 0, l(-.17, .42, amt));
@@ -3097,6 +3104,24 @@ function makePilgrim(robeColor, trimColor, female){
       armL.el.rotation.set(l(-.25, -1.3, amt), 0, l(.06, .25, amt));
       armR.el.rotation.set(l(-.25, -1.3, amt), 0, l(-.06, -.25, amt));
       palms.visible = amt > .5; armL.hand.visible = armR.hand.visible = amt <= .5;
+    },
+    /* setKneel(amt) — the kneeling bow （跪拜）, 2026-11-18 (江仔：
+       鞠躬唔應該合十，隻手應該按喺地下，郁身體先係鞠躬). amt 0 =
+       arms at rest; amt 1 = arms reaching forward-down, hands low
+       beside the knees and pressed toward the floor, a little wider
+       than the shoulders — while the bow group bends the torso
+       forward, so the figure kneels and bows with hands on the
+       ground. The pressed palms stay hidden throughout a bow; the
+       mitt hands stay visible (they read as hands on the floor).
+       The loop calls this INSTEAD of setPray while a kneel-bow is
+       running, never both, so the two poses can never fight. */
+    setKneel: function(amt){
+      var l = function(a, b, t){ return a + (b - a) * t; };
+      armL.sh.rotation.set(l(0, -1.1, amt), 0, l(-.17, -.28, amt));
+      armR.sh.rotation.set(l(0, -1.1, amt), 0, l(.17, .28, amt));
+      armL.el.rotation.set(l(-.25, -.2, amt), 0, l(.06, .05, amt));
+      armR.el.rotation.set(l(-.25, -.2, amt), 0, l(-.06, -.05, amt));
+      palms.visible = false; armL.hand.visible = armR.hand.visible = true;
     }
   };
   poseStand();
@@ -3727,11 +3752,12 @@ function enterHall(d){
           if (destSeat != null){
             seatedIdx = destSeat; toast(t('toastSeated'));
             var bowQueued = pendingBow;
-            if (pendingBow){ pendingBow = false; bowDur = 1.6; bowPower = .55; bowAnim = 1.6; playBell(0.1); }
-            /* queued prayer: hands come together on arrival. If a
-               deep bow was queued too, the bow's own dip stands —
-               the prayer must not overwrite it with the gentle one */
-            if (pendingPalms){ pendingPalms = false; prayTarget = 1; if (!bowQueued){ bowDur = 1.1; bowPower = .26; bowAnim = 1.1; playBell(0.06); toast(t('toastPalms')); } }
+            if (pendingBow){ pendingBow = false; bowKneel = true; bowDur = 1.6; bowPower = .55; bowAnim = 1.6; playBell(0.1); }
+            /* queued prayer: hands come together on arrival for two
+               seconds, then return to the sides. If a kneeling bow
+               was queued too, the bow's own dip stands — the prayer
+               must not overwrite it with the gentle one */
+            if (pendingPalms){ pendingPalms = false; prayTarget = 1; prayHoldUntil = clockT + 2.5; if (!bowQueued){ bowKneel = false; bowDur = 1.1; bowPower = .26; bowAnim = 1.1; playBell(0.06); toast(t('toastPalms')); } }
           }
           updateHint(); renderActions();
           if (afterFn) afterFn();
@@ -3794,8 +3820,10 @@ function enterHall(d){
             if (visitorWalk.amt > .02) vu.walk(visitorWalkPhase, visitorWalk.amt);
           }
           vu.bow.rotation.x = 0;
-          /* walking frees the arms — prayer fades out with the stride */
+          /* walking frees the arms — prayer and kneel both fade out
+             with the stride */
           prayT = Math.max(0, prayT - .12 * dt60);
+          kneelT = Math.max(0, kneelT - .12 * dt60);
         }
       } else if (seatedIdx != null && SEATS[seatedIdx]){
         var vst = SEATS[seatedIdx];
@@ -3810,10 +3838,19 @@ function enterHall(d){
         while (sDy < -Math.PI) sDy += Math.PI * 2;
         visitorFigure.rotation.y += sDy * (1 - Math.pow(1 - .12, dt60));
         vu.bow.rotation.x = bowDip * 1.15;
-        /* ease the hands toward the prayer target, then pose them */
+        /* 合掌 only ever holds two seconds (2026-11-18, 江仔：合十
+           2 秒，跟住隻手返原位) — the hold releases itself, so the
+           hands are never left pressed together */
+        if (prayHoldUntil && clockT > prayHoldUntil){ prayTarget = 0; prayHoldUntil = 0; }
+        /* ease the hands toward the prayer target, then pose them;
+           the kneeling bow （跪拜） takes the arms instead — hands
+           on the ground, never pressed — while its dip is running */
         prayT += (prayTarget - prayT) * (1 - Math.pow(1 - .18, dt60));
         if (Math.abs(prayTarget - prayT) < .01) prayT = prayTarget;
-        vu.setPray(prayT);
+        kneelTarget = (bowAnim > 0 && bowKneel) ? 1 : 0;
+        kneelT += (kneelTarget - kneelT) * (1 - Math.pow(1 - .18, dt60));
+        if (Math.abs(kneelTarget - kneelT) < .01) kneelT = kneelTarget;
+        if (kneelT > .01) vu.setKneel(kneelT); else vu.setPray(prayT);
       } else {
         vu.rise();
         visitorFigure.position.set(visitorStandAt.x, 0, visitorStandAt.z);
@@ -3824,10 +3861,12 @@ function enterHall(d){
         while (stDy < -Math.PI) stDy += Math.PI * 2;
         visitorFigure.rotation.y += stDy * (1 - Math.pow(1 - .08, dt60));
         vu.bow.rotation.x = bowDip * 1.15;
+        if (prayHoldUntil && clockT > prayHoldUntil){ prayTarget = 0; prayHoldUntil = 0; }
         /* ease the hands toward the prayer target, then pose them */
         prayT += (prayTarget - prayT) * (1 - Math.pow(1 - .18, dt60));
         if (Math.abs(prayTarget - prayT) < .01) prayT = prayTarget;
-        vu.setPray(prayT);
+        kneelT = Math.max(0, kneelT - .18 * dt60);
+        if (kneelT > .01) vu.setKneel(kneelT); else vu.setPray(prayT);
       }
     }
     /* the hall's few living worshippers (2026-11-15): each one
@@ -3840,6 +3879,10 @@ function enterHall(d){
       var amb = hallAmbient[ai], afig = amb.fig, au = afig.userData;
       if (amb.state === 'seated'){
         au.sit();
+        /* hands hang at the sides at rest (2026-11-18, 江仔：未叫
+           合十之前隻手應該垂直放喺兩側) — sit() shows the pressed
+           palms, so the rest pose is put back right after it */
+        au.setPray(0);
         afig.position.set(SEATS[amb.seat].x, .16, SEATS[amb.seat].z);
         var ady = Math.PI - afig.rotation.y;
         while (ady > Math.PI) ady -= Math.PI * 2;
@@ -5694,7 +5737,7 @@ function renderActions(){
     seatedIdx = null;
     startWalkTo(0, -5.4, null, function(){
       visitorStandAt = { x: 0, z: -5.4 };
-      bowDur = 1.5; bowPower = .5; bowAnim = 1.5; playBell(0.08);
+      bowKneel = false; bowDur = 1.5; bowPower = .5; bowAnim = 1.5; playBell(0.08);
       setTimeout(function(){ addIncenseSticks(1); }, 650);
       setTimeout(function(){ lightHallSmoke(); smokeBoost = 1; incenseToast(); }, 1350);
       setTimeout(function(){
@@ -5708,12 +5751,13 @@ function renderActions(){
   btn('🙏', t('actPalms'), function(){
     /* 合掌 is its own action now (2026-11-18, 江仔：合掌同鞠躬一個
        動作，隻手冇變過位置) — the hands come together at the chest
-       and STAY there, with only a gentle incline of the head, never
-       the deep bow of 鞠躬. Already seated — pray at once. Still
-       standing — the figure finds the nearest empty cushion, walks
-       over, sits, and only then brings the hands together (the
-       walk-arrival code fires the queued prayer). */
-    if (seatedIdx != null && !visitorWalk){ prayTarget = 1; bowDur = 1.1; bowPower = .26; bowAnim = 1.1; playBell(0.06); toast(t('toastPalms')); return; }
+       for two seconds only, with a gentle incline of the head, and
+       then return to hanging at the sides, never the deep bow of
+       鞠躬. Already seated — pray at once. Still standing — the
+       figure finds the nearest empty cushion, walks over, sits, and
+       only then brings the hands together (the walk-arrival code
+       fires the queued prayer). */
+    if (seatedIdx != null && !visitorWalk){ prayTarget = 1; prayHoldUntil = clockT + 2.5; bowKneel = false; bowDur = 1.1; bowPower = .26; bowAnim = 1.1; playBell(0.06); toast(t('toastPalms')); return; }
     if (visitorWalk && visitorWalk.seat != null){ pendingPalms = true; return; }
     var from = visitorFigure ? visitorFigure.position : { x:0, z:STAND_Z };
     var best = null, bestD = 1e9;
@@ -5729,11 +5773,13 @@ function renderActions(){
        bow at once. Still standing — the little figure finds the
        nearest empty cushion by itself, walks over, sits down, and
        only then bows (the walk-arrival code fires the queued bow).
-       Hands come together first (2026-11-18): a bow is made with
-       palms pressed, so 鞠躬 sets prayer too — the deep forward
-       bend is what sets it apart from 合掌, not the hands. */
-    if (seatedIdx != null && !visitorWalk){ prayTarget = 1; bowDur = 1.6; bowPower = .55; bowAnim = 1.6; playBell(0.1); toast(t('toastBow')); return; }
-    if (visitorWalk && visitorWalk.seat != null){ pendingBow = true; pendingPalms = true; return; }
+       A bow is a kneeling bow （跪拜）, 2026-11-18 (江仔：鞠躬唔
+       應該合十，隻手應該按喺地下，郁身體先係鞠躬) — the hands
+       stay OUT of prayer and reach for the floor at the sides while
+       the body bends forward; 合掌 is a separate action and is
+       never part of a bow. */
+    if (seatedIdx != null && !visitorWalk){ prayTarget = 0; bowKneel = true; bowDur = 1.6; bowPower = .55; bowAnim = 1.6; playBell(0.1); toast(t('toastBow')); return; }
+    if (visitorWalk && visitorWalk.seat != null){ pendingBow = true; return; }
     var from = visitorFigure ? visitorFigure.position : { x:0, z:STAND_Z };
     var best = null, bestD = 1e9;
     SEATS.forEach(function(s, i){
@@ -5741,7 +5787,7 @@ function renderActions(){
       var dd = (s.x - from.x) * (s.x - from.x) + (s.z - from.z) * (s.z - from.z);
       if (dd < bestD){ bestD = dd; best = i; }
     });
-    if (best != null){ sitSeat(best); pendingBow = true; pendingPalms = true; }
+    if (best != null){ sitSeat(best); pendingBow = true; }
   });
   if (currentHall === 'wts'){
     btn('🎋', t('actFortune'), function(){ openFortune(); }, true);
