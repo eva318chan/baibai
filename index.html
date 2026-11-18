@@ -5005,7 +5005,7 @@ function buildGarden(){
      Moved deeper with the temple (2026-11-15), so the gap between
      gate and hall reads as a real walk, not a step. Thinned 2026-11-15
      (5 trees -> 3, heights varied) so the backdrop reads open, not a wall. */
-  makePine(-7, -36, 2.0); makeTree(11.5, -37, 1.05); makePine(-12, -35, 1.6);
+  makePine(-7, -27, 2.0); makeTree(11.5, -28, 1.05); makePine(-12, -26, 1.6);
   /* the temple itself — pushed far deeper into the grounds and
      set off the gate's axis, raised on its own two-tier
      stone terrace with steps of its own, so from the path it reads
@@ -5036,14 +5036,27 @@ function buildGarden(){
      match), so its green roof, gold walls and lit open doorway fill
      the gate opening from anywhere in the courtyard; the mid-ground
      pine that stood near the sightline moved aside with it.
+     Moved closer again 2026-11-18 (江仔第三次圈圖：refresh 之後
+     喺門口望入去依然淨係草地) — the -48 hall was still too far
+     and too small: from the gate the camera looks down, so the
+     hall's walls sat in the top sliver of the frame and any sideways
+     turn of the camera slid the narrow doorway's window clean off
+     it. Now z -48 → -38, scale 1.25 → 1.45, terrace 20 → 24, so the
+     hall fills the doorway from the gate itself, not just from the
+     courtyard centre; the mid-ground trees moved up to z -26..-28
+     so they never stand between gate and hall. The trade-off is
+     deliberate: the hall now reads nearer and bigger than the gate,
+     no longer a small distant building — that is the price of
+     seeing it through the gate, and it is what 江仔 asked for
+     three times.
      The hall's roof is deep-green
      glazed tile against the gate's vermilion red, and its walls a
      deeper gold-cream — the two buildings can never be mistaken
      for one another now, and the hall's roof edge no longer cuts
      across the gate roofline. */
-  box(20, .55, 9.0, 0xa8a294, pathX(-12.6), .28, -48); box(18, .55, 7.7, 0x9d9c8e, pathX(-12.6), .83, -48);
-  for (var st2 = 0; st2 < 3; st2++) box(2.9 - st2 * .35, .16, .7, 0xa3a294, pathX(-12.6), .08 + st2 * .16, -42.6 - st2 * .45);
-  var temple = new THREE.Group(); temple.position.set(pathX(-12.6), 1.1, -48); temple.scale.setScalar(1.25); scene.add(temple); gGateHits.push(temple);
+  box(24, .55, 9.0, 0xa8a294, pathX(-12.6), .28, -38); box(22, .55, 7.7, 0x9d9c8e, pathX(-12.6), .83, -38);
+  for (var st2 = 0; st2 < 3; st2++) box(2.9 - st2 * .35, .16, .7, 0xa3a294, pathX(-12.6), .08 + st2 * .16, -32.6 - st2 * .45);
+  var temple = new THREE.Group(); temple.position.set(pathX(-12.6), 1.1, -38); temple.scale.setScalar(1.45); scene.add(temple); gGateHits.push(temple);
   box(13.5, 1.0, 7.2, 0xa8a294, 0, .5, 0, temple);
   /* the front is OPEN (2026-11-18): a real doorway, not a solid wall —
      through it you see the inner hall, warm and lit, never grass or
