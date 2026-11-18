@@ -2727,6 +2727,21 @@ function buildCommon(kind){
       bl.position.set(x * 1.55 + (fi - 1) * .1, 1.97, -9.8); scene.add(bl);
     }
   });
+  /* pastries — a plate of golden pastries either side of the altar
+     burner (2026-11-18, 江仔：神枱香爐望落去係空嘅，加返拜祭嘅
+     糕點), paired like the oranges and the vases, so the altar
+     table reads dressed all across. No bun tower: the table is
+     already full, and a 包山 belongs to the Cheung Chau festival,
+     not to a Wong Tai Sin altar */
+  [-.7, .7].forEach(function(x){
+    var pplate = latheMesh([[.02,0],[.14,.02],[.21,.06],[.18,.08]], 0xd8d2c2, 20);
+    pplate.material = new THREE.MeshStandardMaterial({ color: 0xd8d2c2, roughness: .35 });
+    pplate.position.set(x, 1.37, -9.35); scene.add(pplate);
+    [[0,.1,0],[.07,.09,.05],[-.07,.09,-.04]].forEach(function(o){
+      var pa = new THREE.Mesh(new THREE.SphereGeometry(.07,12,10), mat(0xd8a24a, .6));
+      pa.scale.y = .62; pa.position.set(x + o[0], 1.37 + o[1], -9.35 + o[2]); scene.add(pa);
+    });
+  });
   /* a proper bronze burner, lathe-turned: three feet, a swelling
      body, a rolled rim, twin handles and a bed of pale ash. One
      stands on the altar table before the deity; a twin sized to
@@ -2758,12 +2773,16 @@ function buildCommon(kind){
   }
   var altarBurner = buildBurner(.62); altarBurner.position.set(0, 1.37, -9.55); scene.add(altarBurner);
   /* the altar burner's own three sticks, spread clearly apart
-     and fanned like the offered ones, so they too read as three */
+     and fanned like the offered ones, so they too read as three.
+     Thickened 2026-11-18 (江仔：神枱香爐望落去係空嘅) — the old
+     hair-thin sticks (r .014) were invisible from the seats, so
+     the burner read as empty; these read as incense from anywhere
+     in the hall */
   [-.15, 0, .15].forEach(function(x, ai){
-    var as = new THREE.Mesh(new THREE.CylinderGeometry(.014,.014,.5,6), mat(0xb03024, .7));
-    as.position.set(x, 1.37 + .36 + .22, -9.55); as.rotation.z = (1 - ai) * .12; scene.add(as);
-    var at = new THREE.Mesh(new THREE.SphereGeometry(.019,8,8), new THREE.MeshBasicMaterial({ color: 0xff7b3a }));
-    at.position.set(x + (ai - 1) * .055, 1.37 + .36 + .48, -9.55); scene.add(at);
+    var as = new THREE.Mesh(new THREE.CylinderGeometry(.028,.028,.62,6), mat(0xb03024, .7));
+    as.position.set(x, 1.37 + .36 + .28, -9.55); as.rotation.z = (1 - ai) * .14; scene.add(as);
+    var at = new THREE.Mesh(new THREE.SphereGeometry(.032,8,8), new THREE.MeshBasicMaterial({ color: 0xff7b3a }));
+    at.position.set(x + (ai - 1) * .08, 1.37 + .36 + .62, -9.55); scene.add(at);
   });
   burnerGroup = buildBurner(0.85); burnerGroup.position.set(0, .35, -6.6); scene.add(burnerGroup);
   incenseGroup = new THREE.Group(); incenseGroup.position.set(0, .56, 0); burnerGroup.add(incenseGroup);
@@ -2831,9 +2850,11 @@ function buildCommon(kind){
   });
   /* smoke — two living columns: a full one curling up from the
      worship burner in front of the altar, and a thinner wisp from
-     the altar burner. They start dark — nothing rises until the
-     visitor offers incense (2026-11-15) — and the worship column
-     thickens for a while after each offering. Each particle rises,
+     the altar burner. The worship column starts dark — nothing
+     rises from it until the visitor offers incense (2026-11-15) —
+     and thickens for a while after each offering; the altar wisp
+     rises from the moment you enter (2026-11-18), because the
+     temple's own incense is always burning. Each particle rises,
      drifts wider as it climbs, and loops — readable as real smoke
      from anywhere in the hall. */
   smokeSystems = [];
@@ -2852,11 +2873,16 @@ function buildCommon(kind){
   }
   smokePts = makeSmoke(0, 2.1, -6.6, 130, .42, .3, .3);
   makeSmoke(0, 2.35, -9.55, 60, .34, .2, .2);
-  /* the hall starts smokeless: no smoke rises from either burner
-     until the visitor offers incense — the two columns are built
-     but held at zero opacity until lit */
+  /* the hall starts smokeless: no smoke rises from the worship
+     burner until the visitor offers incense — its column is built
+     but held at zero opacity until lit. The altar burner's own
+     thin wisp is different: it is the temple's own incense, always
+     burning, so it rises from the moment you enter (2026-11-18,
+     江仔：神枱香爐望落去係空嘅) — only the worship column waits
+     for your offering */
   hallSmokeSystems = smokeSystems.slice();
   hallSmokeSystems.forEach(function(s){ s.baseOp = 0; s.obj.material.opacity = 0; });
+  if (hallSmokeSystems[1]) hallSmokeSystems[1].baseOp = .2;
   hallSmokeLit = false;
 }
 
