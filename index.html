@@ -2169,6 +2169,10 @@ var pendingBow = false;
    the floor, kneelT is its eased blend. */
 var prayTarget = 0, prayT = 0, pendingPalms = false, prayHoldUntil = 0;
 var kneelTarget = 0, kneelT = 0, bowKneel = false;
+/* incense offering arm (2026-11-21, 江仔：上香要有動作——伸手攞香插落香爐):
+   offerTarget is what the visitor wants (1 = right hand reaching out
+   holding the incense), offerT is the eased blend the loop drives. */
+var offerTarget = 0, offerT = 0;
 var smokeSystems = [], smokeBoost = 0, burnerGroup = null, incenseBusy = false;
 /* incense offering (2026-11-15): at most three sticks per visit to
    the hall — the count resets every time you leave and come back;
@@ -3085,6 +3089,17 @@ function makePilgrim(robeColor, trimColor, female){
      they stand proud of the cloth, big enough to read at a glance */
   var palms = makePalms(skin, .09);
   palms.position.set(0, .47, .30); palms.rotation.x = -.12; palms.visible = false; upper.add(palms);
+  /* one incense stick held in the right hand while offering
+     (2026-11-21) — rides in the hand, appears as the arm
+     extends, hides when the stick is placed in the burner */
+  var offerStick = new THREE.Group();
+  var oShaft = new THREE.Mesh(new THREE.CylinderGeometry(.014, .014, .4, 7), mat(0xb03024, .7));
+  oShaft.position.y = -.2; offerStick.add(oShaft);
+  var oTip = new THREE.Mesh(new THREE.SphereGeometry(.02, 8, 8), new THREE.MeshBasicMaterial({ color: 0xff7b3a }));
+  oTip.position.y = -.41; offerStick.add(oTip);
+  offerStick.position.set(0, -.26, .07);
+  offerStick.visible = false;
+  armR.el.add(offerStick);
   /* the 道童 head (2026-11-15): bigger and rounder like the designed
      clay acolyte, with a topknot on the crown */
   var headG = makeHead(skin, hairC, .235, !!female, 0, true); headG.position.y = .68; upper.add(headG);
@@ -3152,6 +3167,25 @@ function makePilgrim(robeColor, trimColor, female){
       armL.el.rotation.set(l(-.25, -.2, amt), 0, l(.06, .05, amt));
       armR.el.rotation.set(l(-.25, -.2, amt), 0, l(-.06, -.05, amt));
       palms.visible = false; armL.hand.visible = armR.hand.visible = true;
+    },
+    /* setOffer(amt) — the incense offering, 2026-11-21 (江仔：上香
+       嗰個動作冇動作，淨係企喺面前然後炷香就出現咗). amt 0 = arms
+       at rest; amt 1 = right arm reaching forward toward the
+       burner, holding one incense stick, while the left arm stays
+       at rest. The stick rides in the right hand and appears as
+       the arm extends; when the stick is placed in the burner the
+       hand stick hides and addIncenseSticks puts the real stick
+       in the burner. The loop calls this INSTEAD of setPray /
+       setKneel while an offering is running, never both. */
+    setOffer: function(amt){
+      var l = function(a, b, t){ return a + (b - a) * t; };
+      armL.sh.rotation.set(0, 0, -.17);
+      armL.el.rotation.set(-.25, 0, .06);
+      armR.sh.rotation.set(l(0, -1.05, amt), 0, l(.17, .05, amt));
+      armR.el.rotation.set(l(-.25, -.35, amt), 0, l(-.06, 0, amt));
+      palms.visible = false;
+      armL.hand.visible = armR.hand.visible = true;
+      if (offerStick) offerStick.visible = amt > .4;
     }
   };
   poseStand();
@@ -3602,6 +3636,7 @@ function enterHall(d){
      with its palms still pressed from before */
   prayTarget = 0; prayT = 0; prayHoldUntil = 0; pendingPalms = false;
   kneelTarget = 0; kneelT = 0; bowKneel = false; pendingBow = false;
+  offerTarget = 0; offerT = 0;
   buildCommon(d.id); if (d.id === 'wts') buildStatueWTS(); else buildStatueGY();
   /* you are in the hall too: a little Taoist acolyte （道童） in a
      dark-blue robe with a pale-gold sash and a topknot — the designed
@@ -3860,6 +3895,7 @@ function enterHall(d){
              with the stride */
           prayT = Math.max(0, prayT - .12 * dt60);
           kneelT = Math.max(0, kneelT - .12 * dt60);
+          offerT = Math.max(0, offerT - .12 * dt60);
         }
       } else if (seatedIdx != null && SEATS[seatedIdx]){
         var vst = SEATS[seatedIdx];
@@ -3899,11 +3935,15 @@ function enterHall(d){
         visitorFigure.rotation.y += stDy * (1 - Math.pow(1 - .08, dt60));
         vu.bow.rotation.x = bowDip * 1.15;
         if (prayHoldUntil && clockT > prayHoldUntil){ prayTarget = 0; prayHoldUntil = 0; }
-        /* ease the hands toward the prayer target, then pose them */
+        /* ease the hands toward the prayer target, then pose them;
+           the offering takes the arms instead while it runs */
         prayT += (prayTarget - prayT) * (1 - Math.pow(1 - .18, dt60));
         if (Math.abs(prayTarget - prayT) < .01) prayT = prayTarget;
         kneelT = Math.max(0, kneelT - .18 * dt60);
-        if (kneelT > .01) vu.setKneel(kneelT); else vu.setPray(prayT);
+        offerT += (offerTarget - offerT) * (1 - Math.pow(1 - .18, dt60));
+        if (Math.abs(offerTarget - offerT) < .01) offerT = offerTarget;
+        if (offerT > .01) vu.setOffer(offerT);
+        else if (kneelT > .01) vu.setKneel(kneelT); else vu.setPray(prayT);
       }
     }
     /* the hall's few living worshippers (2026-11-15): each one
@@ -5775,13 +5815,19 @@ function renderActions(){
     startWalkTo(0, -5.4, null, function(){
       visitorStandAt = { x: 0, z: -5.4 };
       bowKneel = false; bowDur = 1.5; bowPower = .5; bowAnim = 1.5; playBell(0.08);
-      setTimeout(function(){ addIncenseSticks(1); }, 650);
-      setTimeout(function(){ lightHallSmoke(); smokeBoost = 1; incenseToast(); }, 1350);
+      /* the offering (2026-11-21, 江仔：上香要有動作——伸手攞香
+         插落香爐，唔可以淨係企喺度等炷香出現): the right hand
+         reaches out holding the incense, places it in the burner,
+         then withdraws — the stick only appears in the burner at
+         the moment the hand reaches it */
+      offerTarget = 1;
+      setTimeout(function(){ addIncenseSticks(1); offerTarget = 0; }, 900);
+      setTimeout(function(){ lightHallSmoke(); smokeBoost = 1; incenseToast(); }, 1500);
       setTimeout(function(){
         if (prevSeat != null && SEATS[prevSeat]) sitSeat(prevSeat);
         else { visitorStandAt = { x: 0, z: STAND_Z }; startWalkTo(0, STAND_Z, null); }
         incenseBusy = false;
-      }, 2900);
+      }, 3200);
     });
     updateHint(); renderActions();
   });
