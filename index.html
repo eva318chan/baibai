@@ -795,6 +795,7 @@ var I18N = {
     donateConfirm:'添香油', amtFree:'隨緣',
     toastIncense:'已上香，煙供裊裊，心意已達。',
     toastIncenseLimit:'每次入廟只能上三次香。',
+    toastIncenseFar:'未能上香，請行近香爐再試。',
     toastBow:'已鞠躬行禮，禮成。',
     toastPalms:'合掌靜心，同大家一齊靜坐。',
     toastLotus:'已獻上一朵蓮花，願心清淨。',
@@ -878,6 +879,7 @@ var I18N = {
     donateConfirm:'添香油', amtFree:'随缘',
     toastIncense:'已上香，烟供袅袅，心意已达。',
     toastIncenseLimit:'每次入庙只能上三次香。',
+    toastIncenseFar:'未能上香，请走近香炉再试。',
     toastBow:'已鞠躬行礼，礼成。',
     toastPalms:'合掌静心，跟大家一起静坐。',
     toastLotus:'已献上一朵莲花，愿心清净。',
@@ -961,6 +963,7 @@ var I18N = {
     donateConfirm:'Offer', amtFree:'Any Amount',
     toastIncense:'Incense lit. May your wish rise with the smoke.',
     toastIncenseLimit:'Three incense offerings per visit, please.',
+    toastIncenseFar:'Too far from the burner — please step closer and try again.',
     toastBow:'You bowed in respect. The rite is complete.',
     toastPalms:'Palms together — sitting quietly with everyone.',
     toastLotus:'A lotus offered. May your heart stay pure.',
@@ -2170,10 +2173,19 @@ var pendingBow = false;
    the floor, kneelT is its eased blend. */
 var prayTarget = 0, prayT = 0, pendingPalms = false, prayHoldUntil = 0;
 var kneelTarget = 0, kneelT = 0, bowKneel = false;
-/* incense offering arm (2026-11-21, 江仔：上香要有動作——伸手攞香插落香爐):
-   offerTarget is what the visitor wants (1 = right hand reaching out
-   holding the incense), offerT is the eased blend the loop drives. */
-var offerTarget = 0, offerT = 0;
+/* two-hands incense offering (2026-11-22, 江仔：拜神動作未做好——
+   雙手插香然後鞠躬感覺唔到；按道教儀式本身做，唔抄韓國網站）:
+   offerP is the offering's progress through its poses and
+   offerPTarget is where it is heading — the loop eases offerP
+   toward the target every frame, so the hands travel smoothly
+   from one pose to the next instead of snapping:
+     0 = at rest, hands hanging at the sides
+     1 = both hands together at the chest, holding one stick
+     2 = hands raised together to forehead height (the offering)
+     3 = hands lowered together to place the stick in the burner
+   The stick itself appears in the burner as the hands reach
+   pose 3; the hands then return to 0 and a short bow follows. */
+var offerP = 0, offerPTarget = 0;
 var smokeSystems = [], smokeBoost = 0, burnerGroup = null, incenseBusy = false;
 /* incense offering (2026-11-15): at most three sticks per visit to
    the hall — the count resets every time you leave and come back;
@@ -3090,17 +3102,23 @@ function makePilgrim(robeColor, trimColor, female){
      they stand proud of the cloth, big enough to read at a glance */
   var palms = makePalms(skin, .09);
   palms.position.set(0, .47, .30); palms.rotation.x = -.12; palms.visible = false; upper.add(palms);
-  /* one incense stick held in the right hand while offering
-     (2026-11-21) — rides in the hand, appears as the arm
-     extends, hides when the stick is placed in the burner */
+  /* one incense stick held between BOTH hands while offering
+     (2026-11-22, 雙手奉香） — it rides on the torso, not on one
+     hand, so it stays centred between the hands through every
+     pose: upright with the ember up while the hands hold it at
+     the chest and raise it to the forehead, then turning ember-
+     down as the hands lower it into the burner. setOffer drives
+     its position and angle from offerP; it hides the moment the
+     real stick appears in the burner. */
   var offerStick = new THREE.Group();
   var oShaft = new THREE.Mesh(new THREE.CylinderGeometry(.014, .014, .4, 7), mat(0xb03024, .7));
   oShaft.position.y = -.2; offerStick.add(oShaft);
   var oTip = new THREE.Mesh(new THREE.SphereGeometry(.02, 8, 8), new THREE.MeshBasicMaterial({ color: 0xff7b3a }));
   oTip.position.y = -.41; offerStick.add(oTip);
-  offerStick.position.set(0, -.26, .07);
+  offerStick.position.set(0, .25, .34);
+  offerStick.rotation.x = Math.PI;
   offerStick.visible = false;
-  armR.el.add(offerStick);
+  upper.add(offerStick);
   /* the 道童 head (2026-11-15): bigger and rounder like the designed
      clay acolyte, with a topknot on the crown */
   var headG = makeHead(skin, hairC, .235, !!female, 0, true); headG.position.y = .68; upper.add(headG);
@@ -3169,24 +3187,46 @@ function makePilgrim(robeColor, trimColor, female){
       armR.el.rotation.set(l(-.25, -.2, amt), 0, l(-.06, -.05, amt));
       palms.visible = false; armL.hand.visible = armR.hand.visible = true;
     },
-    /* setOffer(amt) — the incense offering, 2026-11-21 (江仔：上香
-       嗰個動作冇動作，淨係企喺面前然後炷香就出現咗). amt 0 = arms
-       at rest; amt 1 = right arm reaching forward toward the
-       burner, holding one incense stick, while the left arm stays
-       at rest. The stick rides in the right hand and appears as
-       the arm extends; when the stick is placed in the burner the
-       hand stick hides and addIncenseSticks puts the real stick
-       in the burner. The loop calls this INSTEAD of setPray /
-       setKneel while an offering is running, never both. */
-    setOffer: function(amt){
+    /* setOffer(p) — the two-hands incense offering, 2026-11-22
+       (江仔：雙手插香然後鞠躬）. p runs 0 → 3 through four poses,
+       and the loop eases it toward its target, so the hands
+       travel smoothly: 0 rest, 1 both hands together at the
+       chest holding one stick, 2 hands raised together to
+       forehead height, 3 hands lowered together to place the
+       stick in the burner. The pressed palms stay hidden
+       throughout — the two mitt hands hold the stick between
+       them. The loop calls this INSTEAD of setPray / setKneel
+       while an offering is running, never both. */
+    setOffer: function(p){
       var l = function(a, b, t){ return a + (b - a) * t; };
-      armL.sh.rotation.set(0, 0, -.17);
-      armL.el.rotation.set(-.25, 0, .06);
-      armR.sh.rotation.set(l(0, -1.05, amt), 0, l(.17, .05, amt));
-      armR.el.rotation.set(l(-.25, -.35, amt), 0, l(-.06, 0, amt));
+      /* shoulder / elbow rotations for each arm at the four poses:
+         [shX, shZ, elX, elZ] — the two arms mirror each other, so
+         the hands always meet at the centre front together */
+      var poses = {
+        L: [[0, -.17, -.25, .06], [-.5, .42, -1.3, .25], [-1.15, .42, -1.75, .25], [-1.45, .30, -.25, .20]],
+        R: [[0, .17, -.25, -.06], [-.5, -.42, -1.3, -.25], [-1.15, -.42, -1.75, -.25], [-1.45, -.30, -.25, -.20]]
+      };
+      var seg = Math.max(0, Math.min(2, Math.floor(p)));
+      var f = Math.max(0, Math.min(1, p - seg));
+      function pose(arm, i){ return l(poses[arm][seg][i], poses[arm][seg + 1][i], f); }
+      armL.sh.rotation.set(pose('L', 0), 0, pose('L', 1));
+      armL.el.rotation.set(pose('L', 2), 0, pose('L', 3));
+      armR.sh.rotation.set(pose('R', 0), 0, pose('R', 1));
+      armR.el.rotation.set(pose('R', 2), 0, pose('R', 3));
       palms.visible = false;
       armL.hand.visible = armR.hand.visible = true;
-      if (offerStick) offerStick.visible = amt > .4;
+      /* the stick between the hands: upright, ember up, while
+         held at the chest and raised to the forehead; turning
+         ember-down as the hands lower it into the burner.
+         [posY, posZ, rotX] at the four poses. */
+      var stickPos = [[.25, .34, Math.PI], [.25, .34, Math.PI], [.52, .26, Math.PI], [.79, .46, 0]];
+      if (offerStick){
+        offerStick.position.set(0,
+          l(stickPos[seg][0], stickPos[seg + 1][0], f),
+          l(stickPos[seg][1], stickPos[seg + 1][1], f));
+        offerStick.rotation.x = l(stickPos[seg][2], stickPos[seg + 1][2], f);
+        offerStick.visible = p > .15 && p < 2.95;
+      }
     }
   };
   poseStand();
@@ -3637,7 +3677,7 @@ function enterHall(d){
      with its palms still pressed from before */
   prayTarget = 0; prayT = 0; prayHoldUntil = 0; pendingPalms = false;
   kneelTarget = 0; kneelT = 0; bowKneel = false; pendingBow = false;
-  offerTarget = 0; offerT = 0;
+  offerP = 0; offerPTarget = 0; offerActive = false; offerSeq++;
   buildCommon(d.id); if (d.id === 'wts') buildStatueWTS(); else buildStatueGY();
   /* you are in the hall too: a little Taoist acolyte （道童） in a
      dark-blue robe with a pale-gold sash and a topknot — the designed
@@ -3896,7 +3936,7 @@ function enterHall(d){
              with the stride */
           prayT = Math.max(0, prayT - .12 * dt60);
           kneelT = Math.max(0, kneelT - .12 * dt60);
-          offerT = Math.max(0, offerT - .12 * dt60);
+          offerP = Math.max(0, offerP - .12 * dt60); offerPTarget = 0;
         }
       } else if (seatedIdx != null && SEATS[seatedIdx]){
         var vst = SEATS[seatedIdx];
@@ -3941,9 +3981,9 @@ function enterHall(d){
         prayT += (prayTarget - prayT) * (1 - Math.pow(1 - .18, dt60));
         if (Math.abs(prayTarget - prayT) < .01) prayT = prayTarget;
         kneelT = Math.max(0, kneelT - .18 * dt60);
-        offerT += (offerTarget - offerT) * (1 - Math.pow(1 - .18, dt60));
-        if (Math.abs(offerTarget - offerT) < .01) offerT = offerTarget;
-        if (offerT > .01) vu.setOffer(offerT);
+        offerP += (offerPTarget - offerP) * (1 - Math.pow(1 - .18, dt60));
+        if (Math.abs(offerPTarget - offerP) < .01) offerP = offerPTarget;
+        if (offerP > .01) vu.setOffer(offerP);
         else if (kneelT > .01) vu.setKneel(kneelT); else vu.setPray(prayT);
       }
     }
@@ -5779,6 +5819,45 @@ function bindJoy(id, getJoy, setJoy){
 
 /* ================= hall actions ================= */
 var beadCount = 0, lotusOffered = 0;
+/* the two-hands offering itself (2026-11-22) — one smooth,
+   unhurried sequence, driven by offerPTarget so the loop eases
+   the hands from pose to pose:
+     hands together at the chest holding the stick (1.4s)
+     → raised together to the forehead, held a moment (1.4s)
+     → lowered together to the burner (1.2s), the stick is
+       placed in the burner as the hands reach it
+     → hands return to the sides, a short bow follows (~1.5s),
+       smoke rises and the rite finishes.
+   Any walk started while it runs aborts it (see startWalkTo):
+   the pending steps check their sequence number and die, so no
+   stick appears in the burner while the figure walks away. */
+var offerSeq = 0, offerActive = false;
+function runOffering(done){
+  var seq = ++offerSeq;
+  offerActive = true;
+  playBell(0.08);
+  offerPTarget = 1;
+  setTimeout(function(){ if (seq !== offerSeq) return; offerPTarget = 2; }, 1400);
+  setTimeout(function(){ if (seq !== offerSeq) return; offerPTarget = 3; }, 2800);
+  setTimeout(function(){
+    if (seq !== offerSeq) return;
+    addIncenseSticks(1);
+    offerPTarget = 0;
+  }, 4000);
+  setTimeout(function(){
+    if (seq !== offerSeq) return;
+    lightHallSmoke(); smokeBoost = 1;
+    /* the short bow after the offering (2026-11-22): a brief
+       respectful dip of the head and body, NOT the full kneeling
+       bow — that stays the separate 鞠躬 action */
+    bowKneel = false; bowDur = 1.5; bowPower = .5; bowAnim = 1.5;
+  }, 4600);
+  setTimeout(function(){
+    if (seq !== offerSeq) return;
+    offerActive = false;
+    if (done) done();
+  }, 6400);
+}
 function renderActions(){
   var bar = document.getElementById('action-bar'); bar.innerHTML = '';
   function btn(icon, label, fn, primary, extra){
@@ -5794,17 +5873,51 @@ function renderActions(){
        limit is never announced in advance — only on the third
        (last) offering is it gently mentioned. */
     if (incenseOffered >= 3){ toast(t('toastIncenseLimit')); return; }
-    incenseOffered++;
-    var third = incenseOffered === 3;
+    var third = false;
     function incenseToast(){ toast(third ? t('toastIncenseLimit') : t('toastIncense')); }
-    /* in the middle of another walk, the offering is made from
-       where you stand — the stick still appears in the burner */
-    if (visitorWalk || !visitorFigure){ addIncenseSticks(1); lightHallSmoke(); smokeBoost = 1; playBell(0.08); incenseToast(); return; }
+    /* the offering is made AT the burner (2026-11-22): while the
+       pilgrim is still on the move, only allow it when already
+       close enough to reach the burner — otherwise the stick
+       would appear in the burner while the hands are far away,
+       which is exactly what felt wrong. Too far away: no stick
+       is spent, nothing appears, just a gentle word. */
+    function nearBurner(){
+      if (!visitorFigure) return false;
+      var dx = visitorFigure.position.x, dz = visitorFigure.position.z + 6.6;
+      return Math.sqrt(dx * dx + dz * dz) <= 1.6;
+    }
+    if (visitorWalk || !visitorFigure){
+      if (!nearBurner()){ toast(t('toastIncenseFar')); return; }
+      /* already beside the burner — offer in place. Stop the walk
+         first (releasing any cushion it was heading for) so the
+         loop leaves the walking branch and the hands can do the
+         offering instead of the stride. The standing branch pins
+         the figure to visitorStandAt every frame, so point that
+         at where the figure actually stands — otherwise it would
+         snap back across the hall. */
+      releaseSeatRings();
+      pendingBow = false; pendingPalms = false;
+      visitorStandAt = { x: visitorFigure.position.x, z: visitorFigure.position.z };
+      visitorWalk = null;
+      incenseOffered++;
+      third = incenseOffered === 3;
+      incenseBusy = true;
+      /* v46.3 safety net: if the offering is interrupted any
+         other way, the lock still releases after 10s — the button
+         must never go dead for good */
+      setTimeout(function(){ incenseBusy = false; }, 10000);
+      runOffering(function(){ incenseBusy = false; incenseToast(); });
+      updateHint(); renderActions();
+      return;
+    }
     /* the full offering, the way it is done in a real hall: you
        rise, walk the aisle to the great burner before the altar,
-       bow, and place one incense stick while the smoke rises —
-       then walk back to your cushion or standing place.
-       The camera follows you the whole way. */
+       offer the incense with both hands, bow briefly, and place
+       one incense stick while the smoke rises — then walk back
+       to your cushion or standing place. The camera follows you
+       the whole way. */
+    incenseOffered++;
+    third = incenseOffered === 3;
     incenseBusy = true;
     /* v46.3 safety net: if the offering walk is interrupted any
        other way, the lock still releases after 10s — the button
@@ -5815,20 +5928,12 @@ function renderActions(){
     seatedIdx = null;
     startWalkTo(0, -5.4, null, function(){
       visitorStandAt = { x: 0, z: -5.4 };
-      bowKneel = false; bowDur = 1.5; bowPower = .5; bowAnim = 1.5; playBell(0.08);
-      /* the offering (2026-11-21, 江仔：上香要有動作——伸手攞香
-         插落香爐，唔可以淨係企喺度等炷香出現): the right hand
-         reaches out holding the incense, places it in the burner,
-         then withdraws — the stick only appears in the burner at
-         the moment the hand reaches it */
-      offerTarget = 1;
-      setTimeout(function(){ addIncenseSticks(1); offerTarget = 0; }, 900);
-      setTimeout(function(){ lightHallSmoke(); smokeBoost = 1; incenseToast(); }, 1500);
-      setTimeout(function(){
+      runOffering(function(){
+        incenseToast();
         if (prevSeat != null && SEATS[prevSeat]) sitSeat(prevSeat);
         else { visitorStandAt = { x: 0, z: STAND_Z }; startWalkTo(0, STAND_Z, null); }
         incenseBusy = false;
-      }, 3200);
+      });
     });
     updateHint(); renderActions();
   });
@@ -5906,6 +6011,13 @@ function startWalkTo(x, z, seatIdx, after){
      by the visitor (seat tap, bow, stand up) — release the lock
      so 上香 works again on the next press */
   if (visitorWalk && visitorWalk.after && incenseBusy) incenseBusy = false;
+  /* abort a running offering (2026-11-22): if the visitor steers
+     away mid-offering — seat tap, stand up — the pending offering
+     steps must die instead of placing a stick in the burner while
+     the figure walks away. The offering's own walks (to the burner
+     before it starts, back afterwards) run while offerActive is
+     false, so they never trip this. */
+  if (incenseBusy && offerActive){ incenseBusy = false; offerActive = false; offerSeq++; offerPTarget = 0; }
   /* the walk is steered frame by frame in the hall loop: the
      figure turns smoothly toward the destination — whichever
      compass point it lies in, down the aisle, across the rows,
