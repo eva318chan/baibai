@@ -647,7 +647,7 @@
       <div class="fortune-reading" id="fortune-reading" style="display:none;"></div>
       <div style="text-align:center; margin:12px 0 2px;"><button class="btn" data-close="fortune-overlay" data-i18n="backToGarden">返回庭園</button></div>
       <p class="fortune-note" data-i18n="fortuneSource">來源：嗇色園官方籤文（黃大仙祠一百靈籤），籤文、解曰及詳情逐支核對。一百支已齊。籤文屬民俗文化參考，並非命運判決；重要決定請以現實判斷為準。</p>
-      <div style="text-align:center; margin:12px 0 2px;"><button class="btn ghost" id="save-slip-btn" data-i18n="saveSlip">保存籤文卡</button></div>
+      <div style="text-align:center; margin:12px 0 2px;"><button class="btn ghost" id="save-slip-btn" data-i18n="saveSlip">保存籤文卡</button> <button class="btn ghost" id="share-slip-btn" data-i18n="shareFriend">分享俾朋友</button></div>
       <div class="close-row" style="gap:10px;">
         <button class="btn ghost" id="shake-again" data-i18n="shakeAgain">再求一支</button>
         <button class="btn" data-close="fortune-overlay" data-i18n="receive">收下籤文</button>
@@ -698,6 +698,7 @@
     </div>
     <p class="ts-note" data-i18n="tsYearNote">生肖按農曆年（立春）計；1 月或 2 月初出生嘅朋友，生肖可能係上一年嘅，請自行核對。</p>
     <div class="ts-result" id="ts-result" style="display:none;"></div>
+    <div style="text-align:center; margin:10px 0 2px; display:none;" id="ts-share-row"><button class="btn ghost" id="share-ts-btn" data-i18n="shareFriend">分享俾朋友</button></div>
     <div class="close-row" style="gap:10px;">
       <button class="btn ghost" data-close="taisui-overlay" data-i18n="closeSheet">合十離開</button>
     </div>
@@ -784,7 +785,7 @@ var I18N = {
     fortuneTitle:'求 籤', fortuneSub:'心誠則靈。請喺心入面默念所問之事，再撳「搖籤」。', slipHeader:'黃大仙靈籤',
     fortuneResultTitle:'你求到嘅籤', fortuneResultSub:'籤文錄自黃大仙靈籤通行本，請靜心細讀。',
     fortuneSource:'來源：嗇色園官方籤文（黃大仙祠一百靈籤），籤文、解曰及詳情逐支核對。一百支已齊。籤文屬民俗文化參考，並非命運判決；重要決定請以現實判斷為準。',
-    cancel:'取消', shakeBtn:'搖 籤', shakeAgain:'再求一支', receive:'收下籤文', backToGarden:'返回庭園', closeSheet:'合十離開', saveSlip:'保存籤文卡', oneMatterOneStick:'傳統講求一事一籤——同一件事，唔好重複求籤，靜心等結果。', toastSlipSaved:'籤文卡已保存，可以分享畀親友。',
+    cancel:'取消', shakeBtn:'搖 籤', shakeAgain:'再求一支', receive:'收下籤文', backToGarden:'返回庭園', closeSheet:'合十離開', saveSlip:'保存籤文卡', oneMatterOneStick:'傳統講求一事一籤——同一件事，唔好重複求籤，靜心等結果。', toastSlipSaved:'籤文卡已保存，可以分享畀親友。', shareFriend:'分享俾朋友', toastShared:'已經打開分享，揀邊個朋友都得。', toastShareSaved:'呢部機唔支援直接分享，已經幫你下載咗張卡。', toastLinkCopied:'條 link 已經複製，可以貼去 WhatsApp 分享。',
     readMore:'解讀', readLess:'收起解讀', readOne:'一句話', readSeven:'七方面', readDetail:'傳統詳解 · 作個提醒', readClose:'籤文是提醒，不是定局。靜下心來，好好面對，逢凶可以化吉，化險可以為夷。', readSrc:'白話解讀：kaucim.ai 現代解讀；傳統詳解：嗇色園官方籤文。',
     beadsTitle:'撥 念 珠', beadsSub:'一珠一念，心無雜念。撳下面按鈕逐粒撥，數滿 108 粒為一遍。',
     beadStart:'靜心，開始第一粒。', beadReset:'重新數', beadNext:'撥一粒',
@@ -867,7 +868,7 @@ var I18N = {
     fortuneTitle:'求 签', fortuneSub:'心诚则灵。请在心里默念所问之事，再点「摇签」。', slipHeader:'黄大仙灵签',
     fortuneResultTitle:'你求到的签', fortuneResultSub:'签文录自黄大仙灵签通行本，请静心细读。',
     fortuneSource:'来源：啬色园官方签文（黄大仙祠一百灵签），签文、解曰及详情逐支核对。一百支已齐。签文属民俗文化参考，并非命运判决；重要决定请以现实判断为准。',
-    cancel:'取消', shakeBtn:'摇 签', shakeAgain:'再求一支', receive:'收下签文', backToGarden:'返回庭园', closeSheet:'合十离开', saveSlip:'保存签文卡', oneMatterOneStick:'传统讲求一事一签——同一件事，不要重复求签，静心等结果。', toastSlipSaved:'签文卡已保存，可以分享给亲友。',
+    cancel:'取消', shakeBtn:'摇 签', shakeAgain:'再求一支', receive:'收下签文', backToGarden:'返回庭园', closeSheet:'合十离开', saveSlip:'保存签文卡', oneMatterOneStick:'传统讲求一事一签——同一件事，不要重复求签，静心等结果。', toastSlipSaved:'签文卡已保存，可以分享给亲友。', shareFriend:'分享给朋友', toastShared:'已打开分享，可以选择朋友。', toastShareSaved:'此设备不支持直接分享，已帮你下载了卡片。', toastLinkCopied:'链接已复制，可以粘贴到 WhatsApp 分享。',
     readMore:'解读', readLess:'收起解读', readOne:'一句话', readSeven:'七方面', readDetail:'传统详解 · 作个提醒', readClose:'签文是提醒，不是定局。静下心来，好好面对，逢凶可以化吉，化险可以为夷。', readSrc:'白话解读：kaucim.ai 现代解读；传统详解：啬色园官方签文。',
     beadsTitle:'拨 念 珠', beadsSub:'一珠一念，心无杂念。点下面按钮逐粒拨，数满 108 粒为一遍。',
     beadStart:'静心，开始第一粒。', beadReset:'重新数', beadNext:'拨一粒',
@@ -950,7 +951,7 @@ var I18N = {
     fortuneTitle:'Draw a Fortune Stick', fortuneSub:'Sincerity brings the spirit near. Hold your question quietly in your heart, then tap "Shake".', slipHeader:'Wong Tai Sin Lots',
     fortuneResultTitle:'Your Fortune Stick', fortuneResultSub:'From the standard Wong Tai Sin fortune-stick book. Read it slowly, with a calm mind.',
     fortuneSource:"Source: the official Sik Sik Yuen stick texts (the 100 sticks of Wong Tai Sin Temple); each poem, interpretation and detail has been checked against them. All 100 sticks are included. Fortune sticks are a folk-culture reference, not a verdict on your fate — for important decisions, trust your own judgement.",
-    cancel:'Cancel', shakeBtn:'Shake', shakeAgain:'Draw Again', receive:'Keep This Stick', backToGarden:'Return to garden', closeSheet:'Done', saveSlip:'Save Slip Card', oneMatterOneStick:'Tradition says one matter, one stick — do not draw again for the same question; sit with the answer.', toastSlipSaved:'Slip card saved — share it with family and friends.',
+    cancel:'Cancel', shakeBtn:'Shake', shakeAgain:'Draw Again', receive:'Keep This Stick', backToGarden:'Return to garden', closeSheet:'Done', saveSlip:'Save Slip Card', oneMatterOneStick:'Tradition says one matter, one stick — do not draw again for the same question; sit with the answer.', toastSlipSaved:'Slip card saved — share it with family and friends.', shareFriend:'Share with friends', toastShared:'Share sheet opened — pick who to send it to.', toastShareSaved:'This device cannot share directly — the card has been downloaded instead.', toastLinkCopied:'Link copied — paste it into WhatsApp to share.',
     readMore:'Read More', readLess:'Hide Reading', readOne:'In one sentence', readSeven:'Seven areas of life', readDetail:'Traditional detail — as a reminder', readClose:'A stick is a reminder, not a verdict. Quiet your mind and face what comes: misfortune can turn to good fortune, and danger to safety.', readSrc:'Plain-language reading: kaucim.ai modern reading; traditional detail: the official Sik Sik Yuen stick texts.',
     beadsTitle:'Prayer Beads', beadsSub:'One bead, one thought, a mind free of clutter. Tap the button to count bead by bead — 108 beads make one full round.',
     beadStart:'Still your mind. Begin with the first bead.', beadReset:'Start Over', beadNext:'Next Bead',
@@ -6015,7 +6016,8 @@ function renderTsYears(){
 }
 function renderTsResult(){
   var box = document.getElementById('ts-result'); if (!box) return;
-  if (!tsSign){ box.style.display = 'none'; box.innerHTML = ''; return; }
+  var sr = document.getElementById('ts-share-row');
+  if (!tsSign){ box.style.display = 'none'; box.innerHTML = ''; if (sr) sr.style.display = 'none'; return; }
   var d = TS_YEARS[tsYear], type = d.clash[tsSign] || 'none';
   var head = LANG === 'en' ? tsDisp(tsSign) + ' · ' + TS_SIGN_EN[TS_SIGNS.indexOf(tsSign)] : tsDisp(tsSign);
   var html = '<p class="ts-year-line">' + tsYearLine(tsYear) + '</p>'
@@ -6031,7 +6033,7 @@ function renderTsResult(){
   } else {
     html += '<p class="ts-close">' + t('tsCloseCalm') + '</p>';
   }
-  box.innerHTML = html; box.style.display = 'block';
+  box.innerHTML = html; box.style.display = 'block'; if (sr) sr.style.display = 'block';
 }
 function openTaiSui(){
   renderTsYears(); renderTsSigns(); renderTsResult();
@@ -6177,8 +6179,8 @@ function wrapText(x, text, maxW){
   if (line) lines.push(line);
   return lines;
 }
-function saveFortuneCard(){
-  var lot = currentLot; if (!lot) return;
+function drawFortuneCard(){
+  var lot = currentLot; if (!lot) return null;
   var W = 1080, H = 1440, cv = document.createElement('canvas');
   cv.width = W; cv.height = H; var x = cv.getContext('2d');
   x.fillStyle = '#f6efdc'; x.fillRect(0, 0, W, H);
@@ -6215,16 +6217,67 @@ function saveFortuneCard(){
   x.fillStyle = '#7a6a52'; x.font = '400 28px ' + serif;
   x.fillText(LANG === 'en' ? 'A folk-culture reference, not a verdict on your fate.'
     : (LANG === 'sc' ? '签文属民俗文化参考，并非命运判决。' : '籤文屬民俗文化參考，並非命運判決。'), W / 2, H - 100);
+  return cv;
+}
+/* 保存籤文卡：下載上面畫好嘅卡（2026-11-18 原有做法）。 */
+function saveFortuneCard(silent){
+  var cv = drawFortuneCard(); if (!cv) return;
+  var lot = currentLot;
   var a = document.createElement('a');
   a.download = 'baibai-lot-' + lot.no + '.png';
   cv.toBlob(function(blob){
     if (!blob) return;
     a.href = URL.createObjectURL(blob); a.click();
     setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000);
-    toast(t('toastSlipSaved'));
+    if (!silent) toast(t('toastSlipSaved'));
   }, 'image/png');
 }
+/* 分享籤文卡 (2026-11-22, 江仔批准)：手機用系統分享直接將張卡圖分享出去（WhatsApp / IG 都食圖片）；唔支援嘅機就退回下載。向外分享，唔係殿內社交，唔破壞靜嘅氣氛。 */
+function shareFortuneCard(){
+  var lot = currentLot; if (!lot) return;
+  var cv = drawFortuneCard(); if (!cv) return;
+  var fileName = 'baibai-lot-' + lot.no + '.png';
+  var text = LANG === 'en' ? 'I drew Wong Tai Sin lot No. ' + lot.no + ' "' + lot.title[LANG] + '" on Baibai — come in, be still, and think.'
+    : (LANG === 'sc' ? '我在拜拜求到黄大仙灵签第 ' + lot.no + ' 签「' + lot.title[LANG] + '」，进来静一静，想一想。'
+    : '我喺拜拜求到黃大仙靈籤第 ' + cnNum(lot.no) + ' 籤「' + lot.title[LANG] + '」，入嚟靜一靜，諗一諗。');
+  cv.toBlob(function(blob){
+    if (!blob) return;
+    var file = new File([blob], fileName, {type: 'image/png'});
+    if (navigator.share && navigator.canShare && navigator.canShare({files: [file]})){
+      navigator.share({files: [file], title: '拜拜 · 黃大仙靈籤', text: text, url: 'https://baibai.hk/'})
+        .then(function(){ toast(t('toastShared')); })
+        .catch(function(e){ if (e && e.name !== 'AbortError'){ saveFortuneCard(true); toast(t('toastShareSaved')); } });
+    } else {
+      saveFortuneCard(true); toast(t('toastShareSaved'));
+    }
+  }, 'image/png');
+}
+/* 分享查太歲結果 (2026-11-22, 江仔批准)：分享文字＋條 link，唔使整圖。 */
+function shareTaiSui(){
+  if (!tsSign) return;
+  var d = TS_YEARS[tsYear], type = d.clash[tsSign] || 'none';
+  var text = LANG === 'en' ? 'I checked my Tai Sui on Baibai: ' + TS_SIGN_EN[TS_SIGNS.indexOf(tsSign)] + ', ' + tsYear + ' — ' + t('tsType_' + type) + '.'
+    : (LANG === 'sc' ? '我在拜拜查太岁：属' + tsDisp(tsSign) + '，' + tsYear + '年' + t('tsType_' + type) + '。进来静一静。'
+    : '我喺拜拜查太歲：屬' + tsDisp(tsSign) + '，' + tsYear + '年' + t('tsType_' + type) + '。入嚟靜一靜。');
+  if (navigator.share){
+    navigator.share({title: '拜拜 · 查太歲', text: text, url: 'https://baibai.hk/'})
+      .then(function(){ toast(t('toastShared')); })
+      .catch(function(e){ if (e && e.name !== 'AbortError') copyBaibaiLink(); });
+  } else {
+    copyBaibaiLink();
+  }
+}
+function copyBaibaiLink(){
+  var url = 'https://baibai.hk/';
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(url).then(function(){ toast(t('toastLinkCopied')); }, function(){ toast(url); });
+  } else {
+    toast(url);
+  }
+}
 document.getElementById('save-slip-btn').addEventListener('click', function(){ saveFortuneCard(); });
+document.getElementById('share-slip-btn').addEventListener('click', function(){ shareFortuneCard(); });
+document.getElementById('share-ts-btn').addEventListener('click', function(){ shareTaiSui(); });
 function doShake(){
   var tube = document.getElementById('tube-icon');
   var btn = document.getElementById('shake-btn'); btn.disabled = true;
