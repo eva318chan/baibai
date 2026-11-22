@@ -288,6 +288,31 @@
   .btn{background:var(--red); color:#fff; border:none; border-radius:999px; padding:12px 30px; font-size:15px; font-weight:700; letter-spacing:.1em;}
   .btn.ghost{background:transparent; border:1px solid var(--line); color:var(--ink);}
   .btn.goldb{background:#7a5c1e; border:1px solid var(--gold);}
+  /* 2026-11-22: quiet 30 seconds after an offering, the 問事方向
+     picker before a stick is drawn, and the 查籤文 lookup */
+  #quiet-pill{display:none; align-items:center; gap:9px; margin:0 auto 8px; width:max-content; max-width:92%; background:rgba(18,14,11,.55); border:1px solid rgba(201,162,75,.45); color:var(--cream); border-radius:999px; padding:6px 14px 6px 8px; font-size:12.5px; letter-spacing:.08em; pointer-events:auto; opacity:0; transition:opacity .8s ease; cursor:pointer;}
+  #quiet-pill.on{display:flex;}
+  #quiet-pill.show{opacity:.92;}
+  #quiet-pill svg{width:22px; height:22px; flex:none; transform:rotate(-90deg);}
+  #quiet-pill circle{fill:none; stroke-width:2;}
+  #quiet-pill .q-bg{stroke:rgba(255,255,255,.16);}
+  #quiet-pill .q-fg{stroke:var(--gold-soft); stroke-linecap:round; stroke-dasharray:56.55; stroke-dashoffset:0;}
+  #quiet-pill .q-sec{font-variant-numeric:tabular-nums; opacity:.75; min-width:1.4em; text-align:right;}
+  .ask-grid{display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin:14px 0 6px;}
+  .ask-chip{background:rgba(42,33,26,.7); border:1px solid var(--line); color:var(--ink); border-radius:999px; padding:10px 18px; font-size:15px; font-family:inherit; letter-spacing:.08em;}
+  .ask-chip:active{transform:scale(.97);}
+  .ask-line{font-size:13px; color:var(--gold-soft); text-align:center; margin:2px 0 0; letter-spacing:.06em;}
+  .breathe-line{font-size:13.5px; color:var(--ink-dim); text-align:center; margin:6px 0 0; line-height:1.8;}
+  .f-aspect{margin-top:12px; text-align:left; background:#fdf8ec; border:1px solid #d9c48a; border-left:4px solid #a93226; border-radius:10px; padding:12px 14px;}
+  .f-aspect b{display:block; font-size:13.5px; color:#8c2b1d; letter-spacing:.1em; margin-bottom:4px;}
+  .f-aspect span{font-size:15px; line-height:1.9; color:#33241a;}
+  .fortune-reading .rd-line.rd-asked{background:#f8ecd0; border-left:3px solid #a93226; border-radius:6px; padding:6px 10px; margin:0 0 6px;}
+  #fortune-stage-result .only-in-lookup{display:none;}
+  #fortune-stage-result.lookup .only-in-lookup{display:block;}
+  #fortune-stage-result.lookup .hide-in-lookup{display:none !important;}
+  .lookup-row{display:flex; justify-content:center; gap:10px; margin:14px 0 4px;}
+  .lookup-row input{width:140px; text-align:center; background:rgba(42,33,26,.7); color:var(--ink); border:1px solid var(--line); border-radius:10px; padding:11px 10px; font-size:18px; font-family:inherit;}
+  .lookup-err{min-height:1.6em; font-size:13px; color:var(--gold-soft); text-align:center; margin:6px 0 0;}
   /* fortune card */
   /* 結果卡 (v46, v46.2): a real Wong Tai Sin paper slip （籤紙） — pink
      paper, red border and red text, the way the slip a drawer is
@@ -441,6 +466,7 @@
     </div>
     <button class="enter-btn" id="enter-btn" data-i18n="enterBtn">入 廟</button>
     <button class="enter-btn ghost" id="taisui-btn" data-i18n="taisuiBtn">查 太 歲</button>
+    <button class="enter-btn ghost" id="lookup-btn" data-i18n="lookupBtn">查 籤 文</button>
     <!-- 直接入殿 removed 2026-11-18 (江仔：第一版唔需要，入到去庭院
          已經有「入殿參拜」掣) — v1 entry is just 入廟 + 查太歲; the
          fast lane lives in the garden HUD, not on the front door. -->
@@ -508,6 +534,7 @@
       </div>
     </div>
     <div class="hall-bottom">
+      <div id="quiet-pill" role="status"><svg viewBox="0 0 22 22" aria-hidden="true"><circle class="q-bg" cx="11" cy="11" r="9"/><circle class="q-fg" id="quiet-ring" cx="11" cy="11" r="9"/></svg><span id="quiet-text"></span><span class="q-sec" id="quiet-sec"></span></div>
       <p class="hint-line" id="hall-hint">拖動畫面環視大殿 · 撳一個發光嘅空蒲團，就可以坐低參拜</p>
       <div class="action-bar" id="action-bar"></div>
     </div>
@@ -533,9 +560,21 @@
 <!-- ============ FORTUNE SHEET ============ -->
 <div class="overlay" id="fortune-overlay" role="dialog" aria-modal="true">
   <div class="sheet">
+    <div id="fortune-stage-ask" style="display:none;">
+      <h3 data-i18n="askTitle">想問邊方面？</h3>
+      <p class="sub" data-i18n="askSub">揀一個方向，解讀會先講嗰方面；唔揀都得。</p>
+      <div class="ask-grid" id="ask-grid"></div>
+      <div class="close-row" style="gap:10px;">
+        <button class="btn ghost" data-close="fortune-overlay" data-i18n="cancel">取消</button>
+        <button class="btn ghost" id="ask-skip" data-i18n="askSkip">略過，直接求</button>
+      </div>
+      <p class="fortune-note" style="text-align:center;" data-i18n="oneMatterOneStick">傳統講求一事一籤——同一件事，唔好重複求籤，靜心等結果。</p>
+    </div>
     <div id="fortune-stage-shake">
       <h3 data-i18n="fortuneTitle">求 籤</h3>
       <p class="sub" data-i18n="fortuneSub">心誠則靈。請喺心入面默念所問之事，再撳「搖籤」。</p>
+      <p class="ask-line" id="ask-line" style="display:none;"></p>
+      <p class="breathe-line" data-i18n="breathe">深呼吸三下，心定咗先搖籤。</p>
       <!-- 簽筒 (v46.4): forty thin bamboo sticks (3.6 wide, not flat wide slats) in three rattle groups, each shaded by a horizontal light-to-dark gradient so a stick reads round, not a paper strip; seven with solid bright-red tops; four with black handwritten numbers just above the mouth (67, 52, 88, 39 as in the TaoNet photo) — the numbered sticks sit in group c and are drawn last, so no later stick can cover a number, and they stand 11+ units apart so two-digit numbers never collide. Edge sticks stay near-vertical so none pokes out past the tube body. The dark mouth interior is drawn BEFORE the sticks so they read as emerging from inside the hole, and the tube body hides their lower parts. Shake (three-group rattle) and bamboo sound unchanged. -->
       <div class="shake-stage"><div class="tube" id="tube-icon" role="img" aria-label="簽筒"><svg viewBox="0 0 120 160" xmlns="http://www.w3.org/2000/svg">
         <defs>
@@ -635,7 +674,8 @@
       </div>
     </div>
     <div id="fortune-stage-result" style="display:none;">
-      <h3 data-i18n="fortuneResultTitle">你求到嘅籤</h3>
+      <h3 class="hide-in-lookup" data-i18n="fortuneResultTitle">你求到嘅籤</h3>
+      <h3 class="only-in-lookup" data-i18n="lookupResultTitle">籤文查閱</h3>
       <p class="sub" data-i18n="fortuneResultSub">籤文錄自黃大仙靈籤通行本，請靜心細讀。</p>
       <div class="fortune-paper">
         <div class="f-head" data-i18n="slipHeader">黃大仙靈籤</div>
@@ -644,16 +684,18 @@
         <p class="f-verse" id="f-verse"></p>
       </div>
       <p class="fortune-note" id="f-note"></p>
+      <div class="f-aspect" id="f-aspect" style="display:none;"></div>
       <div style="text-align:center; margin:14px 0 2px;"><button class="btn ghost" id="read-btn">解讀</button></div>
       <div class="fortune-reading" id="fortune-reading" style="display:none;"></div>
-      <div style="text-align:center; margin:12px 0 2px;"><button class="btn" data-close="fortune-overlay" data-i18n="backToGarden">返回庭園</button></div>
+      <div class="hide-in-lookup" style="text-align:center; margin:12px 0 2px;"><button class="btn" data-close="fortune-overlay" data-i18n="backToGarden">返回庭園</button></div>
       <p class="fortune-note" data-i18n="fortuneSource">來源：嗇色園官方籤文（黃大仙祠一百靈籤），籤文、解曰及詳情逐支核對。一百支已齊。籤文屬民俗文化參考，並非命運判決；重要決定請以現實判斷為準。</p>
       <div style="text-align:center; margin:12px 0 2px;"><button class="btn ghost" id="save-slip-btn" data-i18n="saveSlip">保存籤文卡</button> <button class="btn ghost" id="share-slip-btn" data-i18n="shareFriend">分享俾朋友</button></div>
       <div class="close-row" style="gap:10px;">
-        <button class="btn ghost" id="shake-again" data-i18n="shakeAgain">再求一支</button>
+        <button class="btn ghost hide-in-lookup" id="shake-again" data-i18n="shakeAgain">再求一支</button>
+        <button class="btn ghost only-in-lookup" id="lookup-again" data-i18n="lookupAgain">查另一支</button>
         <button class="btn" data-close="fortune-overlay" data-i18n="receive">收下籤文</button>
       </div>
-      <p class="fortune-note" data-i18n="oneMatterOneStick">傳統講求一事一籤——同一件事，唔好重複求籤，靜心等結果。</p>
+      <p class="fortune-note hide-in-lookup" data-i18n="oneMatterOneStick">傳統講求一事一籤——同一件事，唔好重複求籤，靜心等結果。</p>
     </div>
   </div>
 </div>
@@ -679,6 +721,18 @@
 </div>
 
 <!-- ============ TAI SUI SHEET (v47) ============ -->
+<div class="overlay" id="lookup-overlay" role="dialog" aria-modal="true">
+  <div class="sheet">
+    <h3 data-i18n="lookupTitle">查 籤 文</h3>
+    <p class="sub" data-i18n="lookupSub">已經求咗黃大仙靈籤？輸入籤號（1 至 100），睇返籤文同解讀。</p>
+    <div class="lookup-row"><input id="lookup-no" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="3" autocomplete="off"></div>
+    <p class="lookup-err" id="lookup-err" role="status"></p>
+    <div class="close-row" style="gap:10px;">
+      <button class="btn ghost" data-close="lookup-overlay" data-i18n="cancel">取消</button>
+      <button class="btn" id="lookup-go" data-i18n="lookupGo">查 籤</button>
+    </div>
+  </div>
+</div>
 <div class="overlay" id="taisui-overlay" role="dialog" aria-modal="true">
   <div class="sheet">
     <h3 data-i18n="taisuiTitle">查 太 歲</h3>
@@ -798,6 +852,9 @@ var I18N = {
     toastIncense:'已上香，煙供裊裊，心意已達。',
     toastIncenseLimit:'每次入廟只能上三次香。',
     toastIncenseFar:'未能上香，請行近香爐再試。',
+    quietLine:'靜一靜，專心三十秒', quietDone:'心靜了，慢慢嚟。',
+    askTitle:'想問邊方面？', askSub:'揀一個方向，解讀會先講嗰方面；唔揀都得。', askSkip:'略過，直接求', askFor:'所問：{a}', breathe:'深呼吸三下，心定咗先搖籤。', aspectHead:'你問嘅「{a}」',
+    lookupBtn:'查 籤 文', lookupTitle:'查 籤 文', lookupSub:'已經求咗黃大仙靈籤？輸入籤號（1 至 100），睇返籤文同解讀。', lookupPh:'籤號 1–100', lookupGo:'查 籤', lookupErr:'請輸入 1 至 100 之間嘅籤號。', lookupResultTitle:'籤文查閱', lookupAgain:'查另一支',
     toastBow:'已鞠躬行禮，禮成。',
     toastPalms:'合掌靜心，同大家一齊靜坐。',
     toastLotus:'已獻上一朵蓮花，願心清淨。',
@@ -883,6 +940,9 @@ var I18N = {
     toastIncense:'已上香，烟供袅袅，心意已达。',
     toastIncenseLimit:'每次入庙只能上三次香。',
     toastIncenseFar:'未能上香，请走近香炉再试。',
+    quietLine:'静一静，专心三十秒', quietDone:'心静了，慢慢来。',
+    askTitle:'想问哪方面？', askSub:'选一个方向，解读会先讲那方面；不选也可以。', askSkip:'略过，直接求', askFor:'所问：{a}', breathe:'深呼吸三下，心定了再摇签。', aspectHead:'你问的「{a}」',
+    lookupBtn:'查 签 文', lookupTitle:'查 签 文', lookupSub:'已经求了黄大仙灵签？输入签号（1 至 100），查看签文和解读。', lookupPh:'签号 1–100', lookupGo:'查 签', lookupErr:'请输入 1 至 100 之间的签号。', lookupResultTitle:'签文查阅', lookupAgain:'查另一支',
     toastBow:'已鞠躬行礼，礼成。',
     toastPalms:'合掌静心，跟大家一起静坐。',
     toastLotus:'已献上一朵莲花，愿心清净。',
@@ -968,6 +1028,9 @@ var I18N = {
     toastIncense:'Incense lit. May your wish rise with the smoke.',
     toastIncenseLimit:'Three incense offerings per visit, please.',
     toastIncenseFar:'Too far from the burner — please step closer and try again.',
+    quietLine:'Be still — thirty quiet seconds', quietDone:'Your mind is settled. Take your time.',
+    askTitle:'What would you like to ask about?', askSub:'Choose one area and the reading will begin there. You may also skip.', askSkip:'Skip and draw', askFor:'Asking about: {a}', breathe:'Take three slow breaths, then shake when your mind is settled.', aspectHead:'What you asked — {a}',
+    lookupBtn:'Look Up a Stick', lookupTitle:'Look Up a Stick', lookupSub:'Already drawn a Wong Tai Sin stick? Enter its number (1 to 100) to read the poem and its reading.', lookupPh:'No. 1–100', lookupGo:'Look Up', lookupErr:'Please enter a stick number from 1 to 100.', lookupResultTitle:'Stick Text', lookupAgain:'Look up another',
     toastBow:'You bowed in respect. The rite is complete.',
     toastPalms:'Palms together — sitting quietly with everyone.',
     toastLotus:'A lotus offered. May your heart stay pure.',
@@ -1063,6 +1126,7 @@ function applyLang(){
   var fs = document.getElementById('fortune-stage-result');
   var fo = document.getElementById('fortune-overlay');
   if (fs && fo && fs.style.display !== 'none' && fo.classList.contains('open') && currentLot){ renderSlip(currentLot); }
+  if (typeof refreshFortuneExtras === 'function') refreshFortuneExtras();
   /* keep an open 解讀 panel in the new language (2026-11-15, v44) */
   var rp = document.getElementById('fortune-reading');
   var rb = document.getElementById('read-btn');
@@ -5914,7 +5978,7 @@ function renderActions(){
          other way, the lock still releases after 10s — the button
          must never go dead for good */
       setTimeout(function(){ incenseBusy = false; }, 10000);
-      runOffering(function(){ incenseBusy = false; incenseToast(); });
+      runOffering(function(){ incenseBusy = false; incenseToast(); startQuiet(); });
       updateHint(); renderActions();
       return;
     }
@@ -5937,7 +6001,7 @@ function renderActions(){
     startWalkTo(0, -5.4, null, function(){
       visitorStandAt = { x: 0, z: -5.4 };
       runOffering(function(){
-        incenseToast();
+        incenseToast(); startQuiet();
         if (prevSeat != null && SEATS[prevSeat]) sitSeat(prevSeat);
         else { visitorStandAt = { x: 0, z: STAND_Z }; startWalkTo(0, STAND_Z, null); }
         incenseBusy = false;
@@ -6062,10 +6126,113 @@ function standUp(){
 }
 
 /* ================= fortune ================= */
+/* 問事方向 (2026-11-22): before the tube is shaken the visitor may
+   name the area of life the question is about — one of the seven
+   areas the modern readings already cover (index into
+   MODERN_ASPECTS, so the three languages stay in step) — or skip.
+   The result card then shows that area's reading first. */
+var fortuneAspect = null, fortuneLookup = false;
+function fortuneStage(name){
+  var ids = ['ask','shake','result'];
+  for (var i=0;i<ids.length;i++){ document.getElementById('fortune-stage-' + ids[i]).style.display = ids[i] === name ? 'block' : 'none'; }
+}
+function aspectLabel(i){ var L = MODERN_ASPECTS[LANG] || MODERN_ASPECTS.tc; return L[i]; }
+function renderAskGrid(){
+  var g = document.getElementById('ask-grid'); if (!g || typeof MODERN_ASPECTS === 'undefined' || !MODERN_ASPECTS) return;
+  g.innerHTML = '';
+  var L = MODERN_ASPECTS[LANG] || MODERN_ASPECTS.tc;
+  for (var i=0;i<L.length;i++){
+    (function(idx){
+      var b = document.createElement('button'); b.className = 'ask-chip'; b.textContent = L[idx];
+      b.addEventListener('click', function(){ fortuneAspect = idx; renderAskLine(); fortuneStage('shake'); });
+      g.appendChild(b);
+    })(i);
+  }
+}
+function renderAskLine(){
+  var el = document.getElementById('ask-line'); if (!el) return;
+  if (fortuneAspect == null || typeof MODERN_ASPECTS === 'undefined' || !MODERN_ASPECTS){ el.style.display = 'none'; el.textContent = ''; }
+  else { el.textContent = t('askFor').replace('{a}', aspectLabel(fortuneAspect)); el.style.display = 'block'; }
+}
+function renderAspectBox(lot){
+  var box = document.getElementById('f-aspect'); if (!box) return;
+  var mod = lot && lot.modern && lot.modern[LANG];
+  var v = (fortuneAspect != null && mod && mod.aspects) ? mod.aspects[aspectLabel(fortuneAspect)] : null;
+  if (!v){ box.style.display = 'none'; box.innerHTML = ''; return; }
+  box.innerHTML = '<b>' + esc(t('aspectHead').replace('{a}', aspectLabel(fortuneAspect))) + '</b><span>' + esc(v) + '</span>';
+  box.style.display = 'block';
+}
+function refreshFortuneExtras(){
+  renderAskGrid(); renderAskLine();
+  var fs = document.getElementById('fortune-stage-result');
+  if (fs && fs.style.display !== 'none' && currentLot) renderAspectBox(currentLot);
+  var inp = document.getElementById('lookup-no'); if (inp) inp.placeholder = t('lookupPh');
+  var qt = document.getElementById('quiet-text'); if (qt && quietState) qt.textContent = t(quietState === 'done' ? 'quietDone' : 'quietLine');
+}
 function openFortune(){
-  document.getElementById('fortune-stage-shake').style.display = 'block';
-  document.getElementById('fortune-stage-result').style.display = 'none';
+  fortuneAspect = null; fortuneLookup = false;
+  document.getElementById('fortune-stage-result').classList.remove('lookup');
+  renderAskGrid(); renderAskLine();
+  fortuneStage('ask');
   document.getElementById('fortune-overlay').classList.add('open');
+}
+/* 查籤文 (2026-11-22): someone who already holds a stick number —
+   drawn at the real temple, or kept from an earlier visit here —
+   can read that stick's text and reading. It shows the very same
+   card as a drawn stick; nothing is shaken and nothing is sent
+   anywhere. */
+function openLookup(){
+  var inp = document.getElementById('lookup-no'); inp.value = ''; inp.placeholder = t('lookupPh');
+  document.getElementById('lookup-err').textContent = '';
+  document.getElementById('lookup-overlay').classList.add('open');
+}
+function doLookup(){
+  var raw = (document.getElementById('lookup-no').value || '').replace(/[０-９]/g, function(c){ return String.fromCharCode(c.charCodeAt(0) - 65248); }).trim();
+  var n = /^[0-9]{1,3}$/.test(raw) ? parseInt(raw, 10) : NaN;
+  var lot = null;
+  if (n >= 1 && n <= 100){ for (var i=0;i<LOTS.length;i++){ if (LOTS[i].no === n){ lot = LOTS[i]; break; } } }
+  if (!lot){ document.getElementById('lookup-err').textContent = t('lookupErr'); return; }
+  fortuneAspect = null; fortuneLookup = true; currentLot = lot;
+  var rp0 = document.getElementById('fortune-reading'); if (rp0) rp0.style.display = 'none';
+  var rb0 = document.getElementById('read-btn'); if (rb0) rb0.textContent = t('readMore');
+  renderSlip(lot); renderAspectBox(lot);
+  document.getElementById('fortune-stage-result').classList.add('lookup');
+  fortuneStage('result');
+  document.getElementById('lookup-overlay').classList.remove('open');
+  document.getElementById('fortune-overlay').classList.add('open');
+  var sh = document.querySelector('#fortune-overlay .sheet'); if (sh) sh.scrollTop = 0;
+}
+/* 靜心三十秒 (2026-11-22): once the incense is placed and the short
+   bow is done, a small quiet pill counts thirty seconds — a thin
+   ring and one line, low on the screen, never a dialog. It locks
+   nothing: every button still works, a tap on the pill puts it
+   away, and leaving the hall ends it. */
+var quietState = null, quietTimer = null, quietEnd = 0;
+function stopQuiet(){
+  clearInterval(quietTimer); quietTimer = null; quietState = null;
+  var pill = document.getElementById('quiet-pill'); if (!pill) return;
+  pill.classList.remove('show');
+  setTimeout(function(){ if (!quietState) pill.classList.remove('on'); }, 850);
+}
+function startQuiet(){
+  var pill = document.getElementById('quiet-pill'); if (!pill) return;
+  clearInterval(quietTimer);
+  var ring = document.getElementById('quiet-ring'), sec = document.getElementById('quiet-sec'), txt = document.getElementById('quiet-text');
+  var total = 30000; quietEnd = Date.now() + total; quietState = 'run';
+  txt.textContent = t('quietLine'); sec.textContent = '30'; ring.style.strokeDashoffset = '0';
+  pill.classList.add('on');
+  setTimeout(function(){ if (quietState) pill.classList.add('show'); }, 30);
+  quietTimer = setInterval(function(){
+    var left = quietEnd - Date.now();
+    if (left <= 0){
+      clearInterval(quietTimer); quietTimer = null; quietState = 'done';
+      ring.style.strokeDashoffset = '56.55'; sec.textContent = ''; txt.textContent = t('quietDone');
+      setTimeout(function(){ if (quietState === 'done') stopQuiet(); }, 5000);
+      return;
+    }
+    sec.textContent = String(Math.ceil(left / 1000));
+    ring.style.strokeDashoffset = String(56.55 * (1 - left / total));
+  }, 250);
 }
 /* ================= tai sui checker (v47, 2026-11-15) =================
    查太歲 — pick a zodiac sign (or a birth year) and see whether it
@@ -6240,9 +6407,14 @@ function renderReading(lot){
     var labels = MODERN_ASPECTS[LANG] || MODERN_ASPECTS.tc;
     var asp = mod.aspects || {};
     var seven = '', anyAspect = false;
-    for (var i=0;i<labels.length;i++){
-      var v = asp[labels[i]];
-      if (v){ anyAspect = true; seven += '<div class="rd-line"><b>' + esc(labels[i]) + '</b>' + esc(v) + '</div>'; }
+    /* the area the visitor asked about comes first, marked out;
+       the other six follow in their usual order (2026-11-22) */
+    var order = [];
+    if (typeof fortuneAspect === 'number' && labels[fortuneAspect]) order.push(fortuneAspect);
+    for (var oi=0;oi<labels.length;oi++){ if (oi !== fortuneAspect) order.push(oi); }
+    for (var i=0;i<order.length;i++){
+      var v = asp[labels[order[i]]];
+      if (v){ anyAspect = true; seven += '<div class="rd-line' + (order[i] === fortuneAspect ? ' rd-asked' : '') + '"><b>' + esc(labels[order[i]]) + '</b>' + esc(v) + '</div>'; }
     }
     if (anyAspect){ html += '<h4>' + esc(t('readSeven')) + '</h4>' + seven; }
   }
@@ -6408,9 +6580,8 @@ function doShake(){
     currentLot = lot;
     var rp0 = document.getElementById('fortune-reading'); if (rp0) rp0.style.display = 'none';
     var rb0 = document.getElementById('read-btn'); if (rb0) rb0.textContent = t('readMore');
-    renderSlip(lot);
-    document.getElementById('fortune-stage-shake').style.display = 'none';
-    document.getElementById('fortune-stage-result').style.display = 'block';
+    renderSlip(lot); renderAspectBox(lot);
+    fortuneStage('result');
     playBell(0.14);
   }, 1500);
 }
@@ -6434,6 +6605,13 @@ document.getElementById('enter-btn').addEventListener('click', function(){ ensur
    select, wired once at load. The year select maps a birth year to
    its sign: 1924 is a Rat year, so sign = (year − 1924) mod 12. */
 document.getElementById('taisui-btn').addEventListener('click', function(){ openTaiSui(); });
+document.getElementById('lookup-btn').addEventListener('click', function(){ openLookup(); });
+document.getElementById('lookup-go').addEventListener('click', function(){ doLookup(); });
+document.getElementById('lookup-no').addEventListener('keydown', function(e){ if (e.key === 'Enter'){ e.preventDefault(); doLookup(); } });
+document.getElementById('lookup-no').addEventListener('input', function(){ document.getElementById('lookup-err').textContent = ''; });
+document.getElementById('lookup-again').addEventListener('click', function(){ document.getElementById('fortune-overlay').classList.remove('open'); openLookup(); });
+document.getElementById('ask-skip').addEventListener('click', function(){ fortuneAspect = null; renderAskLine(); fortuneStage('shake'); });
+document.getElementById('quiet-pill').addEventListener('click', function(){ stopQuiet(); });
 document.getElementById('privacy-link').addEventListener('click', function(){ renderLegal(); document.getElementById('privacy-overlay').classList.add('open'); });
 document.getElementById('terms-link').addEventListener('click', function(){ renderLegal(); document.getElementById('terms-overlay').classList.add('open'); });
 (function(){
@@ -6517,7 +6695,7 @@ document.getElementById('back-select').addEventListener('click', function(){ sho
    just inside the gate, facing the hall through it — not back at
    the garden's far starting point: you step out of the temple
    where you came in, you don't teleport to the beginning. */
-document.getElementById('leave-hall').addEventListener('click', function(){ disposeScene(); currentHall = null; gPos = { x: pathX(-12.6), z: -11 }; gHeading = Math.PI; gCamYaw = Math.PI; gCamYawT = Math.PI; enterGarden(true); syncChant(); });
+document.getElementById('leave-hall').addEventListener('click', function(){ stopQuiet(); disposeScene(); currentHall = null; gPos = { x: pathX(-12.6), z: -11 }; gHeading = Math.PI; gCamYaw = Math.PI; gCamYawT = Math.PI; enterGarden(true); syncChant(); });
 document.querySelectorAll('.lang-opt').forEach(function(b){
   b.addEventListener('click', function(){
     var nl = b.getAttribute('data-lang');
