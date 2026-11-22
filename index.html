@@ -313,6 +313,26 @@
   .lookup-row{display:flex; justify-content:center; gap:10px; margin:14px 0 4px;}
   .lookup-row input{width:140px; text-align:center; background:rgba(42,33,26,.7); color:var(--ink); border:1px solid var(--line); border-radius:10px; padding:11px 10px; font-size:18px; font-family:inherit;}
   .lookup-err{min-height:1.6em; font-size:13px; color:var(--gold-soft); text-align:center; margin:6px 0 0;}
+  /* 字體大細 (2026-11-22): 小 = the sizes the card always had,
+     中 (default) one step up, 大 two steps up. Only the slip text
+     and its readings scale; the saved image card is unaffected. */
+  #fortune-stage-result{--fs:1.15; --fs2:1.2;}
+  #fortune-stage-result.fs-s{--fs:1; --fs2:1;}
+  #fortune-stage-result.fs-l{--fs:1.32; --fs2:1.42;}
+  #fortune-stage-result .fortune-paper .f-verse{font-size:calc(21px * var(--fs));}
+  #fortune-stage-result #f-note{font-size:calc(12px * var(--fs2));}
+  #fortune-stage-result .fortune-reading h4{font-size:calc(15px * var(--fs));}
+  #fortune-stage-result .fortune-reading .rd-one{font-size:calc(17px * var(--fs));}
+  #fortune-stage-result .fortune-reading .rd-line{font-size:calc(14.5px * var(--fs));}
+  #fortune-stage-result .fortune-reading .rd-close{font-size:calc(14px * var(--fs));}
+  #fortune-stage-result .f-aspect b{font-size:calc(13.5px * var(--fs));}
+  #fortune-stage-result .f-aspect span{font-size:calc(15px * var(--fs));}
+  .fs-row{display:flex; justify-content:flex-end; align-items:center; gap:6px; margin:0 0 8px; font-size:12px; color:var(--ink-dim);}
+  .fs-row span{margin-right:2px; letter-spacing:.08em;}
+  .fs-btn{background:transparent; border:1px solid var(--line); color:var(--ink); border-radius:999px; min-width:34px; height:30px; padding:0 9px; font-family:inherit; line-height:1;}
+  .fs-btn[data-fs="s"]{font-size:12px;} .fs-btn[data-fs="m"]{font-size:14px;} .fs-btn[data-fs="l"]{font-size:16.5px;}
+  .fs-btn[aria-pressed="true"]{border-color:var(--gold); color:var(--gold-soft); background:rgba(201,162,75,.12);}
+  .fortune-paper .f-verse.cols{flex-wrap:nowrap; max-width:100%;}
   /* fortune card */
   /* 結果卡 (v46, v46.2): a real Wong Tai Sin paper slip （籤紙） — pink
      paper, red border and red text, the way the slip a drawer is
@@ -677,6 +697,7 @@
       <h3 class="hide-in-lookup" data-i18n="fortuneResultTitle">你求到嘅籤</h3>
       <h3 class="only-in-lookup" data-i18n="lookupResultTitle">籤文查閱</h3>
       <p class="sub" data-i18n="fortuneResultSub">籤文錄自黃大仙靈籤通行本，請靜心細讀。</p>
+      <div class="fs-row" role="group" data-i18n-aria="fontLabel"><span data-i18n="fontLabel">字體</span><button class="fs-btn" data-fs="s" data-i18n="fontS">小</button><button class="fs-btn" data-fs="m" data-i18n="fontM">中</button><button class="fs-btn" data-fs="l" data-i18n="fontL">大</button></div>
       <div class="fortune-paper">
         <div class="f-head" data-i18n="slipHeader">黃大仙靈籤</div>
         <div class="f-meta"><span class="f-no" id="f-no">第 一 籤</span><span class="f-level" id="f-level">上上</span></div>
@@ -852,6 +873,7 @@ var I18N = {
     toastIncense:'已上香，煙供裊裊，心意已達。',
     toastIncenseLimit:'每次入廟只能上三次香。',
     toastIncenseFar:'未能上香，請行近香爐再試。',
+    fontLabel:'字體', fontS:'小', fontM:'中', fontL:'大',
     quietLine:'靜一靜，專心三十秒', quietDone:'心靜了，慢慢嚟。',
     askTitle:'想問邊方面？', askSub:'揀一個方向，解讀會先講嗰方面；唔揀都得。', askSkip:'略過，直接求', askFor:'所問：{a}', breathe:'深呼吸三下，心定咗先搖籤。', aspectHead:'你問嘅「{a}」',
     lookupBtn:'查 籤 文', lookupTitle:'查 籤 文', lookupSub:'已經求咗黃大仙靈籤？輸入籤號（1 至 100），睇返籤文同解讀。', lookupPh:'籤號 1–100', lookupGo:'查 籤', lookupErr:'請輸入 1 至 100 之間嘅籤號。', lookupResultTitle:'籤文查閱', lookupAgain:'查另一支',
@@ -940,6 +962,7 @@ var I18N = {
     toastIncense:'已上香，烟供袅袅，心意已达。',
     toastIncenseLimit:'每次入庙只能上三次香。',
     toastIncenseFar:'未能上香，请走近香炉再试。',
+    fontLabel:'字体', fontS:'小', fontM:'中', fontL:'大',
     quietLine:'静一静，专心三十秒', quietDone:'心静了，慢慢来。',
     askTitle:'想问哪方面？', askSub:'选一个方向，解读会先讲那方面；不选也可以。', askSkip:'略过，直接求', askFor:'所问：{a}', breathe:'深呼吸三下，心定了再摇签。', aspectHead:'你问的「{a}」',
     lookupBtn:'查 签 文', lookupTitle:'查 签 文', lookupSub:'已经求了黄大仙灵签？输入签号（1 至 100），查看签文和解读。', lookupPh:'签号 1–100', lookupGo:'查 签', lookupErr:'请输入 1 至 100 之间的签号。', lookupResultTitle:'签文查阅', lookupAgain:'查另一支',
@@ -1028,6 +1051,7 @@ var I18N = {
     toastIncense:'Incense lit. May your wish rise with the smoke.',
     toastIncenseLimit:'Three incense offerings per visit, please.',
     toastIncenseFar:'Too far from the burner — please step closer and try again.',
+    fontLabel:'Text size', fontS:'S', fontM:'M', fontL:'L',
     quietLine:'Be still — thirty quiet seconds', quietDone:'Your mind is settled. Take your time.',
     askTitle:'What would you like to ask about?', askSub:'Choose one area and the reading will begin there. You may also skip.', askSkip:'Skip and draw', askFor:'Asking about: {a}', breathe:'Take three slow breaths, then shake when your mind is settled.', aspectHead:'What you asked — {a}',
     lookupBtn:'Look Up a Stick', lookupTitle:'Look Up a Stick', lookupSub:'Already drawn a Wong Tai Sin stick? Enter its number (1 to 100) to read the poem and its reading.', lookupPh:'No. 1–100', lookupGo:'Look Up', lookupErr:'Please enter a stick number from 1 to 100.', lookupResultTitle:'Stick Text', lookupAgain:'Look up another',
@@ -6606,6 +6630,21 @@ document.getElementById('enter-btn').addEventListener('click', function(){ ensur
    its sign: 1924 is a Rat year, so sign = (year − 1924) mod 12. */
 document.getElementById('taisui-btn').addEventListener('click', function(){ openTaiSui(); });
 document.getElementById('lookup-btn').addEventListener('click', function(){ openLookup(); });
+/* 字體大細: remembered on this device only */
+function setSlipFont(sz, save){
+  if (sz !== 's' && sz !== 'm' && sz !== 'l') sz = 'm';
+  var fs = document.getElementById('fortune-stage-result');
+  fs.classList.remove('fs-s', 'fs-l'); if (sz !== 'm') fs.classList.add('fs-' + sz);
+  var bs = document.querySelectorAll('.fs-btn');
+  for (var i=0;i<bs.length;i++) bs[i].setAttribute('aria-pressed', bs[i].getAttribute('data-fs') === sz ? 'true' : 'false');
+  if (save){ try { localStorage.setItem('baibai_slip_fs', sz); } catch(e){} }
+}
+(function(){
+  var sz = 'm'; try { sz = localStorage.getItem('baibai_slip_fs') || 'm'; } catch(e){}
+  setSlipFont(sz, false);
+  var bs = document.querySelectorAll('.fs-btn');
+  for (var i=0;i<bs.length;i++) bs[i].addEventListener('click', function(){ setSlipFont(this.getAttribute('data-fs'), true); });
+})();
 document.getElementById('lookup-go').addEventListener('click', function(){ doLookup(); });
 document.getElementById('lookup-no').addEventListener('keydown', function(e){ if (e.key === 'Enter'){ e.preventDefault(); doLookup(); } });
 document.getElementById('lookup-no').addEventListener('input', function(){ document.getElementById('lookup-err').textContent = ''; });
