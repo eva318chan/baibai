@@ -2455,14 +2455,18 @@ function buildCommon(kind){
   var isGY = kind === 'gy';
   scene.background = new THREE.Color(isGY ? 0x232b1f : 0x291b11);
   scene.fog = new THREE.Fog(isGY ? 0x232b1f : 0x291b11, 32, 72);
-  scene.add(new THREE.AmbientLight(0xffe6c0, .8));
-  var key = new THREE.DirectionalLight(0xffd9a0, 1.05); key.position.set(4,10,7); scene.add(key);
+  /* 2026-11-22 (江仔：殿內可以推光少少；朋友部 Android 睇落偏暗) —
+     ambient + key raised and a soft sky/floor fill added, so figures
+     and the statue never fall to near-black on dimmer screens */
+  scene.add(new THREE.AmbientLight(0xffe6c0, 1.0));
+  scene.add(new THREE.HemisphereLight(0xfff0d2, 0x8a6a48, .35));
+  var key = new THREE.DirectionalLight(0xffd9a0, 1.2); key.position.set(4,10,7); scene.add(key);
   var warm = new THREE.PointLight(0xff9c3f, .95, 27); warm.position.set(0,4.6,-7.8); scene.add(warm);
   /* a dedicated glow on the statue, so the figure holds the far end
      of the hall as its single focal point */
   var focus = new THREE.PointLight(0xffd9a0, .85, 17); focus.position.set(0,6.8,-8.4); scene.add(focus);
   /* soft light over the seating area so the seated worshippers read clearly */
-  var cong = new THREE.PointLight(0xffdca6, .55, 17); cong.position.set(0,5.4,1.2); scene.add(cong);
+  var cong = new THREE.PointLight(0xffdca6, .8, 17); cong.position.set(0,5.4,1.2); scene.add(cong);
   /* floor + two-tier altar platform — the hall is deliberately deep:
      a long nave runs from the entrance back to a raised altar, so the
      eye travels the full length of the room before it rests */
